@@ -1,4 +1,5 @@
-const {BasicStrategy} = require('passport-http');
+//const {BasicStrategy} = require('passport-http');
+const LocalStrategy = require('passport-local').Strategy;
 const express = require('express');
 const jsonParser = require('body-parser').json();
 const passport = require('passport');
@@ -9,91 +10,68 @@ const router = express.Router();
 
 router.use(jsonParser);
 
-/*
-const strategy = new BasicStrategy(
-  (username, password, cb) => {
-    User
-      .findOne({username})
-      .exec()
-      .then(user => {
-        if (!user) {
-          return cb(null, false, {
-            message: 'Incorrect username'
-          });
-        }
-        if (user.password !== password) {
-          return cb(null, false, 'Incorrect password');
-        }
-        return cb(null, user);
-      })
-      .catch(err => cb(err))
-});
-
-passport.use(strategy);
-*/
-
 // POST
-router.post('/', (req, res) => {
-  if (!req.body) {
-    return res.status(400).json({message: 'No request body'});
-  }
+router.post('/new', (req, res) => {
+    if (!req.body) {
+        return res.status(400).json({message: 'No request body'});
+    }
 
-  if (!('username' in req.body)) {
-    return res.status(422).json({message: 'Missing field: username'});
-  }
+    if (!('username' in req.body)) {
+        return res.status(422).json({message: 'Missing field: username'});
+    }
 
-  let {username, password, firstName, lastName} = req.body;
+    let {username, password, firstName, lastName} = req.body;
 
-  if (typeof username !== 'string') {
-    return res.status(422).json({message: 'Incorrect field type: username'});
-  }
+    if (typeof username !== 'string') {
+        return res.status(422).json({message: 'Incorrect field type: username'});
+    }
 
-  username = username.trim();
+    username = username.trim();
 
-  if (username === '') {
-    return res.status(422).json({message: 'Incorrect field length: username'});
-  }
+    if (username === '') {
+        return res.status(422).json({message: 'Incorrect field length: username'});
+    }
 
-  if (!(password)) {
-    return res.status(422).json({message: 'Missing field: password'});
-  }
+    if (!(password)) {
+        return res.status(422).json({message: 'Missing field: password'});
+    }
 
-  if (typeof password !== 'string') {
-    return res.status(422).json({message: 'Incorrect field type: password'});
-  }
+    if (typeof password !== 'string') {
+        return res.status(422).json({message: 'Incorrect field type: password'});
+    }
 
-  password = password.trim();
+    password = password.trim();
 
-  if (password === '') {
-    return res.status(422).json({message: 'Incorrect field length: password'});
-  }
+    if (password === '') {
+        return res.status(422).json({message: 'Incorrect field length: password'});
+    }
 
-  // check for existing user
-  return User
+    // check for existing user
+    return User
     .find({username})
     .count()
     .exec()
     .then(count => {
-      if (count > 0) {
-        return res.status(422).json({message: 'username already taken'});
-      }
-      // if no existing user, hash password
-      return User.hashPassword(password)
+        if (count > 0) {
+            return res.status(422).json({message: 'username already taken'});
+        }
+    // if no existing user, hash password
+    return User.hashPassword(password)
     })
     .then(hash => {
-      return User
+        return User
         .create({
-          username: username,
-          password: hash,
-          firstName: firstName,
-          lastName: lastName
+            username: username,
+            password: hash,
+            firstName: firstName,
+            lastName: lastName
         })
     })
     .then(user => {
-      return res.status(201).json(user.apiRepr());
+        return res.status(201).json(user.apiRepr());
     })
     .catch(err => {
-      res.status(500).json({message: 'Internal server error'})
+        res.status(500).json({message: 'Internal server error'})
     });
 });
 
@@ -102,46 +80,83 @@ router.post('/', (req, res) => {
 // if we're creating users. keep in mind, you can also
 // verify this in the Mongo shell.
 router.get('/', (req, res) => {
-  return User
+    return User
     .find()
     .exec()
     .then(users => res.json(users.map(user => user.apiRepr())))
     .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
 });
 
-
+/*
 // NB: at time of writing, passport uses callbacks, not promises
 const basicStrategy = new BasicStrategy(function(username, password, callback) {
-  let user;
-  User
+    let user;
+    User
     .findOne({username: username})
     .exec()
     .then(_user => {
-      user = _user;
-      console.log(`user is ${user}\n\nand _user is ${_user}`);
-      if (!user) {
-        return callback(null, false, {message: 'Incorrect username'});
-      }
-      return user.validatePassword(password);
+        user = _user;
+        if (!user) {
+            return callback(null, false, {message: 'Incorrect username'});
+        }
+        return user.validatePassword(password);
     })
     .then(isValid => {
-      if (!isValid) {
-        return callback(null, false, {message: 'Incorrect password'});
-      }
-      else {
-        return callback(null, user)
-      }
+        if (!isValid) {
+            return callback(null, false, {message: 'Incorrect password'});
+        }
+        else {
+            return callback(null, user)
+        }
     });
 });
 
-
 passport.use(basicStrategy);
+*/
+
+const localStrategy = new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      if (!user.validatePassword(password)) { return done(null, false); }
+      return done(null, user);
+    });
+  }
+);
+
+passport.use(localStrategy);
 router.use(passport.initialize());
 
-router.get('/me',
-  passport.authenticate('basic', {session: false}),
-  (req, res) => res.json({user: req.user.apiRepr()})
-);
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+
+router.get('/me', passport.authenticate('local', {session: false}), (req, res) => {
+    if (req.user) {
+        console.log(`User is: ${req.user}`);
+        res.send({
+            user: req.user
+        })
+    } else {
+        res.send(`Not logged in`);    
+    }
+});
+
+router.post('/login', passport.authenticate('local-login', {
+    successRedirect : '/', // redirect to the secure profile section
+    failureRedirect : '/' // redirect back to the signup page if there is an error
+}));
+
+router.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/me');
+});
 
 
 module.exports = {router};
