@@ -63,7 +63,7 @@ function checkLogin() {
             }
         },
         error: (req, status, err) => {
-            console.log("Error when checking login (frontend): " + err);
+            console.log("Error when checking login (main.js): " + err);
         }
     }); 
 }
