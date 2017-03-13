@@ -1,16 +1,51 @@
-//const {BasicStrategy} = require('passport-http');
-const LocalStrategy = require('passport-local').Strategy;
 const express = require('express');
-const jsonParser = require('body-parser').json();
-const passport = require('passport');
+const passport = require('passport');const LocalStrategy = require('passport-local').Strategy;
 
 const {User} = require('./models');
 
 const router = express.Router();
 
-router.use(jsonParser);
+// DEFINE AUTH STRATEGY
+const localStrategy = new LocalStrategy({
+    usernameField: 'username',
+    passwordField: 'password',
+    session: true
+    },
+    function(username, password, callback) {
+        let user;
+        User
+        .findOne({ username: username })
+        .then(_user => {
+            user = _user;
+            if (!user) {
+                return callback(null, false, {message: 'Incorrect username'});
+            }
+            return user.validatePassword(password);
+        })
+        .then(isValid => {
+            if (!isValid) {
+                return callback(null, false, {message: 'Incorrect password'});
+            }
+            else {
+                return callback(null, user)
+            }
+        });
+});
 
-// POST
+passport.use(localStrategy);
+
+passport.serializeUser(function(user, cb) {
+    cb(null, user.id);
+});
+
+passport.deserializeUser(function(id, cb) {
+    User.findById(id, function (err, user) {
+        if (err) { return cb(err); }
+        cb(null, user);
+    });
+});
+
+// CREATE NEW USER
 router.post('/new', (req, res) => {
     if (!req.body) {
         return res.status(400).json({message: 'No request body'});
@@ -75,10 +110,7 @@ router.post('/new', (req, res) => {
     });
 });
 
-// never expose all your users like below in a prod application
-// we're just doing this so we have a quick way to see
-// if we're creating users. keep in mind, you can also
-// verify this in the Mongo shell.
+// SHOW ALL USERS (to be removed eventually)
 router.get('/', (req, res) => {
     return User
     .find()
@@ -87,75 +119,32 @@ router.get('/', (req, res) => {
     .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
 });
 
-/*
-// NB: at time of writing, passport uses callbacks, not promises
-const basicStrategy = new BasicStrategy(function(username, password, callback) {
-    let user;
-    User
-    .findOne({username: username})
-    .exec()
-    .then(_user => {
-        user = _user;
-        if (!user) {
-            return callback(null, false, {message: 'Incorrect username'});
-        }
-        return user.validatePassword(password);
-    })
-    .then(isValid => {
-        if (!isValid) {
-            return callback(null, false, {message: 'Incorrect password'});
-        }
-        else {
-            return callback(null, user)
-        }
-    });
-});
-
-passport.use(basicStrategy);
-*/
-
-const localStrategy = new LocalStrategy(
-  function(username, password, done) {
-    User.findOne({ username: username }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) { return done(null, false); }
-      if (!user.validatePassword(password)) { return done(null, false); }
-      return done(null, user);
-    });
-  }
-);
-
-passport.use(localStrategy);
-router.use(passport.initialize());
-
-
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-
-router.get('/me', passport.authenticate('local', {session: false}), (req, res) => {
-    if (req.user) {
-        console.log(`User is: ${req.user}`);
-        res.send({
-            user: req.user
-        })
-    } else {
-        res.send(`Not logged in`);    
+// LOG IN
+router.post('/login', passport.authenticate('local'), (req, res, next) => {
+    if (req.isAuthenticated()) {
+        User.findOne({ username: req.body.username }, (err, user) => {
+            res.redirect('/users/profile/' + user.username);      
+        });
+    } else { 
+        res.send('Couldn\'t log in'); 
     }
 });
 
-router.post('/login', passport.authenticate('local-login', {
-    successRedirect : '/', // redirect to the secure profile section
-    failureRedirect : '/' // redirect back to the signup page if there is an error
-}));
+// PROFILE
+router.get('/profile/:username', (req, res, next) => {
+    if (req.isAuthenticated()) {
+        User.findOne({ username: req.params.username }, (err, user) => {
+            res.send(user);
+        });
+    } else { 
+        res.redirect('./');
+    }
+});
 
+// LOG OUT
 router.get('/logout', (req, res) => {
     req.logout();
-    res.redirect('/me');
+    res.redirect('/');
 });
 
 

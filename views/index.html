@@ -5,7 +5,7 @@
 </head>
 <body>
 <h1>Help Expat Berlin</h1>
-    <form id="login-form">
+    <form id="login-form" method="post" action="users/login">
         <h2>Login</h2>
         <label>Username</label><br>
         <input class="username" type="text" name="username"><br>
@@ -16,6 +16,8 @@
     </form><br>
     <div class="logged-in">You are logged in</div><br>
     <div class="not-logged-in">You are not logged in</div>
+    <br>
+    <a href="/users/profile">My Profile</a>
 
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>

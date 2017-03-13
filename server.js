@@ -1,5 +1,10 @@
 const bodyParser = require('body-parser');
 const express = require('express');
+const passport = require('passport');const LocalStrategy = require('passport-local').Strategy;
+const cookieParser = require('cookie-parser')('keyboard cat');
+const jsonParser = require('body-parser').json();
+const urlEncoded = require('body-parser').urlencoded({ extended: true });
+const session = (require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 
@@ -11,13 +16,32 @@ const {PORT, DATABASE_URL} = require('./config');
 
 const app = express();
 
-// logging
+const checkLogin = (req, res, next) => {
+    if (req.user) {
+        res.locals.user = req.user;
+        console.log(`Logged in as ${res.locals.user}`);
+    } else {
+        res.locals.user = false;      
+        console.log(`NOT logged in`);
+    }
+    next();
+};
+
 app.use(morgan('common'));
-app.use(express.static('views'));
+app.use(cookieParser);
+app.use(jsonParser);
+app.use(urlEncoded);
+app.use(session);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('*', checkLogin);
 
 app.use('/users/', usersRouter);
+app.use(express.static('views'));
 
-app.use('*', function(req, res) {
+app.use('*', (req, res) => {
     return res.status(404).json({message: 'Not Found'});
 });
 
