@@ -19,10 +19,10 @@ const app = express();
 const checkLogin = (req, res, next) => {
     if (req.user) {
         res.locals.user = req.user;
-        console.log(`Logged in as ${res.locals.user}`);
+        console.log(`Logged in as ${res.locals.user.username}`);
     } else {
         res.locals.user = false;      
-        console.log(`NOT logged in`);
+        console.log(`NOT logged`);
     }
     next();
 };
@@ -39,7 +39,19 @@ app.use(passport.session());
 app.use('*', checkLogin);
 
 app.use('/users/', usersRouter);
+
+app.set('view engine', 'ejs');
 app.use(express.static('views'));
+
+app.get('/', (req, res) => {
+    /*return User
+    .find()
+    .exec()
+    .then(users => res.json(users.map(user => user.apiRepr())))
+    .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));*/
+    //const username = req.user || null;
+    res.render('index', {test: req.user || null});
+});
 
 app.use('*', (req, res) => {
     return res.status(404).json({message: 'Not Found'});

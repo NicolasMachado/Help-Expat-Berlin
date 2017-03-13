@@ -1,5 +1,4 @@
 $(function() {
-    checkLogin();
     // LOGIN
     /*$('#login-form').on('submit', (e) => {
         e.preventDefault();
@@ -11,24 +10,6 @@ $(function() {
         logout();
     });
 });
-
-function checkLogin() {
-    $.ajax({
-        type: 'GET',
-        url: '/',
-        data: {},
-        success: (req, rep, res) => {
-            if (req.user) {
-                console.log(req.user);
-            } else {
-                console.log('nope');
-            }
-        },
-        error: (req, status, err) => {
-            console.log(err);
-        }
-    }); 
-}
 
 function login() {
     const username = $('#login-form > .username')[0].value;
@@ -57,7 +38,7 @@ function logout() {
         url: '/users/logout',
         data: {},
         success: (req, rep, res) => {
-            checkLogin();
+            location.href = "/"
         },
         error: (req, status, err) => {
             console.log(err);

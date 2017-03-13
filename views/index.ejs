@@ -5,19 +5,20 @@
 </head>
 <body>
 <h1>Help Expat Berlin</h1>
+    <% if (!test) { %>
     <form id="login-form" method="post" action="users/login">
-        <h2>Login</h2>
+        <h2>Login </h2>
         <label>Username</label><br>
         <input class="username" type="text" name="username"><br>
         <label>Password</label><br>
         <input class="password" type="password" name="password"><br>
         <input type="submit" value="OK">
-        <a href="#" class="logout">Logout</a>
     </form><br>
-    <div class="logged-in">You are logged in</div><br>
-    <div class="not-logged-in">You are not logged in</div>
+    <% } else { %>
+    <div class="logged-in">You are logged in as <%= test.username %></div><br>
+    <a href="#" class="logout">Logout</a>
+    <% } %>
     <br>
-    <a href="/users/profile">My Profile</a>
 
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>

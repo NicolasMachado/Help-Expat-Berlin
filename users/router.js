@@ -112,18 +112,19 @@ router.post('/new', (req, res) => {
 
 // SHOW ALL USERS (to be removed eventually)
 router.get('/', (req, res) => {
-    return User
+    /*return User
     .find()
     .exec()
     .then(users => res.json(users.map(user => user.apiRepr())))
-    .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
+    .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));*/
+    res.render('views/index')
 });
 
 // LOG IN
 router.post('/login', passport.authenticate('local'), (req, res, next) => {
     if (req.isAuthenticated()) {
         User.findOne({ username: req.body.username }, (err, user) => {
-            res.redirect('/users/profile/' + user.username);      
+            res.redirect('/');      
         });
     } else { 
         res.send('Couldn\'t log in'); 
