@@ -1,9 +1,8 @@
 const express = require('express');
 const passport = require('passport');const LocalStrategy = require('passport-local').Strategy;
-
 const {User} = require('./models');
-
 const router = express.Router();
+router.use(express.static('./views'));
 
 // DEFINE AUTH STRATEGY
 const localStrategy = new LocalStrategy({
@@ -43,6 +42,15 @@ passport.deserializeUser(function(id, cb) {
         if (err) { return cb(err); }
         cb(null, user);
     });
+});
+
+// SHOW ALL USERS (to be removed eventually)
+router.get('/showall', (req, res) => {
+    return User
+    .find()
+    .exec()
+    .then(users => res.json(users.map(user => user.apiRepr())))
+    .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
 });
 
 // CREATE NEW USER
@@ -103,21 +111,11 @@ router.post('/new', (req, res) => {
         })
     })
     .then(user => {
-        return res.status(201).json(user.apiRepr());
+        res.redirect('./'); // account created
     })
     .catch(err => {
         res.status(500).json({message: 'Internal server error'})
     });
-});
-
-// SHOW ALL USERS (to be removed eventually)
-router.get('/', (req, res) => {
-    /*return User
-    .find()
-    .exec()
-    .then(users => res.json(users.map(user => user.apiRepr())))
-    .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));*/
-    res.render('views/index')
 });
 
 // LOG IN
@@ -132,14 +130,19 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
 });
 
 // PROFILE
-router.get('/profile/:username', (req, res, next) => {
+router.get('/profile/', (req, res, next) => {
     if (req.isAuthenticated()) {
-        User.findOne({ username: req.params.username }, (err, user) => {
-            res.send(user);
+        User.findOne({ username: req.user.username }, (err, user) => {
+            res.render('profile', user);
         });
     } else { 
         res.redirect('./');
     }
+});
+
+// CREATE ACCOUNT
+router.get('/account-create', (req, res) => {
+    res.render('account-create');
 });
 
 // LOG OUT

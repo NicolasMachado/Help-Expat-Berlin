@@ -1,27 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Help Expat Berlin</title>
-</head>
-<body>
+<% include head %>
+
 <h1>Help Expat Berlin</h1>
-    <% if (!test) { %>
-    <form id="login-form" method="post" action="users/login">
-        <h2>Login </h2>
-        <label>Username</label><br>
-        <input class="username" type="text" name="username"><br>
-        <label>Password</label><br>
-        <input class="password" type="password" name="password"><br>
-        <input type="submit" value="OK">
-    </form><br>
-    <% } else { %>
-    <div class="logged-in">You are logged in as <%= test.username %></div><br>
-    <a href="#" class="logout">Logout</a>
-    <% } %>
-    <br>
+<% if (!user) { %>
+<form id="login-form" method="post" action="users/login">
+    <h2>Login </h2>
+    <label>Username</label><br>
+    <input class="username" type="text" name="username"><br>
+    <label>Password</label><br>
+    <input class="password" type="password" name="password"><br>
+    <input type="submit" value="OK">
+</form><br>
+<a href="users/account-create" class="new-account">Create a new account</a>
+<% } else { %>
+<div class="logged-in">You are logged in as <%= user.username %></div><br>
+<a href="users/profile">My Profile</a><br><br>
 
+<form id="logout-form" method="get" action="users/logout">
+    <input type="submit" value="Log Out">
+</form>
+<% } %>
+<br><br><a href="users/showall">Show all users</a>
+<br>
 
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <script src="main.js"></script>
-</body>
-</html>
+<% include footer %>

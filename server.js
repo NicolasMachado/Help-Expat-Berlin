@@ -35,22 +35,16 @@ app.use(session);
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static('views'));
 
 app.use('*', checkLogin);
 
 app.use('/users/', usersRouter);
 
 app.set('view engine', 'ejs');
-app.use(express.static('views'));
 
 app.get('/', (req, res) => {
-    /*return User
-    .find()
-    .exec()
-    .then(users => res.json(users.map(user => user.apiRepr())))
-    .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));*/
-    //const username = req.user || null;
-    res.render('index', {test: req.user || null});
+    res.render('index', {user: req.user || null});
 });
 
 app.use('*', (req, res) => {

@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Help Expat Berlin</title>
-</head>
-<body>
-    <h1>Profile</h1>
-    <a href="./">Back to landing page</a>
+<% include head %>
 
-
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <script src="main.js"></script>
-</body>
-</html>
+<h1>Help Expat Berlin</h1>
+    <h2>Profile - <%= user.username %></h2>
+    <p>Username: <%= user.username %></p>
+    <p>First Name: <%= user.firstName %></p>
+    <p>Last Name: <%= user.lastName %></p>
+<a href="../">Back</a>
+<br>
+    
+<% include footer %>
