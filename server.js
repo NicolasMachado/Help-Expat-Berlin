@@ -1,14 +1,15 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const passport = require('passport');const LocalStrategy = require('passport-local').Strategy;
-const cookieParser = require('cookie-parser')('keyboard cat');
+const cookieParser = require('cookie-parser')('whatever floats your boat');
 const jsonParser = require('body-parser').json();
 const urlEncoded = require('body-parser').urlencoded({ extended: true });
-const session = (require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+const session = (require('express-session')({ secret: 'whatever floats your boat', resave: false, saveUninitialized: false }));
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const flash = require('connect-flash');
 
-const {router: usersRouter} = require('./users');
+const {router: authRouter} = require('./auth');
 
 mongoose.Promise = global.Promise;
 
@@ -17,8 +18,11 @@ const {PORT, DATABASE_URL} = require('./config/db');
 const app = express();
 
 const checkLogin = (req, res, next) => {
-    req.user ? res.locals.user = req.user : res.locals.user = false;   
-    req.error ? res.locals.error = req.error : res.locals.error = false;    
+    req.user ? res.locals.user = req.user : res.locals.user = false; // check if authenticated
+    const alertMessage = req.flash('alertMessage');
+    const errorMessage = req.flash('errorMessage');
+    alertMessage.length > 0 ? res.locals.alertMessage = alertMessage : res.locals.alertMessage = false;
+    errorMessage.length > 0 ? res.locals.errorMessage = errorMessage : res.locals.errorMessage = false;
     next();
 };
 
@@ -27,6 +31,7 @@ app.use(cookieParser);
 app.use(jsonParser);
 app.use(urlEncoded);
 app.use(session);
+app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -34,7 +39,7 @@ app.use(express.static('views'));
 
 app.use('*', checkLogin);
 
-app.use('/users/', usersRouter);
+app.use('/auth/', authRouter);
 
 app.set('view engine', 'ejs');
 
@@ -43,7 +48,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('*', (req, res) => {
-    return res.status(404).json({message: 'Not Found'});
+    console.log(req.user);
+    return res.status(404).json({message: '404 - Not Found'});
 });
 
 // referenced by both runServer and closeServer. closeServer

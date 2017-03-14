@@ -8,5 +8,6 @@
     <link href="css/main.css" rel="stylesheet">
 </head>
 <body>
-<% if (error) { %> <div class="error-banner">Error: <%= error %></div><% } %>
+<% if (errorMessage) { %> <div class="error-banner">Error: <%= errorMessage %></div><% } %>
+<% if (alertMessage) { %> <div class="alert-banner"><%= alertMessage %></div><% } %>
 <main>

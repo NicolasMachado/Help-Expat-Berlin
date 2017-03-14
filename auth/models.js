@@ -9,20 +9,28 @@ const UserSchema = mongoose.Schema({
         required: true,
         unique: true
     },
+    email: {
+        type: String,
+        required: true
+    },
     password: {
         type: String,
         required: true
     },
-    firstName: {type: String, default: ""},
-    lastName: {type: String, default: ""}
+    facebook: {
+        id: {type: String},
+        token: {type: String},
+        email: {type: String}
+    }
 });
 
 UserSchema.methods.apiRepr = function() {
     return {
         username: this.username || '',
-        firstName: this.firstName || '',
-        lastName: this.lastName || '',
-        id: this._id
+        email: this.email || '',
+        password: this.password || '',
+        id: this._id,
+        FBId: this.facebook.id || ''
     };
 }
 

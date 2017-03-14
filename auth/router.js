@@ -37,15 +37,36 @@ passport.use(new LocalStrategy({
 passport.use(new FacebookStrategy({
     clientID: '858085050997039',
     clientSecret: '592abccfb6f6d9b974a0537086d1c067',
-    callbackURL: "http://localhost:8080/auth/facebook/callback"
+    callbackURL: "http://localhost:8080/auth/facebook/callback",
+    profileFields: ["emails", "displayName"]
   },
-  function(accessToken, refreshToken, profile, done) {
-    User.findOrCreate(({ username: profile.displayName }), function(err, user) {
-      if (err) { return done(err); }
-      done(null, user);
-    });
-  }
-));
+  function(accessToken, refreshToken, profile, cb) {
+    let user;
+    console.log(`profile.id in strategy: ${profile.id}`);
+    User
+    .findOne({ facebook: {id: profile.id }})
+    .then(_user => {
+            user = _user;
+            if (!user) {
+                return User
+                .create({
+                    username: profile.displayName,
+                    password: "fbnopass",
+                    email: "test.example@test.com",
+                    facebook: {
+                        id: profile.id,
+                        token: accessToken,
+                        email: "test.example@test.com"
+                    }
+                })
+            } else {
+                return cb(null, user);
+            }
+        })
+    .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
+    console.log(user);
+    return cb(null, user);
+}));
 
 passport.serializeUser(function(user, cb) {
     cb(null, user.id);
@@ -62,46 +83,52 @@ passport.deserializeUser(function(id, cb) {
 router.get('/showall', (req, res) => {
     return User
     .find()
-    .exec()
-    .then(users => res.json(users.map(user => user.apiRepr())))
+    .then(users => {res.render('userlist', {users})})
     .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
 });
 
 // CREATE NEW USER
 router.post('/new', (req, res) => {
-    console.log(req.body);
     if (!req.body) {
         return res.status(400).json({message: 'No request body'});
     }
 
     if (!('username' in req.body)) {
-        return res.render('account-create', {error: 'Missing field: username'});
+        return res.render('account-create', {errorMessage: 'Missing field: username'});
     }
 
-    let {username, password, firstName, lastName} = req.body;
+    if (!('email' in req.body)) {
+        return res.render('account-create', {errorMessage: 'Missing field: email'});
+    }
+
+    let {username, password, email} = req.body;
 
     if (typeof username !== 'string') {
-        return res.render('account-create', {error: 'Incorrect field type: username'});
+        return res.render('account-create', {errorMessage: 'Incorrect field type: username'});
     }
 
     username = username.trim();
+    email = email.trim();
+    password = password.trim();
 
     if (username === '') {
-        return res.render('account-create', {error: 'You must provide a user name'});
+        return res.render('account-create', {errorMessage: 'You must provide a user name'});
+    }
+
+    if (email === '') {
+        return res.render('account-create', {errorMessage: 'You must provide an email address'});
     }
 
     if (!(password)) {
-        return res.render('account-create', {error: 'You must provide a password'});
+        return res.render('account-create', {errorMessage: 'You must provide a password'});
     }
 
     if (typeof password !== 'string') {
-        return res.render('account-create', {error: 'Incorrect field type: password'});
+        return res.render('account-create', {errorMessage: 'Incorrect field type: password'});
     }
 
-    password = password.trim();
-
     if (password === '') {
-        return res.render('account-create', {error: 'You must provide a password'});
+        return res.render('account-create', {errorMessage: 'You must provide a password'});
     }
 
     // check for existing user
@@ -111,7 +138,7 @@ router.post('/new', (req, res) => {
     .exec()
     .then(count => {
         if (count > 0) {
-            return res.render('account-create', {error: 'Username already taken'});
+            return res.render('account-create', {errorMessage: 'Username already taken'});
         }
     // if no existing user, hash password
     return User.hashPassword(password)
@@ -121,12 +148,12 @@ router.post('/new', (req, res) => {
         .create({
             username: username,
             password: hash,
-            firstName: firstName,
-            lastName: lastName
+            email: email
         })
     })
     .then(user => {
-        res.redirect('./'); // account created
+        req.flash('alertMessage', 'Account created!');
+        res.redirect('/'); // account created
     })
     .catch(err => {
         res.status(500).json({message: 'Internal server error'})
@@ -160,24 +187,34 @@ router.get('/account-create', (req, res) => {
     res.render('account-create');
 });
 
+// DELETE
+router.get('/delete/:id', (req, res) => {
+    console.log(req.params.id);
+    User
+    .findByIdAndRemove(req.params.id)
+    .then(res.redirect('/auth/showall'))
+});
+
 // LOG OUT
 router.get('/logout', (req, res) => {
     req.logout();
     res.redirect('/');
 });
 
-//FACEBOOK
-// Redirect the user to Facebook for authentication.  When complete,
-// Facebook will redirect the user back to the application at
-//     /auth/facebook/callback
+// LOGIN WITH FB
 router.get('/facebook', passport.authenticate('facebook'));
 
-// Facebook will redirect the user to this URL after approval.  Finish the
-// authentication process by attempting to obtain an access token.  If
-// access was granted, the user will be logged in.  Otherwise,
-// authentication has failed.
-router.get('/facebook/callback',
-  passport.authenticate('facebook', { successRedirect: './',
-                                      failureRedirect: '/' }));
+// FB CALLBACK
+router.get('/facebook/callback', (req, res, next) => {
+    console.log("req.user after callback:");
+    console.log(req.user);
+    if (req.isAuthenticated()) {
+            req.flash('alertMessage', 'You are connected with FB!');
+            res.redirect('/');
+    } else { 
+        req.flash('errorMessage', 'Not authenticated!');
+        res.redirect('/');
+    }
+});
 
 module.exports = {router};

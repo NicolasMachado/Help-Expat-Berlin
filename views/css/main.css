@@ -24,3 +24,15 @@ main {
 	background-color: #FFA4A4;
 	color: #B42020;	
 }
+
+.alert-banner {
+	padding: 20px;
+	text-align: center;
+	background-color: #D0D2FF;
+	color: #3B3B93;	
+}
+
+.user-desc {
+	background-color: #ddd;
+	padding: 10px;
+}
