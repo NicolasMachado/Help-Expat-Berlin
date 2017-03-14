@@ -19,8 +19,7 @@ const UserSchema = mongoose.Schema({
     },
     facebook: {
         id: {type: String},
-        token: {type: String},
-        email: {type: String}
+        token: {type: String}
     }
 });
 
@@ -30,7 +29,8 @@ UserSchema.methods.apiRepr = function() {
         email: this.email || '',
         password: this.password || '',
         id: this._id,
-        FBId: this.facebook.id || ''
+        FBId: this.facebook.id || '',
+        FBToken: this.facebook.token || ''
     };
 }
 

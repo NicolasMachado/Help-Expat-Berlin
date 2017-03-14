@@ -42,30 +42,28 @@ passport.use(new FacebookStrategy({
   },
   function(accessToken, refreshToken, profile, cb) {
     let user;
-    console.log(`profile.id in strategy: ${profile.id}`);
     User
-    .findOne({ facebook: {id: profile.id }})
+    .findOne({ 'facebook.id': profile.id })
     .then(_user => {
-            user = _user;
-            if (!user) {
-                return User
-                .create({
-                    username: profile.displayName,
-                    password: "fbnopass",
-                    email: "test.example@test.com",
-                    facebook: {
-                        id: profile.id,
-                        token: accessToken,
-                        email: "test.example@test.com"
-                    }
-                })
-            } else {
-                return cb(null, user);
-            }
-        })
-    .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
-    console.log(user);
-    return cb(null, user);
+        user = _user;
+        if (!user) {
+            console.log(`USER DOESNT EXIST, CREATE`);
+            return User
+            .create({
+                username: profile.displayName,
+                password: "fbnopass",
+                email: profile.emails[0].value,
+                facebook: {
+                    id: profile.id,
+                    token: accessToken
+                }
+            })
+            .then(user => cb(null, user))
+        } else {
+            console.log(`USER ALREADY EXISTS, RETURN`);
+            return cb(null, user);
+        }
+    });
 }));
 
 passport.serializeUser(function(user, cb) {
@@ -164,10 +162,12 @@ router.post('/new', (req, res) => {
 router.post('/login', passport.authenticate('local'), (req, res, next) => {
     if (req.isAuthenticated()) {
         User.findOne({ username: req.body.username }, (err, user) => {
-            res.redirect('/');      
+            req.flash('alertMessage', `Welcome, ${user.username}`);
+            res.redirect('profile');     
         });
     } else { 
-        res.send('Couldn\'t log in'); 
+        req.flash('errorMessage', 'Couldn\'t login');
+        res.redirect('/');
     }
 });
 
@@ -178,7 +178,8 @@ router.get('/profile/', (req, res, next) => {
             res.render('profile', user);
         });
     } else { 
-        res.redirect('./');
+        req.flash('errorMessage', 'You must login first.');
+        res.redirect('/');
     }
 });
 
@@ -202,14 +203,12 @@ router.get('/logout', (req, res) => {
 });
 
 // LOGIN WITH FB
-router.get('/facebook', passport.authenticate('facebook'));
+router.get('/facebook', passport.authenticate('facebook', { scope : ['email'] }));
 
 // FB CALLBACK
-router.get('/facebook/callback', (req, res, next) => {
-    console.log("req.user after callback:");
-    console.log(req.user);
+router.get('/facebook/callback', passport.authenticate('facebook', { scope : ['email'] }), (req, res) => {
     if (req.isAuthenticated()) {
-            req.flash('alertMessage', 'You are connected with FB!');
+            req.flash('alertMessage', 'You are logged in with Facebook');
             res.redirect('/');
     } else { 
         req.flash('errorMessage', 'Not authenticated!');
