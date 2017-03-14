@@ -55,38 +55,39 @@ router.get('/showall', (req, res) => {
 
 // CREATE NEW USER
 router.post('/new', (req, res) => {
+    console.log(req.body);
     if (!req.body) {
         return res.status(400).json({message: 'No request body'});
     }
 
     if (!('username' in req.body)) {
-        return res.status(422).json({message: 'Missing field: username'});
+        return res.render('account-create', {error: 'Missing field: username'});
     }
 
     let {username, password, firstName, lastName} = req.body;
 
     if (typeof username !== 'string') {
-        return res.status(422).json({message: 'Incorrect field type: username'});
+        return res.render('account-create', {error: 'Incorrect field type: username'});
     }
 
     username = username.trim();
 
     if (username === '') {
-        return res.status(422).json({message: 'Incorrect field length: username'});
+        return res.render('account-create', {error: 'You must provide a user name'});
     }
 
     if (!(password)) {
-        return res.status(422).json({message: 'Missing field: password'});
+        return res.render('account-create', {error: 'You must provide a password'});
     }
 
     if (typeof password !== 'string') {
-        return res.status(422).json({message: 'Incorrect field type: password'});
+        return res.render('account-create', {error: 'Incorrect field type: password'});
     }
 
     password = password.trim();
 
     if (password === '') {
-        return res.status(422).json({message: 'Incorrect field length: password'});
+        return res.render('account-create', {error: 'You must provide a password'});
     }
 
     // check for existing user
@@ -96,7 +97,7 @@ router.post('/new', (req, res) => {
     .exec()
     .then(count => {
         if (count > 0) {
-            return res.status(422).json({message: 'username already taken'});
+            return res.render('account-create', {error: 'Username already taken'});
         }
     // if no existing user, hash password
     return User.hashPassword(password)

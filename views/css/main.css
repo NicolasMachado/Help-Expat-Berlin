@@ -17,3 +17,10 @@ h1 {
 main {
 	padding: 20px;
 }
+
+.error-banner {
+	padding: 20px;
+	text-align: center;
+	background-color: #FFA4A4;
+	color: #B42020;	
+}

@@ -12,18 +12,13 @@ const {router: usersRouter} = require('./users');
 
 mongoose.Promise = global.Promise;
 
-const {PORT, DATABASE_URL} = require('./config');
+const {PORT, DATABASE_URL} = require('./config/db');
 
 const app = express();
 
 const checkLogin = (req, res, next) => {
-    if (req.user) {
-        res.locals.user = req.user;
-        console.log(`Logged in as ${res.locals.user.username}`);
-    } else {
-        res.locals.user = false;      
-        console.log(`NOT logged`);
-    }
+    req.user ? res.locals.user = req.user : res.locals.user = false;   
+    req.error ? res.locals.error = req.error : res.locals.error = false;    
     next();
 };
 
