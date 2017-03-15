@@ -13,7 +13,7 @@ const {router: authRouter} = require('./auth');
 
 mongoose.Promise = global.Promise;
 
-const {PORT, DATABASE_URL} = require('./config/db');
+const {PORT, DATABASE_URL} = require('./config/config.js');
 
 const app = express();
 

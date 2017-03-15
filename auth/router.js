@@ -5,6 +5,7 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const {User} = require('./models');
 const router = express.Router();
 const faker = require('faker');
+const {FACEBOOKAUTH} = require('../config/config.js');
 router.use(express.static('./views'));
 
 // DEFINE AUTH STRATEGY
@@ -36,9 +37,9 @@ passport.use(new LocalStrategy({
 
 // DEFINE FACEBOOK STRATEGY
 passport.use(new FacebookStrategy({
-    clientID: '858085050997039',
-    clientSecret: '592abccfb6f6d9b974a0537086d1c067',
-    callbackURL: "http://localhost:8080/auth/facebook/callback",
+    clientID: FACEBOOKAUTH.clientID,
+    clientSecret: FACEBOOKAUTH.clientSecret,
+    callbackURL: FACEBOOKAUTH.callbackURL,
     profileFields: ["emails", "displayName"]
   },
   function(accessToken, refreshToken, profile, cb) {
