@@ -2,12 +2,13 @@
 
 <% users.forEach((user) => { %>
 	<div class="user-desc">
-	Username: <%= user.username%><br>
-	email: <%= user.email%><br>
-	password: <%= user.password%><br>
-	id: <%= user.id%><br><br>
-	FBID:  <%= user.facebook.id%><br>
-	FB Token: <%= user.facebook.token%><br>
+	Auth Type: <%= user.authType %><br><br>
+	Username: <%= user.username %><br>
+	email: <%= user.email %><br>
+	password: <%= user.password %><br>
+	id: <%= user.id %><br><br>
+	FBID:  <%= user.facebook.id %><br>
+	FB Token: <%= user.facebook.token %><br>
 	<a href='/auth/delete/<%= user.id %>'>DELETE USER</a> 
 	</div>
 	<br><br><br>

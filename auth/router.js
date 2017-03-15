@@ -4,22 +4,23 @@ const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const {User} = require('./models');
 const router = express.Router();
+const faker = require('faker');
 router.use(express.static('./views'));
 
 // DEFINE AUTH STRATEGY
 passport.use(new LocalStrategy({
-    usernameField: 'username',
+    usernameField: 'email',
     passwordField: 'password',
     session: true
     },
-    function(username, password, callback) {
+    function(email, password, callback) {
         let user;
         User
-        .findOne({ username: username })
+        .findOne({ email: email })
         .then(_user => {
             user = _user;
             if (!user) {
-                return callback(null, false, {message: 'Incorrect username'});
+                return callback(null, false, {message: 'Incorrect email'});
             }
             return user.validatePassword(password);
         })
@@ -51,7 +52,8 @@ passport.use(new FacebookStrategy({
             return User
             .create({
                 username: profile.displayName,
-                password: "fbnopass",
+                authType: 'facebook',
+                password: faker.internet.password(),
                 email: profile.emails[0].value,
                 facebook: {
                     id: profile.id,
@@ -131,12 +133,11 @@ router.post('/new', (req, res) => {
 
     // check for existing user
     return User
-    .find({username})
+    .find({email : email})
     .count()
-    .exec()
     .then(count => {
         if (count > 0) {
-            return res.render('account-create', {errorMessage: 'Username already taken'});
+            return res.render('account-create', {errorMessage: 'This email address is already registered'});
         }
     // if no existing user, hash password
     return User.hashPassword(password)
@@ -146,22 +147,23 @@ router.post('/new', (req, res) => {
         .create({
             username: username,
             password: hash,
-            email: email
+            email: email,
+            authType: 'normal',
         })
     })
     .then(user => {
-        req.flash('alertMessage', 'Account created!');
+        req.flash('alertMessage', 'Account created! You can now log in with your credentials.');
         res.redirect('/'); // account created
     })
     .catch(err => {
-        res.status(500).json({message: 'Internal server error'})
+        res.status(500).json({message: err.errmsg})
     });
 });
 
 // LOG IN
 router.post('/login', passport.authenticate('local'), (req, res, next) => {
     if (req.isAuthenticated()) {
-        User.findOne({ username: req.body.username }, (err, user) => {
+        User.findOne({ email: req.body.email }, (err, user) => {
             req.flash('alertMessage', `Welcome, ${user.username}`);
             res.redirect('profile');     
         });
@@ -208,8 +210,8 @@ router.get('/facebook', passport.authenticate('facebook', { scope : ['email'] })
 // FB CALLBACK
 router.get('/facebook/callback', passport.authenticate('facebook', { scope : ['email'] }), (req, res) => {
     if (req.isAuthenticated()) {
-            req.flash('alertMessage', 'You are logged in with Facebook');
-            res.redirect('/');
+        req.flash('alertMessage', 'You are logged in with Facebook');
+        res.redirect('/');
     } else { 
         req.flash('errorMessage', 'Not authenticated!');
         res.redirect('/');

@@ -4,19 +4,10 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const UserSchema = mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    email: {
-        type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
+    username: { type: String, required: true },
+    authType: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
     facebook: {
         id: {type: String},
         token: {type: String}
@@ -30,7 +21,8 @@ UserSchema.methods.apiRepr = function() {
         password: this.password || '',
         id: this._id,
         FBId: this.facebook.id || '',
-        FBToken: this.facebook.token || ''
+        FBToken: this.facebook.token || '',
+        authType: this.authType || ''
     };
 }
 

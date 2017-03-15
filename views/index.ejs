@@ -3,8 +3,8 @@
 <% if (!user) { %>
 <form id="login-form" method="post" action="auth/login">
     <h2>Login </h2>
-    <label>Username</label><br>
-    <input class="username" type="text" name="username"><br>
+    <label>Email</label><br>
+    <input class="username" type="text" name="email"><br>
     <label>Password</label><br>
     <input class="password" type="password" name="password"><br>
     <input type="submit" value="OK">
@@ -14,10 +14,7 @@
 <% } else { %>
 <div class="logged-in">You are logged in as <%= user.username %></div><br>
 <a href="auth/profile">My Profile</a><br><br>
-
-<form id="logout-form" method="get" action="auth/logout">
-    <input type="submit" value="Log Out">
-</form>
+<a href="auth/logout">Log Out</a><br><br>
 <% } %>
 <br><br><a href="auth/showall">Show all users</a>
 
