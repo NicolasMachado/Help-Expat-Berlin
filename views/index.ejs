@@ -10,12 +10,8 @@
     <input type="submit" value="OK">
 </form><br>
 <a href="auth/facebook" class="fb_connect">Connect with Facebook</a><br><br>
-<a href="auth/account-create" class="new-account">Create a new account</a>
 <% } else { %>
 <div class="logged-in">You are logged in as <%= user.username %></div><br>
-<a href="auth/profile">My Profile</a><br><br>
-<a href="auth/logout">Log Out</a><br><br>
 <% } %>
-<br><br><a href="auth/showall">Show all users</a>
 
 <% include footer %>

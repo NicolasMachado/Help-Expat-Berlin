@@ -175,9 +175,9 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
 });
 
 // PROFILE
-router.get('/profile/', (req, res, next) => {
-    if (req.isAuthenticated()) {
-        User.findOne({ username: req.user.username }, (err, user) => {
+router.get('/profile/:id', (req, res, next) => {
+    if (req.isAuthenticated() && req.user.id === req.params.id) {
+        User.findOne({ id: req.params.id }, (err, user) => {
             res.render('profile', user);
         });
     } else { 
@@ -193,7 +193,6 @@ router.get('/account-create', (req, res) => {
 
 // DELETE
 router.get('/delete/:id', (req, res) => {
-    console.log(req.params.id);
     User
     .findByIdAndRemove(req.params.id)
     .then(res.redirect('/auth/showall'))

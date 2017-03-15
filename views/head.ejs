@@ -3,10 +3,21 @@
 <head>
 	<title>HEB<% if (user) { %> - <%= user.username %><% } %></title>
     <header><h1>Help Expat Berlin</h1></header>
-    <link href="css/normalize.css" rel="stylesheet">
+    <link href="/css/normalize.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
-    <link href="css/main.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
 </head>
+<nav>
+	<a href="/">Home</a>
+	<% if (user) { %>
+	<a href='/auth/profile/<%= user.id %>''>Profile</a>
+	<a href="/auth/logout">Logout</a>
+	<% } %>
+	<% if (!user) { %>
+	<a href="/auth/account-create">Sign up</a>
+	<% } %>
+	<a href="/auth/showall">All users</a>
+</nav>
 <body>
 <% if (errorMessage) { %> <div class="error-banner">Error: <%= errorMessage %></div><% } %>
 <% if (alertMessage) { %> <div class="alert-banner"><%= alertMessage %></div><% } %>
