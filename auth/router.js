@@ -170,7 +170,7 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
     } else { 
         req.flash('errorMessage', 'Couldn\'t login');
         res.redirect('/');
-    }
+    } 
 });
 
 // PROFILE
