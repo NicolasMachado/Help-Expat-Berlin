@@ -211,7 +211,7 @@ router.get('/facebook', passport.authenticate('facebook', { scope : ['email'] })
 router.get('/facebook/callback', passport.authenticate('facebook', { scope : ['email'] }), (req, res) => {
     if (req.isAuthenticated()) {
         req.flash('alertMessage', 'You are logged in with Facebook');
-        res.redirect('/');
+        res.redirect('/auth/profile/' + req.user.id);
     } else { 
         req.flash('errorMessage', 'Not authenticated!');
         res.redirect('/');

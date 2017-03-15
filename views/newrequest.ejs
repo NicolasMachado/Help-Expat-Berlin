@@ -1,0 +1,38 @@
+<% include head %>
+
+<form name="login-form" id="login-form" method="post" action="/request/new">
+    <h2>Post a new request</h2>
+    <label>Type</label>
+    <br>
+    <select name="type" required>
+    	<option value="">---</option>
+    	<option value="assist">On site Assistance</option>
+    	<option value="translation">Translation</option>
+    	<option value="phone">Phone Call</option>
+    	<option value="other">Other</option>
+    </select>
+    <br><br>
+    <label>Date</label>
+    <br>
+    <input class="date" type="datetime-local" name="dateevent">
+    <br>
+    <label>Price</label>
+    <br>
+    <input class="price" type="number" name="price">
+    <br>
+    <label>Rate</label>
+    <br>
+    <select name="rate">
+    	<option value="">---</option>
+    	<option value="flat">flat</option>
+    	<option value="perhour">per hour</option>
+    </select>
+    <br>
+    <label>Description</label>
+    <br>
+    <textarea name="description" cols="40" rows="5" placeholder="Please provide a description of the service you are looking for" required></textarea>
+    <br><br>
+    <input type="submit" value="Submit">
+</form>
+
+<% include footer %>

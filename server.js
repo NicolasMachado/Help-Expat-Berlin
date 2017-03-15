@@ -10,6 +10,7 @@ const morgan = require('morgan');
 const flash = require('connect-flash');
 
 const {router: authRouter} = require('./auth');
+const {router: requestRouter} = require('./request');
 
 mongoose.Promise = global.Promise;
 
@@ -18,7 +19,7 @@ const {PORT, DATABASE_URL} = require('./config/config.js');
 const app = express();
 
 const checkLogin = (req, res, next) => {
-    req.user ? res.locals.user = req.user : res.locals.user = false; // check if authenticated
+    res.locals.user = req.user || false; // check if authenticated
     const alertMessage = req.flash('alertMessage');
     const errorMessage = req.flash('errorMessage');
     alertMessage.length > 0 ? res.locals.alertMessage = alertMessage : res.locals.alertMessage = false;
@@ -40,11 +41,12 @@ app.use(express.static('views'));
 app.use('*', checkLogin);
 
 app.use('/auth/', authRouter);
+app.use('/request/', requestRouter);
 
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
-    res.render('index', {user: req.user || null});
+    res.render('index');
 });
 
 app.use('*', (req, res) => {
@@ -52,8 +54,6 @@ app.use('*', (req, res) => {
     return res.status(404).json({message: '404 - Not Found'});
 });
 
-// referenced by both runServer and closeServer. closeServer
-// assumes runServer has run and set `server` to a server object
 let server;
 
 function runServer() {
