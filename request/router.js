@@ -1,8 +1,22 @@
 const express = require('express');
 const passport = require('passport');
 const {Request} = require('./models');
+const {User} = require('../auth/models');
 const router = express.Router();
 router.use(express.static('./views'));
+
+// SHOW ALL
+router.get('/', (req, res) => {
+    return Request
+        .find()
+        .then(reqs => res.json(
+            reqs.map(req => req.reprList())
+            ))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'})
+        });
+});
 
 // NEW REQUEST SCREEN
 router.get('/new', (req, res) => {
