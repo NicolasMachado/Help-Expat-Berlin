@@ -43,7 +43,7 @@ router.post('/new', (req, res) => {
             .create({
                 author: req.user.id,
                 datePosted: new Date(),
-                dateEvent: req.body.dateevent,
+                dateEvent: req.body.dateevent || null,
                 time: req.body.time,
                 type: req.body.type,
                 price: req.body.price,

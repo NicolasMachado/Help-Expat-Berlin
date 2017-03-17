@@ -53,3 +53,9 @@ main {
 	background-color: #ddd;
 	padding: 10px;
 }
+
+.request-container {
+	background-color: #ddd;
+	margin-top: 10px;
+	padding: 10px;
+}
