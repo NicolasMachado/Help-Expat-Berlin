@@ -22,7 +22,7 @@ function appendUserTo(result) {
 		.then(user => {
 			result.author = user;
 			console.log(user.username)
-		});	
+		});
 }
 
 // How requests should appear when listed
