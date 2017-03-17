@@ -1,12 +1,19 @@
 html {
 	font-family: 'Poppins', sans-serif;
+	min-height: 100vh;
+}
+
+body {
+	max-width: 1000px;
+	margin-right: auto;
+	margin-left: auto;
+	min-height: 100%;
 }
 
 header {
 	background-color: #484848;
 	color: white;
 	text-align: center;
-	height: 100%;
 }
 
 nav {
@@ -33,6 +40,7 @@ h1 {
 main {
 	padding: 20px;
 	text-align: center;
+	background-color: #F5F8F0;
 }
 
 .error-banner {
