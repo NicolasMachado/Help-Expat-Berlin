@@ -49,7 +49,6 @@ passport.use(new FacebookStrategy({
     .then(_user => {
         user = _user;
         if (!user) {
-            console.log(`USER DOESNT EXIST, CREATE`);
             return User
             .create({
                 username: profile.displayName,
@@ -63,7 +62,6 @@ passport.use(new FacebookStrategy({
             })
             .then(user => cb(null, user))
         } else {
-            console.log(`USER ALREADY EXISTS, RETURN`);
             return cb(null, user);
         }
     });
@@ -167,7 +165,7 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
     if (req.isAuthenticated()) {
         User.findOne({ email: req.body.email }, (err, user) => {
             req.flash('alertMessage', `Welcome, ${user.username}`);
-            res.redirect('profile');     
+            res.redirect('profile/' + user._id);
         });
     } else { 
         req.flash('errorMessage', 'Couldn\'t login');
@@ -177,12 +175,21 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
 
 // PROFILE
 router.get('/profile/:id', (req, res, next) => {
-    if (req.isAuthenticated() && req.user.id === req.params.id) {
-        User.findOne({ id: req.params.id }, (err, user) => {
-            res.render('profile', user);
-        });
+    if (req.isAuthenticated()) {
+        User
+            .findOne({ _id: req.params.id })
+            .then(profileUser => {
+                Request
+                    .find({author : profileUser._id})
+                    .then((requests) => {
+                        res.locals.profileUser = profileUser;
+                        res.locals.currentuser = req.user;
+                        res.locals.requests = requests;
+                        res.render('profile');
+                    })
+            })
     } else { 
-        req.flash('errorMessage', 'You must login first.');
+        req.flash('errorMessage', 'You must be logged in to view profiles. Please log in first.');
         res.redirect('/');
     }
 });
@@ -196,6 +203,11 @@ router.get('/account-create', (req, res) => {
 router.get('/delete/:id', (req, res) => {
     User
     .findByIdAndRemove(req.params.id)
+    .then(() => {
+        return Request
+            .find({author : req.params.id})
+            .remove()
+    })
     .then(res.redirect('/auth/showall'))
 });
 

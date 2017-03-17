@@ -9,9 +9,7 @@ router.get('/', (req, res) => {
     return Request
         .find()
         .populate('author')
-        .then(reqs => res.json(
-            reqs.map(req => req)
-            ))
+        .then(reqs => res.json({results: reqs, user: req.user}))
         .catch(err => {
             console.error(err);
             res.status(500).json({message: 'Internal server error'})
@@ -23,7 +21,37 @@ router.get('/new', (req, res) => {
     if (req.isAuthenticated()) {
         res.render('newrequest', {alertMessage: `Remember to read the rules before posting a new request.`});
     } else { 
-        req.flash('errorMessage', 'You must login first.');
+        req.flash('errorMessage', 'You must log in first.');
+        res.redirect('/');
+    }
+});
+
+// DELETE REQUEST
+router.get('/delete/:id', (req, res) => {
+    if (req.isAuthenticated()) {
+        return Request
+            .findByIdAndUpdate(req.params.id, {status: `deleted`})
+            .then(() => {
+                req.flash('alertMessage', 'Your request has been deleted.');
+                res.redirect('/');
+            })
+    } else { 
+        req.flash('errorMessage', 'You must log in first.');
+        res.redirect('/');
+    }
+});
+
+// REMOVE REQUEST
+router.get('/remove/:id', (req, res) => {
+    if (req.isAuthenticated()) {
+        return Request
+            .findByIdAndRemove(req.params.id)
+            .then(() => {
+                req.flash('alertMessage', 'Your request has been deleted.');
+                res.redirect('/auth/profile/' + req.user.id);
+            })
+    } else { 
+        req.flash('errorMessage', 'You must log in first.');
         res.redirect('/');
     }
 });
@@ -64,7 +92,7 @@ router.post('/new', (req, res) => {
                 res.status(500).json({message: err.errmsg})
             });
     } else { 
-        req.flash('errorMessage', 'You must login first.');
+        req.flash('errorMessage', 'You must log in first.');
         res.redirect('/');
     }
 });
