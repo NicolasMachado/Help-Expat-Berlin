@@ -1,7 +1,6 @@
 const express = require('express');
 const passport = require('passport');
-const {Request} = require('./models');
-const {User} = require('../auth/models');
+const {Request, User} = require('../config/models');
 const router = express.Router();
 router.use(express.static('./views'));
 
@@ -9,8 +8,9 @@ router.use(express.static('./views'));
 router.get('/', (req, res) => {
     return Request
         .find()
+        .populate('author')
         .then(reqs => res.json(
-            reqs.map(req => req.reprList())
+            reqs.map(req => req)
             ))
         .catch(err => {
             console.error(err);
@@ -41,7 +41,7 @@ router.post('/new', (req, res) => {
 
         return Request
             .create({
-                authorID: req.user.id,
+                author: req.user.id,
                 datePosted: new Date(),
                 dateEvent: req.body.dateevent,
                 time: req.body.time,
@@ -51,6 +51,10 @@ router.post('/new', (req, res) => {
                 description: req.body.description,
                 status: `open`,
                 interested: []
+            })
+            .then(request => {
+                return User
+                    .findByIdAndUpdate(request.author, {$push: {requests : request._id}})
             })
             .then(() => {
                 req.flash('alertMessage', 'Your request has been posted!');

@@ -1,4 +1,5 @@
-const {Request} = require('./models');
+const {User, Request} = require('../config/models');
 const {router} = require('./router');
 
-module.exports = {Request, router};
+module.exports = {User, Request, router};
+

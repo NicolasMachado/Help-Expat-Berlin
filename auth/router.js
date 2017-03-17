@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
-const {User} = require('./models');
+const {User, Request} = require('../config/models');
 const router = express.Router();
 const faker = require('faker');
 const {FACEBOOKAUTH} = require('../config/config.js');
@@ -84,6 +84,7 @@ passport.deserializeUser(function(id, cb) {
 router.get('/showall', (req, res) => {
     return User
     .find()
+    .populate('requests')
     .then(users => {res.render('userlist', {users})})
     .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
 });
