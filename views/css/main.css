@@ -67,3 +67,22 @@ main {
 	margin-top: 10px;
 	padding: 10px;
 }
+
+.request-details {
+	padding: 10px;
+}
+
+.request-details-less {
+	padding: 10px;
+}
+
+.details-button {
+	border-radius: 3px;
+	padding: 10px;
+	background-color: #9CD4FF;
+	cursor: pointer;
+	width: 150px;
+	margin-left: auto;
+	margin-right:auto;
+
+}

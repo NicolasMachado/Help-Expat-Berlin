@@ -4,9 +4,22 @@ let listParams = {
 
 $(function() {
     if ($('.request-list').length !== 0) {
-    	getList()
+    	getList();
     }
+    $('.request-list').on('click', '.details-button', function() {
+    	expandDetails($(this));
+    });
 });
+
+function expandDetails (button) {
+	if (button.data('state') === 'closed') {
+		button.data('state', 'open').text('Hide details');
+		button.siblings('.request-details').show();
+	} else {
+		button.data('state', 'closed').text('Show details');;
+		button.siblings('.request-details').hide();
+	}	
+}
 
 function getList (listParams) {
 	$.ajax ({
@@ -53,14 +66,19 @@ function requestTemplate (request, user) {
 	const datePosted = displayDate(request.datePosted) || `Unknown`;
 	const rate = request.rate === `perhour` ? `/hour` : ``;
 	return `<div class="request-container">
-				Author: ${author}<br>
-				Type: ${request.type}<br>
-				Posted: ${datePosted}<br>
-				When: ${dateEvent}<br>
-				Requested fee: ${price}${rate}<br>
-				Description: ${request.description}<br>
-				Status: ${request.status}<br>
-				${deleteButton}
+				<div class="request-details-less">
+					Author: ${author}<br>
+					Type: ${request.type}<br>
+					Posted: ${datePosted}<br>
+					${deleteButton}<br>
+				</div>
+				<div class="request-details" hidden>
+					When: ${dateEvent}<br>
+					Requested fee: ${price}${rate}<br>
+					Status: ${request.status}<br>
+					${request.description}
+				</div>
+				<div data-state="closed" data-id="${request._id}" class="details-button">Show details</div>
 			</div>`;
 }
 

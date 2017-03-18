@@ -48,7 +48,7 @@ const RequestSchema = mongoose.Schema({
     description: { type: String, required: true },
     status: { type: String, required: true },
     interested: { type: Array },
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true  }
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
 const User = mongoose.model('User', UserSchema);

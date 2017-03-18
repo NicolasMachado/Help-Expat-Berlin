@@ -182,10 +182,7 @@ router.get('/profile/:id', (req, res, next) => {
                 Request
                     .find({author : profileUser._id})
                     .then((requests) => {
-                        res.locals.profileUser = profileUser;
-                        res.locals.currentuser = req.user;
-                        res.locals.requests = requests;
-                        res.render('profile');
+                        res.render('profile', {profileUser : profileUser, currentuser : req.user, requests : requests});
                     })
             })
     } else { 
