@@ -17,6 +17,7 @@ mongoose.Promise = global.Promise;
 
 // Load either local config or regular config
 if (fs.existsSync('./config/local')) {
+    console.log('Loading local config');
     loadConfig('./config/local/config.js');
 } else {
     loadConfig('./config/config.js');

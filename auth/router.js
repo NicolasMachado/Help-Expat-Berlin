@@ -176,7 +176,7 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
     if (req.isAuthenticated()) {
         User.findOne({ email: req.body.email }, (err, user) => {
             req.flash('alertMessage', `Welcome, ${user.username}`);
-            res.redirect('profile/' + user._id);
+            res.redirect('/');
         });
     } else { 
         req.flash('errorMessage', 'Couldn\'t login');
@@ -197,14 +197,24 @@ router.get('/profile/:id', (req, res, next) => {
                     })
             })
     } else { 
-        req.flash('errorMessage', 'You must be logged in to view profiles. Please log in first.');
-        res.redirect('/');
+        res.redirect('/auth/account-login-request');
     }
 });
 
-// CREATE ACCOUNT
+// CREATE ACCOUNT PAGE
 router.get('/account-create', (req, res) => {
     res.render('account-create');
+});
+
+// LOGIN ACCOUNT PAGE
+router.get('/account-login', (req, res) => {
+    res.render('account-login');
+});
+
+// LOGIN ACCOUNT PAGE WITH ALERT MESSAGE
+router.get('/account-login-request', (req, res) => {
+    req.flash('errorMessage', 'Please log in first.');
+    res.redirect('/auth/account-login');
 });
 
 // DELETE
@@ -232,7 +242,7 @@ router.get('/facebook', passport.authenticate('facebook', { scope : ['email'] })
 router.get('/facebook/callback', passport.authenticate('facebook', { scope : ['email'] }), (req, res) => {
     if (req.isAuthenticated()) {
         req.flash('alertMessage', 'You are logged in with Facebook');
-        res.redirect('/auth/profile/' + req.user.id);
+        res.redirect('/');
     } else { 
         req.flash('errorMessage', 'Not authenticated!');
         res.redirect('/');

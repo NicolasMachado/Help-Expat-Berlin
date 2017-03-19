@@ -1,19 +1,5 @@
 <% include head %>
 
-<% if (!user) { %>
-<form id="login-form" method="post" action="auth/login">
-    <h2>Login </h2>
-    <label>Email</label><br>
-    <input class="username" type="text" name="email"><br>
-    <label>Password</label><br>
-    <input class="password" type="password" name="password"><br>
-    <input type="submit" value="OK">
-</form><br>
-<a href="/auth/facebook" class="fb_connect">Connect with Facebook</a><br><br>
-<% } else { %>
-<div class="logged-in">You are logged in as <%= user.username %></div><br>
-<% } %>
-
 <div class="request-list">
 	
 </div>

@@ -9,8 +9,7 @@ router.get('/new', (req, res) => {
     if (req.isAuthenticated()) {
         res.render('newrequest', {alertMessage: `Remember to read the rules before posting a new request.`});
     } else { 
-        req.flash('errorMessage', 'You must log in first.');
-        res.redirect('/');
+        res.redirect('/auth/account-login-request');
     }
 });
 
@@ -18,8 +17,21 @@ router.get('/new', (req, res) => {
 router.get('/', (req, res) => {
     return Request
         .find()
+        .sort({datePosted: -1})
         .populate('author')
         .then(reqs => res.json({results: reqs, user: req.user}))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'})
+        });
+});
+
+// UPDATE REQUEST DISPLAY
+router.get('/update-display/:id', (req, res) => {
+    return Request
+        .findById(req.params.id)
+        .populate('author')
+        .then(request => res.json({result: request, user: req.user}))
         .catch(err => {
             console.error(err);
             res.status(500).json({message: 'Internal server error'})
@@ -31,7 +43,7 @@ router.get('/proposehelp/:id', (req, res) => {
     if (req.isAuthenticated()) {
         return Request
             .findById(req.params.id)
-            .find({ interested : req.user._id})
+            .find({ interested : {$nin: [req.user._id]}})
             .update({$push : {interested : req.user._id}})
             .then(() => res.json({alertMessage: `Update successful`}))
             .catch(err => {
@@ -39,8 +51,24 @@ router.get('/proposehelp/:id', (req, res) => {
                 res.status(500).json({message: 'Internal server error'})
             });
     } else { 
-        req.flash('errorMessage', 'You must log in first.');
-        res.redirect('/');
+        res.status(401).json({message: 'You need to login first'});
+    }
+});
+
+// REVOKE HELP
+router.get('/revokehelp/:id', (req, res) => {
+    if (req.isAuthenticated()) {
+        return Request
+            .findById(req.params.id)
+            .find({ interested : {$in: [req.user._id]}})
+            .update({$pull : {interested : req.user._id}})
+            .then(() => res.json({alertMessage: `Update successful`}))
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error'})
+            });
+    } else { 
+        res.redirect('/auth/account-login-request');
     }
 });
 
@@ -54,8 +82,7 @@ router.get('/delete/:id', (req, res) => {
                 res.redirect('/');
             })
     } else { 
-        req.flash('errorMessage', 'You must log in first.');
-        res.redirect('/');
+        res.redirect('/auth/account-login-request');
     }
 });
 
@@ -69,8 +96,7 @@ router.get('/remove/:id', (req, res) => {
                 res.redirect('/auth/profile/' + req.user.id);
             })
     } else { 
-        req.flash('errorMessage', 'You must log in first.');
-        res.redirect('/');
+        res.redirect('/auth/account-login-request');
     }
 });
 
@@ -110,8 +136,7 @@ router.post('/new', (req, res) => {
                 res.status(500).json({message: err.errmsg})
             });
     } else { 
-        req.flash('errorMessage', 'You must log in first.');
-        res.redirect('/');
+        res.redirect('/auth/account-login-request');
     }
 });
 

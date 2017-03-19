@@ -1,0 +1,14 @@
+<% include head %>
+
+<form id="login-form" method="post" action="/auth/login">
+    <h2>Login </h2>
+    <label>Email</label><br>
+    <input class="username" type="text" name="email"><br>
+    <label>Password</label><br>
+    <input class="password" type="password" name="password"><br>
+    <input type="submit" value="OK">
+</form><br>
+<a href="/auth/facebook" class="fb_connect">Connect with Facebook</a><br><br>
+Don't have an account yet? <a href="/auth/account-create">Create a new account</a>.
+
+<% include footer %>

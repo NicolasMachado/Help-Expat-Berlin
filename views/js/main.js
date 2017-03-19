@@ -12,12 +12,33 @@ $(function() {
     	expandDetails($(this));
     });
     $('.request-list').on('click', '.button-help', function() {
+		$(this).removeClass('button-help').text('Please wait');
     	clickICanHelp($(this), $(this).parent().data('id'));
+    });
+    $('.request-list').on('click', '.button-revokehelp', function() {
+		$(this).removeClass('button-revokehelp').text('Please wait');
+    	clickRevokHelp($(this), $(this).parent().data('id'));
     });
 });
 
+function clickRevokHelp (button, id) {
+	$.ajax ({
+	    async: true,
+	    crossDomain: false,
+	    url: '/request/revokehelp/' + id,
+	    method: 'GET',
+	    headers: {},
+	    data: {},
+	    success: () => { 
+			button.addClass('button-help').text('I can help!');
+	    },
+	    error: function (result, status, error) {
+	        console.log(result + " - " + status + " - " + error);
+	    }
+	});
+}
+
 function clickICanHelp (button, id) {
-	button.hide();
 	$.ajax ({
 	    async: true,
 	    crossDomain: false,
@@ -25,25 +46,39 @@ function clickICanHelp (button, id) {
 	    method: 'GET',
 	    headers: {},
 	    data: {},
-	    success: () => { 
-	    	button.show();
+	    success: (res, err, conf) => { 
+			button.addClass('button-revokehelp').text('Revoke help');
+			updateRequestDisplay(button, id);
 	    },
-	    error: function(x,e) {
-				    if (x.status==0) {
-				        alert('You are offline!!\n Please Check Your Network.');
-				    } else if(x.status==404) {
-				        alert('Requested URL not found.');
-				    } else if(x.status==500) {
-				        alert('Internel Server Error.');
-				    } else if(e=='parsererror') {
-				        alert('Error.\nParsing JSON Request failed.');
-				    } else if(e=='timeout'){
-				        alert('Request Time out.');
-				    } else {
-				        alert('Unknow Error.\n'+x.responseText);
-				    }
-				}
+	    error: function (result, status, error) {
+	        console.log(result + " - " + status + " - " + error);
+	    	if (error === 'Unauthorized') {
+	    		window.location.href = '/auth/account-login-request';
+	    	}
+	    }
 	});
+}
+
+function updateRequestDisplay (triggerElement, id) {
+	$.ajax ({
+	    async: true,
+	    crossDomain: false,
+	    url: '/request/update-display/' + id,
+	    method: 'GET',
+	    headers: {},
+	    data: {},
+	    success: (request) => { 
+	    	container = triggerElement.parent().parent();
+	    	refreshRequest(container, request.result, request.user) 
+	    },
+	    error: function (result, status, error) {
+	        console.log(result + " - " + status + " - " + error);
+	    }
+	});
+}
+
+function refreshRequest(container, request, user) {
+	container.empty().html(requestTemplate(request, user, true));
 }
 
 function expandDetails (button) {
@@ -64,7 +99,7 @@ function getList (listParams) {
 	    method: 'GET',
 	    headers: {},
 	    data: {},
-	    success: displayList,
+	    success: displayAllRequests,
 	    error: function (result, status, error) {
 	        console.log(result + " - " + status + " - " + error);
 	    }
@@ -84,41 +119,53 @@ function displayDate (date) {
 	return `${day}/${month}/${d.getFullYear()} at ${hour}:${minute}`
 }
 
-function requestTemplate (request, user) {
+function requestTemplate (request, user, open) {
 	if (request.status === `deleted`) {
 		return false
 	}
-	let deleteButton;
+	let deleteButton, helpbutton;
 	if ((user) && (user._id === request.author._id)) {
-		deleteButton = `<a href="/request/delete/${request._id}">Delete<a/>`
+		deleteButton = `<a href="/request/delete/${request._id}">Delete<a/>`;
+		helpbutton = '';
 	} else {
 		deleteButton = ``;
+		const buttonHelpClass =  false ? {class : 'button-revokehelp', text: 'Revoke Help' } : {class : 'button-help', text : 'I can help!'};
+		helpbutton = `div data-id="${request._id}" class="button ${buttonHelpClass.class}">${buttonHelpClass.text}</div>`;
 	}
 	const price = request.price ? `${request.price} €` : `Free`;
 	const author = `<a href="/auth/profile/${request.author._id}">${request.author.username}</a>` || `Unknown`;
 	const dateEvent = displayDate(request.dateEvent) || `Anytime`;
 	const datePosted = displayDate(request.datePosted) || `Unknown`;
 	const rate = request.rate === `perhour` ? `/hour` : ``;
-	return `<div class="request-container">
-				<div class="request-details-less">
-					Author: ${author}<br>
-					Type: ${request.type}<br>
-					Posted: ${datePosted}<br>
-					${deleteButton}<br>
-				</div>
-				<div class="request-details" data-id="${request._id}" hidden>
-					When: ${dateEvent}<br>
-					Requested fee: ${price}${rate}<br>
-					Status: ${request.status}<br>
-					${request.description}
-					<div data-state="closed" data-id="${request._id}" class="button button-help">I can help!</div>
-				</div>
-				<div data-state="closed" data-id="${request._id}" class="button button-details">Show details</div>
-			</div>`;
+	const openOrclosed = open ? { 
+		classDetails : '', 
+		buttonText: 'Hide details',
+		buttonState: 'open'
+	} : { 
+		classDetails : 'hidden', 
+		buttonText: 'Show details',
+		buttonState: 'closed'
+	};
+	return `<div class="request-details-less">
+				Author: ${author}<br>
+				Interested: ${request.interested.length || 'No one yet'}<br>
+				Type: ${request.type}<br>
+				Posted: ${datePosted}<br>
+				${deleteButton}<br>
+			</div>
+			<div class="request-details" data-id="${request._id}" ${openOrclosed.classDetails}>
+				When: ${dateEvent}<br>
+				Requested fee: ${price}${rate}<br>
+				Status: ${request.status}<br>
+				${request.description}<br>
+				${helpbutton}
+			</div>
+			<div data-state="${openOrclosed.buttonState}" data-id="${request._id}" class="button button-details">${openOrclosed.buttonText}</div>
+		`;
 }
 
-function displayList (ajaxResult) {
+function displayAllRequests (ajaxResult) {
 	ajaxResult.results.forEach(request => {
-		$('.request-list').append(requestTemplate(request, ajaxResult.user))
+		$('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, ajaxResult.user) + '</div>')
 	});
 }
