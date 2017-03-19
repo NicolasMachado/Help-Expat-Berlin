@@ -1,12 +1,10 @@
 exports.DATABASE_URL = process.env.DATABASE_URL ||
-                       global.DATABASE_URL ||
-                       'mongodb://Nico:AlphaAndOmega@ds133338.mlab.com:33338/help-expat-berlin' ||
-                      'mongodb://localhost/help-expat-berlin';
+                       global.DATABASE_URL;
 
 exports.PORT = process.env.PORT || 8080;
 
 exports.FACEBOOKAUTH = {
-        'clientID'      : process.env.FB_CLIENT_ID || '858085050997039', // your App ID
-        'clientSecret'  : process.env.FB_CLIENT_SECRET || '592abccfb6f6d9b974a0537086d1c067', // your App Secret
-        'callbackURL'   : process.env.FB_CALLBACK_URL || 'http://localhost:8080/auth/facebook/callback'
+        'clientID'      : process.env.FB_CLIENT_ID, // your App ID
+        'clientSecret'  : process.env.FB_CLIENT_SECRET, // your App Secret
+        'callbackURL'   : process.env.FB_CALLBACK_URL
     };
