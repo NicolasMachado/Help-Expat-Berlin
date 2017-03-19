@@ -29,7 +29,7 @@ function clickRevokHelp (button, id) {
 	    method: 'GET',
 	    headers: {},
 	    data: {},
-	    success: () => { 
+	    success: function() { 
 			updateRequestDisplay(button, id);
 	    },
 	    error: function (result, status, error) {
@@ -46,7 +46,7 @@ function clickICanHelp (button, id) {
 	    method: 'GET',
 	    headers: {},
 	    data: {},
-	    success: (res, err, conf) => { 
+	    success: function(res, err, conf) { 
 			updateRequestDisplay(button, id);
 	    },
 	    error: function (result, status, error) {
@@ -66,7 +66,7 @@ function updateRequestDisplay (triggerElement, id) {
 	    method: 'GET',
 	    headers: {},
 	    data: {},
-	    success: (request) => { 
+	    success: function(request) { 
 	    	container = triggerElement.parent().parent();
 	    	refreshRequest(container, request.result, request.user) 
 	    },
@@ -166,7 +166,7 @@ function requestTemplate (request, user, open) {
 }
 
 function displayAllRequests (ajaxResult) {
-	ajaxResult.results.forEach(request => {
+	ajaxResult.results.forEach(function(request) {
 		$('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, ajaxResult.user) + '</div>')
 	});
 }
