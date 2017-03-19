@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
         .find()
         .sort({datePosted: -1})
         .populate('author')
-        .then(reqs => res.json({results: reqs, user: req.user}))
+        .then(reqs => res.send({results: reqs, user: req.user}))
         .catch(err => {
             console.error(err);
             res.status(500).json({message: 'Internal server error'})

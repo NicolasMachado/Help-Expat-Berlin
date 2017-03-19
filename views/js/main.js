@@ -3,6 +3,7 @@ let listParams = {
 };
 
 $(function() {
+	$.ajaxSetup({ cache: false })
 	$('.alert-banner').delay(5000).fadeOut(1000);
 	$('.error-banner').delay(10000).fadeOut(1000);
     if ($('.request-list').length !== 0) {
@@ -68,7 +69,8 @@ function updateRequestDisplay (triggerElement, id) {
 	    data: {},
 	    success: function(request) { 
 	    	container = triggerElement.parent().parent();
-	    	refreshRequest(container, request.result, request.user) 
+	    	refreshRequest(container, request.result, request.user);
+	    	console.log(request.user);
 	    },
 	    error: function (result, status, error) {
 	        console.log(result + " - " + status + " - " + error);
@@ -92,13 +94,15 @@ function expandDetails (button) {
 
 function getList (listParams) {
 	$.ajax ({
-	    async: true,
 	    crossDomain: false,
 	    url: '/request',
 	    method: 'GET',
 	    headers: {},
 	    data: {},
-	    success: displayAllRequests,
+	    success: function (ajaxResult) {
+	    	console.log(ajaxResult);
+	    	displayAllRequests(ajaxResult.results, ajaxResult.user);
+	    },
 	    error: function (result, status, error) {
 	        console.log(result + " - " + status + " - " + error);
 	    }
@@ -115,29 +119,30 @@ function displayDate (date) {
 	const hour = ('0' + d.getHours()).slice(-2);
 	const minute = ('0' + d.getMinutes()).slice(-2);
 
-	return `${day}/${month}/${d.getFullYear()} at ${hour}:${minute}`
+	return day + '/' + month + '/' + d.getFullYear() + ' at ' + hour + ':' + minute
 }
 
 function requestTemplate (request, user, open) {
-	if (request.status === `deleted`) {
+	if (request.status === 'deleted') {
 		return false
 	}
 
-	let deleteButton, helpbutton;
+	var deleteButton = '', helpbutton = '';
 	if (user) {
 		const buttonHelpClass =  $.inArray( user._id, request.interested ) > -1 ? {class : 'button-revokehelp', text: 'Revoke help' } : {class : 'button-help', text : 'I can help!'};
-		helpbutton = `<div data-id="${request._id}" class="button ${buttonHelpClass.class}">${buttonHelpClass.text}</div>`;	
+		//helpbutton = `<div data-id="${request._id}" class="button ${buttonHelpClass.class}">${buttonHelpClass.text}</div>`;	
+		helpbutton = '<div data-id="' + request._id + '" class="button ' + buttonHelpClass.class + '">' + buttonHelpClass.text + '</div>';
 	}
 	if ((user) && (user._id === request.author._id)) {
-		deleteButton = `<a href="/request/delete/${request._id}">Delete<a/>`;
+		//deleteButton = `<a href="/request/delete/${request._id}">Delete<a/>`;
+		deleteButton = '<a href="/request/delete/' + request._id + '">Delete</a>';
 		helpbutton = '';
 	}
-
-	const price = request.price ? `${request.price} €` : `Free`;
-	const author = `<a href="/auth/profile/${request.author._id}">${request.author.username}</a>` || `Unknown`;
-	const dateEvent = displayDate(request.dateEvent) || `Anytime`;
-	const datePosted = displayDate(request.datePosted) || `Unknown`;
-	const rate = request.rate === `perhour` ? `/hour` : ``;
+	const price = request.price ? request.price + ' €' : 'Free';
+	const author = '<a href="/auth/profile/' + request.author._id + '">' + request.author.username + '</a>' || 'Unknown';
+	const dateEvent = displayDate(request.dateEvent) || 'Anytime';
+	const datePosted = displayDate(request.datePosted) || 'Unknown';
+	const rate = request.rate === 'perhour' ? '/hour' : '';
 	const openOrclosed = open ? { 
 		classDetails : '', 
 		buttonText: 'Hide details',
@@ -147,26 +152,25 @@ function requestTemplate (request, user, open) {
 		buttonText: 'Show details',
 		buttonState: 'closed'
 	};
-	return `<div class="request-details-less">
-				Author: ${author}<br>
-				Interested: ${request.interested.length || 'No one yet'}<br>
-				Type: ${request.type}<br>
-				Posted: ${datePosted}<br>
-				${deleteButton}<br>
-			</div>
-			<div class="request-details" data-id="${request._id}" ${openOrclosed.classDetails}>
-				When: ${dateEvent}<br>
-				Requested fee: ${price}${rate}<br>
-				Status: ${request.status}<br>
-				${request.description}<br>
-				${helpbutton}
-			</div>
-			<div data-state="${openOrclosed.buttonState}" data-id="${request._id}" class="button button-details">${openOrclosed.buttonText}</div>
-		`;
+	return '<div class="request-details-less">' +
+				'Author: ' + author + '<br>' +
+				'Interested: ' + request.interested.length + '<br>' +
+				'Type: ' + request.type + '<br>' +
+				'Posted: ' + datePosted + '<br>' +
+				deleteButton +
+			'</div>' +
+			'<div class="request-details" data-id="' + request._id + '" ' + openOrclosed.classDetails + '>' +
+				'When: ' + dateEvent + '<br>' +
+				'Requested fee: ' + price + rate + '<br>' +
+				'Status: ' + request.status + '<br>' +
+				request.description + '<br>' +
+				helpbutton +
+			'</div>' +
+			'<div data-state="' + openOrclosed.buttonState + '" data-id="' + request._id + '" class="button button-details">' + openOrclosed.buttonText + '</div>'
 }
 
-function displayAllRequests (ajaxResult) {
-	ajaxResult.results.forEach(function(request) {
-		$('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, ajaxResult.user) + '</div>')
+function displayAllRequests (results, user) {
+	results.forEach(function(request) {
+		$('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, user) + '</div>')
 	});
 }
