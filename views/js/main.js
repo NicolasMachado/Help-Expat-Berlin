@@ -30,7 +30,7 @@ function clickRevokHelp (button, id) {
 	    headers: {},
 	    data: {},
 	    success: () => { 
-			button.addClass('button-help').text('I can help!');
+			updateRequestDisplay(button, id);
 	    },
 	    error: function (result, status, error) {
 	        console.log(result + " - " + status + " - " + error);
@@ -47,7 +47,6 @@ function clickICanHelp (button, id) {
 	    headers: {},
 	    data: {},
 	    success: (res, err, conf) => { 
-			button.addClass('button-revokehelp').text('Revoke help');
 			updateRequestDisplay(button, id);
 	    },
 	    error: function (result, status, error) {
@@ -123,15 +122,17 @@ function requestTemplate (request, user, open) {
 	if (request.status === `deleted`) {
 		return false
 	}
+
 	let deleteButton, helpbutton;
+	if (user) {
+		const buttonHelpClass =  $.inArray( user._id, request.interested ) > -1 ? {class : 'button-revokehelp', text: 'Revoke help' } : {class : 'button-help', text : 'I can help!'};
+		helpbutton = `<div data-id="${request._id}" class="button ${buttonHelpClass.class}">${buttonHelpClass.text}</div>`;	
+	}
 	if ((user) && (user._id === request.author._id)) {
 		deleteButton = `<a href="/request/delete/${request._id}">Delete<a/>`;
 		helpbutton = '';
-	} else {
-		deleteButton = ``;
-		const buttonHelpClass =  false ? {class : 'button-revokehelp', text: 'Revoke Help' } : {class : 'button-help', text : 'I can help!'};
-		helpbutton = `div data-id="${request._id}" class="button ${buttonHelpClass.class}">${buttonHelpClass.text}</div>`;
 	}
+
 	const price = request.price ? `${request.price} €` : `Free`;
 	const author = `<a href="/auth/profile/${request.author._id}">${request.author.username}</a>` || `Unknown`;
 	const dateEvent = displayDate(request.dateEvent) || `Anytime`;
