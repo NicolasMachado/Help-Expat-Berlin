@@ -5,7 +5,18 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const {User, Request} = require('../config/models');
 const router = express.Router();
 const faker = require('faker');
-const {FACEBOOKAUTH} = require('../config/config.js');
+const fs = require('fs');
+
+// Load either local config or regular config
+if (fs.existsSync('./config/local')) {
+    loadConfig('../config/local/config.js');
+} else {
+    loadConfig('../config/config.js');
+}
+function loadConfig (configPath) {
+    return {FACEBOOKAUTH} = require(configPath);
+}
+
 router.use(express.static('./views'));
 
 // DEFINE AUTH STRATEGY

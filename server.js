@@ -8,13 +8,22 @@ const session = (require('express-session')({ secret: 'whatever floats your boat
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const flash = require('connect-flash');
+const fs = require('fs');
 
 const {router: authRouter} = require('./auth');
 const {router: requestRouter} = require('./request');
 
 mongoose.Promise = global.Promise;
 
-const {PORT, DATABASE_URL} = require('./config/config.js');
+// Load either local config or regular config
+if (fs.existsSync('./config/local')) {
+    loadConfig('./config/local/config.js');
+} else {
+    loadConfig('./config/config.js');
+}
+function loadConfig (configPath) {
+    return {PORT, DATABASE_URL} = require(configPath);
+}
 
 const app = express();
 
