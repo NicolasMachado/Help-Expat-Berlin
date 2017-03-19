@@ -3,7 +3,9 @@ let listParams = {
 };
 
 $(function() {
-	$.ajaxSetup({ cache: false })
+	$.ajaxSetup({ cache: false });
+	$( "#datepicker" ).datetimepicker();
+	$( document ).tooltip();
 	$('.alert-banner').delay(5000).fadeOut(1000);
 	$('.error-banner').delay(10000).fadeOut(1000);
     if ($('.request-list').length !== 0) {
@@ -70,7 +72,6 @@ function updateRequestDisplay (triggerElement, id) {
 	    success: function(request) { 
 	    	container = triggerElement.parent().parent();
 	    	refreshRequest(container, request.result, request.user);
-	    	console.log(request.user);
 	    },
 	    error: function (result, status, error) {
 	        console.log(result + " - " + status + " - " + error);
@@ -100,7 +101,6 @@ function getList (listParams) {
 	    headers: {},
 	    data: {},
 	    success: function (ajaxResult) {
-	    	console.log(ajaxResult);
 	    	displayAllRequests(ajaxResult.results, ajaxResult.user);
 	    },
 	    error: function (result, status, error) {
@@ -123,9 +123,6 @@ function displayDate (date) {
 }
 
 function requestTemplate (request, user, open) {
-	if (request.status === 'deleted') {
-		return false
-	}
 
 	var deleteButton = '', helpbutton = '';
 	if (user) {
@@ -138,7 +135,7 @@ function requestTemplate (request, user, open) {
 		deleteButton = '<a href="/request/delete/' + request._id + '">Delete</a>';
 		helpbutton = '';
 	}
-	const price = request.price ? request.price + ' €' : 'Free';
+	const price = request.price ? request.price + ' €' : 'None';
 	const author = '<a href="/auth/profile/' + request.author._id + '">' + request.author.username + '</a>' || 'Unknown';
 	const dateEvent = displayDate(request.dateEvent) || 'Anytime';
 	const datePosted = displayDate(request.datePosted) || 'Unknown';
@@ -171,6 +168,8 @@ function requestTemplate (request, user, open) {
 
 function displayAllRequests (results, user) {
 	results.forEach(function(request) {
-		$('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, user) + '</div>')
+		if (request.status !== 'deleted') {
+			$('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, user) + '</div>');
+		}
 	});
 }

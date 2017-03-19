@@ -13,7 +13,8 @@
 			Status: <%= request.status %><br>
 			<% if (request.status === 'deleted') { %><a href='/request/remove/<%= request.id %>'>Remove</a><% } %>
 		</div>
-	</div>
-<% });} %>
+	<% }); %> 
+</div> 
+<%} %>
 
 <% include footer %>

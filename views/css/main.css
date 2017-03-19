@@ -17,6 +17,12 @@ header {
 	text-align: center;
 }
 
+a {
+	color: #075F7C;
+	font-weight: bold;
+    text-decoration: none;
+}
+
 nav {
 	text-align: center;
 	background-color: #777;
