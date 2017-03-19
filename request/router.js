@@ -4,6 +4,16 @@ const {Request, User} = require('../config/models');
 const router = express.Router();
 router.use(express.static('./views'));
 
+// NEW REQUEST SCREEN
+router.get('/new', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.render('newrequest', {alertMessage: `Remember to read the rules before posting a new request.`});
+    } else { 
+        req.flash('errorMessage', 'You must log in first.');
+        res.redirect('/');
+    }
+});
+
 // SHOW ALL
 router.get('/', (req, res) => {
     return Request
@@ -16,10 +26,18 @@ router.get('/', (req, res) => {
         });
 });
 
-// NEW REQUEST SCREEN
-router.get('/new', (req, res) => {
+// PROPOSE HELP
+router.get('/proposehelp/:id', (req, res) => {
     if (req.isAuthenticated()) {
-        res.render('newrequest', {alertMessage: `Remember to read the rules before posting a new request.`});
+        return Request
+            .findById(req.params.id)
+            .find({ interested : req.user._id})
+            .update({$push : {interested : req.user._id}})
+            .then(() => res.json({alertMessage: `Update successful`}))
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error'})
+            });
     } else { 
         req.flash('errorMessage', 'You must log in first.');
         res.redirect('/');

@@ -3,13 +3,48 @@ let listParams = {
 };
 
 $(function() {
+	$('.alert-banner').delay(5000).fadeOut(1000);
+	$('.error-banner').delay(10000).fadeOut(1000);
     if ($('.request-list').length !== 0) {
     	getList();
     }
-    $('.request-list').on('click', '.details-button', function() {
+    $('.request-list').on('click', '.button-details', function() {
     	expandDetails($(this));
     });
+    $('.request-list').on('click', '.button-help', function() {
+    	clickICanHelp($(this), $(this).parent().data('id'));
+    });
 });
+
+function clickICanHelp (button, id) {
+	button.hide();
+	$.ajax ({
+	    async: true,
+	    crossDomain: false,
+	    url: '/request/proposehelp/' + id,
+	    method: 'GET',
+	    headers: {},
+	    data: {},
+	    success: () => { 
+	    	button.show();
+	    },
+	    error: function(x,e) {
+				    if (x.status==0) {
+				        alert('You are offline!!\n Please Check Your Network.');
+				    } else if(x.status==404) {
+				        alert('Requested URL not found.');
+				    } else if(x.status==500) {
+				        alert('Internel Server Error.');
+				    } else if(e=='parsererror') {
+				        alert('Error.\nParsing JSON Request failed.');
+				    } else if(e=='timeout'){
+				        alert('Request Time out.');
+				    } else {
+				        alert('Unknow Error.\n'+x.responseText);
+				    }
+				}
+	});
+}
 
 function expandDetails (button) {
 	if (button.data('state') === 'closed') {
@@ -28,8 +63,7 @@ function getList (listParams) {
 	    url: '/request',
 	    method: 'GET',
 	    headers: {},
-	    data: {
-	    },
+	    data: {},
 	    success: displayList,
 	    error: function (result, status, error) {
 	        console.log(result + " - " + status + " - " + error);
@@ -72,13 +106,14 @@ function requestTemplate (request, user) {
 					Posted: ${datePosted}<br>
 					${deleteButton}<br>
 				</div>
-				<div class="request-details" hidden>
+				<div class="request-details" data-id="${request._id}" hidden>
 					When: ${dateEvent}<br>
 					Requested fee: ${price}${rate}<br>
 					Status: ${request.status}<br>
 					${request.description}
+					<div data-state="closed" data-id="${request._id}" class="button button-help">I can help!</div>
 				</div>
-				<div data-state="closed" data-id="${request._id}" class="details-button">Show details</div>
+				<div data-state="closed" data-id="${request._id}" class="button button-details">Show details</div>
 			</div>`;
 }
 
