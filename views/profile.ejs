@@ -1,61 +1,17 @@
 <% include head %>
-
-<h2><%= profile.user.username %></h2>
+<div class="profile-header">
+	<h2><%= profile.user.username %></h2>
+	<p>Rating: -</p>
+</div>
 
 <% if (user) { %>
 	<% if (String(profile.user._id) == String(profile.currentUser._id)) { %>
-	<div id="profile-tabs">
-		<ul>
-			<li><a href="#tabs-1">Profile</a></li>
-			<li><a href="#tabs-2">Requests</a></li>
-			<li><a href="#tabs-3">Services</a></li>
-			<li><a href="#tabs-4">Messages</a></li>
-		</ul>
-
-		<div id="tabs-1">
-			<h3>My info</h3>
-			<p>Username: <%= profile.user.username %></p>
-			<p>Email: <%= profile.user.email %></p>
-		</div>
-
-		<div id="tabs-2">
-			<% if (profile.requests.length > 0) { %>
-				<div class="profile-requests">
-				<h3>My requests:</h3>
-				<% profile.requests.forEach(request => { %>
-					<div class="request-container">
-						<%= request.description %><br>
-						Status: <%= request.status %><br>
-						<% if (request.status === 'deleted') { %><a href='/request/remove/<%= request.id %>'>Remove</a><% } %>
-					</div>
-				<% }); %> 
-			</div> 
-			<% } else { %>
-				<h3>No request posted yet</h3>
-			<% } %>
-		</div>
-
-		<div id="tabs-3">
-			<% if (profile.services.length > 0) { %>
-				<div class="profile-requests">
-				<h3>Requests you have anwered to:</h3>
-				<% profile.services.forEach(request => { %>
-					<div class="request-container">
-						<%= request.description %><br>
-						Status: <%= request.status %><br>
-						<% if (request.status === 'deleted') { %><a href='/request/remove/<%= request.id %>'>Remove</a><% } %>
-					</div>
-				<% }); %> 
-			</div> 
-			<% } else { %>
-				<h3>No service provided yet</h3>
-			<% } %>
-		</div>
-
-		<div id="tabs-4">
-			<h3>My messages</h3>
-		</div>
-
+	<div class="profile-body">
+		<div class="button profile-tab">Profile</div>
+		<div class="button requests-tab">Requests</div>
+		<div class="button services-tab">Services</div>
+		<div class="button messages-tab">Messages</div>
+		<div id="profile-container"></div>
 	</div>
 	<% } %>
 <% } %>

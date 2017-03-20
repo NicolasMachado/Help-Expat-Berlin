@@ -1,4 +1,4 @@
-let ajaxTemplate = {
+const ajaxTemplate = {
     async: true,
     crossDomain: false,
     url: '',
@@ -20,7 +20,6 @@ $(function() {
 	$( document ).tooltip();
 	$('.alert-banner').delay(5000).fadeOut(1000);
 	$('.error-banner').delay(10000).fadeOut(1000);
-	$( "#profile-tabs" ).tabs();
 
     if ($('.request-list').length !== 0) {
     	getList();
@@ -31,37 +30,127 @@ $(function() {
     });
     $('.request-list').on('click', '.button-help', function() {
 		$(this).removeClass('button-help').text('Please wait');
-    	clickICanHelp($(this), $(this).parent().data('id'));
+    	clickICanHelp($(this), $(this).data('id'));
     });
     $('.request-list').on('click', '.button-revokehelp', function() {
 		$(this).removeClass('button-revokehelp').text('Please wait');
-    	clickRevokHelp($(this), $(this).parent().data('id'));
+    	clickRevokHelp($(this), $(this).data('id'));
+    });
+    $('.profile-body').on('click', '.profile-tab', function() {
+    	$('#profile-container').empty();
+    	getProfileInfo();
+    });
+    $('.profile-body').on('click', '.requests-tab', function() {
+    	$('#profile-container').empty();
+    	getProfileRequests();
+    });
+    $('.profile-body').on('click', '.services-tab', function() {
+    	$('#profile-container').empty();
+    	getProfileServices();
+    });
+    $('.profile-body').on('click', '.button-revokehelp', function() {
+		$(this).removeClass('button-revokehelp').text('Please wait');
+    	clickRevokHelpProfile($(this), $(this).data('id'));
     });
 });
 
+function getProfileServices() {
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/auth/get-profile-services/';
+	thisAjax.success = function(requests) {
+			requests.forEach(function (request) {
+				$('#profile-container').append(displayIndividualServiceProfile(request));
+			});
+	    };
+	$.ajax (thisAjax);
+}
+
+function displayIndividualServiceProfile(request) {
+	return '<div class="request-container" data-id="' + request._id + '">' +
+				'<p>' + request.description + '</p>' +
+				'<div data-id="' + request._id + '" class="button button-revokehelp">Revoke help</div>' +
+			'</div>';
+}
+
 function clickRevokHelp (button, id) {
-	ajaxTemplate.url = '/request/revokehelp/' + id;
-	ajaxTemplate.success = function() { 
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/request/revokehelp/' + id;
+	thisAjax.success = function() { 
 			updateRequestDisplay(button, id);
 	    };
-	$.ajax (ajaxTemplate);
+	$.ajax (thisAjax);
+}
+
+function clickRevokHelpProfile (button, id) {
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/request/revokehelp/' + id;
+	thisAjax.success = function() { 
+			button.parent().remove();
+	    };
+	$.ajax (thisAjax);
 }
 
 function clickICanHelp (button, id) {
-	ajaxTemplate.url = '/request/proposehelp/' + id;
-	ajaxTemplate.success = function() { 
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/request/proposehelp/' + id;
+	thisAjax.success = function() { 
 			updateRequestDisplay(button, id);
 	    };
-	$.ajax (ajaxTemplate);
+	$.ajax (thisAjax);
+}
+
+function getProfileRequests() {
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/auth/get-profile-requests/';
+	thisAjax.success = function(requests) {
+			$('#profile-container').html(display(requests));
+	    };
+	$.ajax (thisAjax);
+	function display (requests) {
+		let listRequests = '';
+		let listInterested = '';
+		const title = requests.length > 0 ? '<h3>Your requests:</h3>' : '<h3>No request posted yet</h3>';
+		requests.forEach(function (request) {
+			if (request.interested.length > 0) {
+				listInterested += '<h4>The following users proposed their help</h4>';
+				request.interested.forEach(function(interestedUser) {
+					listInterested += '<div class="interested-container">' +
+					interestedUser.username +
+					'</div>'
+				});
+			}
+			const removeButton = request.status === 'deleted' ? '<p><a href="/request/remove/' + request._id + '">Remove</a></p>' : '';
+			listRequests += '<div class="request-container" data-id="' + request._id + '">' +
+				'<p>' + request.description + '</p>' +
+				removeButton +
+				listInterested +
+			'</div>';
+			listInterested = '';
+		});
+		return title + listRequests;
+	}
+}
+
+function getProfileInfo() {
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/auth/get-current-user/';
+	thisAjax.success = function(user) {
+			$('#profile-container').html(
+					'<p>Username: ' + user.username + '</p>' +
+					'<p>Email: ' + user.email + '</p>'
+				);
+	    };
+	$.ajax (thisAjax);
 }
 
 function updateRequestDisplay (triggerElement, id) {
-	ajaxTemplate.url = '/request/update-display/' + id;
-	ajaxTemplate.success = function(request) { 
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/request/update-display/' + id;
+	thisAjax.success = function(request) { 
 	    	container = triggerElement.parent().parent();
 	    	refreshRequest(container, request.result, request.user);
 	    };
-	$.ajax (ajaxTemplate);
+	$.ajax (thisAjax);
 }
 
 function refreshRequest(container, request, user) {
@@ -79,11 +168,12 @@ function expandDetails (button) {
 }
 
 function getList (listParams) {
-	ajaxTemplate.url = '/request';
-	ajaxTemplate.success = function (ajaxResult) {
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/request';
+	thisAjax.success = function (ajaxResult) {
 	    	displayAllRequests(ajaxResult.results, ajaxResult.user);
 	    };
-	$.ajax (ajaxTemplate);
+	$.ajax (thisAjax);
 }
 
 function displayDate (date) {
@@ -104,11 +194,9 @@ function requestTemplate (request, user, open) {
 	var deleteButton = '', helpbutton = '';
 	if (user) {
 		const buttonHelpClass =  $.inArray( user._id, request.interested ) > -1 ? {class : 'button-revokehelp', text: 'Revoke help' } : {class : 'button-help', text : 'I can help!'};
-		//helpbutton = `<div data-id="${request._id}" class="button ${buttonHelpClass.class}">${buttonHelpClass.text}</div>`;	
 		helpbutton = '<div data-id="' + request._id + '" class="button ' + buttonHelpClass.class + '">' + buttonHelpClass.text + '</div>';
 	}
 	if ((user) && (user._id === request.author._id)) {
-		//deleteButton = `<a href="/request/delete/${request._id}">Delete<a/>`;
 		deleteButton = '<a href="/request/delete/' + request._id + '">Delete</a>';
 		helpbutton = '';
 	}

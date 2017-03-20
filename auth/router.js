@@ -176,11 +176,50 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
     if (req.isAuthenticated()) {
         User.findOne({ email: req.body.email }, (err, user) => {
             req.flash('alertMessage', `Welcome, ${user.username}`);
-            res.redirect('/');
+            res.redirect('/auth/profile/' + user._id);
         });
     } else { 
         req.flash('errorMessage', 'Couldn\'t login');
         res.redirect('/');
+    } 
+});
+
+// AJAX RETURN PROFILE SERVICES
+router.get('/get-profile-services', (req, res, next) => {
+    if (req.isAuthenticated()) {
+        Request
+            .find({interested: req.user._id})
+            .then(requests => {
+                res.json(requests);
+            })
+    } else {
+        res.status(401).json({message: 'You need to login first'});
+    } 
+});
+
+// AJAX RETURN PROFILE REQUESTS
+router.get('/get-profile-requests', (req, res, next) => {
+    if (req.isAuthenticated()) {
+        Request
+            .find({author : req.user.id})
+            .populate('interested')
+            .then(requests => {
+                res.json(requests);
+            })
+    } else {
+        res.status(401).json({message: 'You need to login first'});
+    } 
+});
+
+// AJAX RETURN CURRENT USER
+router.get('/get-current-user', (req, res, next) => {
+    if (req.isAuthenticated()) {
+        User.findById(req.user.id)
+            .then(user => {
+                res.json(user);
+            })
+    } else {
+        res.status(401).json({message: 'You need to login first'});
     } 
 });
 
