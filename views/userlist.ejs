@@ -9,9 +9,6 @@
 	id: <%= user.id %><br><br>
 	FBID:  <%= user.facebook.id %><br>
 	FB Token: <%= user.facebook.token %><br><br>
-	Requests: <br><% user.requests.forEach((request) => { %>
-		<%= request.type %> : <%= request.description %><br>
-	<% }); %><br><br>
 	<a href='/auth/delete/<%= user.id %>'>DELETE USER</a> 
 	</div>
 	<br><br><br>

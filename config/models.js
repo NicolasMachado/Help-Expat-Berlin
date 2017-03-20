@@ -39,6 +39,7 @@ UserSchema.statics.hashPassword = function(password) {
 
 // REQUEST SCHEMA
 const RequestSchema = mongoose.Schema({
+    title: { type: String, required: true },
     datePosted: { type: Date, required: true },
     dateEvent: { type: Date },
     type: { type: String, required: true },

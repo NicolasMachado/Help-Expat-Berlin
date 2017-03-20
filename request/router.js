@@ -116,6 +116,7 @@ router.post('/new', (req, res) => {
                 author: req.user.id,
                 datePosted: new Date(),
                 dateEvent: req.body.dateevent || null,
+                title: req.body.title,
                 time: req.body.time,
                 type: req.body.type,
                 price: req.body.price,

@@ -94,7 +94,10 @@ router.get('/showall', (req, res) => {
     return User
     .find()
     .populate('requests')
-    .then(users => {res.render('userlist', {users})})
+    .then(users => {
+        console.log(users);
+        res.render('userlist', {users});
+    })
     .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
 });
 

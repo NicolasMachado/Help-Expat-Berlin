@@ -67,7 +67,7 @@ function getProfileServices() {
 
 function displayIndividualServiceProfile(request) {
 	return '<div class="request-container" data-id="' + request._id + '">' +
-				'<p>' + request.description + '</p>' +
+				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
 				'<div data-id="' + request._id + '" class="button button-revokehelp">Revoke help</div>' +
 			'</div>';
 }
@@ -115,13 +115,14 @@ function getProfileRequests() {
 				listInterested += '<h4>The following users proposed their help</h4>';
 				request.interested.forEach(function(interestedUser) {
 					listInterested += '<div class="interested-container">' +
-					interestedUser.username +
+					'<a href="/auth/profile/' + interestedUser._id + '">' + interestedUser.username + '</a> - ' +
+					'<div data-helper="' + interestedUser._id + '" data-id="' + request._id + '" class="button">Accept</div>'
 					'</div>'
 				});
 			}
 			const removeButton = request.status === 'deleted' ? '<p><a href="/request/remove/' + request._id + '">Remove</a></p>' : '';
 			listRequests += '<div class="request-container" data-id="' + request._id + '">' +
-				'<p>' + request.description + '</p>' +
+				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
 				removeButton +
 				listInterested +
 			'</div>';
@@ -215,6 +216,7 @@ function requestTemplate (request, user, open) {
 		buttonState: 'closed'
 	};
 	return '<div class="request-details-less">' +
+				'<b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</b><br>' +
 				'Author: ' + author + '<br>' +
 				'Interested: ' + request.interested.length + '<br>' +
 				'Type: ' + request.type + '<br>' +
@@ -225,7 +227,7 @@ function requestTemplate (request, user, open) {
 				'When: ' + dateEvent + '<br>' +
 				'Requested fee: ' + price + rate + '<br>' +
 				'Status: ' + request.status + '<br>' +
-				request.description + '<br>' +
+				request.description.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '<br>' +
 				helpbutton +
 			'</div>' +
 			'<div data-state="' + openOrclosed.buttonState + '" data-id="' + request._id + '" class="button button-details">' + openOrclosed.buttonText + '</div>'
