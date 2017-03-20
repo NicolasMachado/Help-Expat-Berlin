@@ -30,11 +30,11 @@ $(function() {
     });
     $('.request-list').on('click', '.button-help', function() {
 		$(this).removeClass('button-help').text('Please wait');
-    	clickICanHelp($(this), $(this).data('id'));
+    	clickICanHelp($(this));
     });
     $('.request-list').on('click', '.button-revokehelp', function() {
 		$(this).removeClass('button-revokehelp').text('Please wait');
-    	clickRevokHelp($(this), $(this).data('id'));
+    	clickRevokHelp($(this));
     });
     $('.profile-body').on('click', '.profile-tab', function() {
     	$('#profile-container').empty();
@@ -50,7 +50,7 @@ $(function() {
     });
     $('.profile-body').on('click', '.button-revokehelp', function() {
 		$(this).removeClass('button-revokehelp').text('Please wait');
-    	clickRevokHelpProfile($(this), $(this).data('id'));
+    	clickRevokHelpProfile($(this));
     });
 });
 
@@ -72,29 +72,29 @@ function displayIndividualServiceProfile(request) {
 			'</div>';
 }
 
-function clickRevokHelp (button, id) {
+function clickRevokHelp (button) {
 	let thisAjax = ajaxTemplate;
-	thisAjax.url = '/request/revokehelp/' + id;
+	thisAjax.url = '/request/revokehelp/' + button.data('id');
 	thisAjax.success = function() { 
-			updateRequestDisplay(button, id);
+			updateRequestDisplay(button, button.data('id'));
 	    };
 	$.ajax (thisAjax);
 }
 
-function clickRevokHelpProfile (button, id) {
+function clickRevokHelpProfile (button) {
 	let thisAjax = ajaxTemplate;
-	thisAjax.url = '/request/revokehelp/' + id;
+	thisAjax.url = '/request/revokehelp/' + button.data('id');
 	thisAjax.success = function() { 
 			button.parent().remove();
 	    };
 	$.ajax (thisAjax);
 }
 
-function clickICanHelp (button, id) {
+function clickICanHelp (button) {
 	let thisAjax = ajaxTemplate;
-	thisAjax.url = '/request/proposehelp/' + id;
+	thisAjax.url = '/request/proposehelp/' + button.data('id');
 	thisAjax.success = function() { 
-			updateRequestDisplay(button, id);
+			updateRequestDisplay(button, button.data('id'));
 	    };
 	$.ajax (thisAjax);
 }
