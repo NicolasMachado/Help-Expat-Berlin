@@ -116,7 +116,7 @@ function getProfileRequests() {
 				request.interested.forEach(function(interestedUser) {
 					listInterested += '<div class="interested-container">' +
 					'<a href="/auth/profile/' + interestedUser._id + '">' + interestedUser.username + '</a> - ' +
-					'<div data-helper="' + interestedUser._id + '" data-id="' + request._id + '" class="button">Accept</div>'
+					'<div data-helper="' + interestedUser._id + '" data-id="' + request._id + '" class="button">Accept</div>' +
 					'</div>'
 				});
 			}
