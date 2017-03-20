@@ -124,10 +124,6 @@ router.post('/new', (req, res) => {
                 status: `open`,
                 interested: []
             })
-            .then(request => {
-                return User
-                    .findByIdAndUpdate(request.author, {$push: {requests : request._id}})
-            })
             .then(() => {
                 req.flash('alertMessage', 'Your request has been posted!');
                 res.redirect('/'); // account created

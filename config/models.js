@@ -13,8 +13,7 @@ const UserSchema = mongoose.Schema({
     facebook: {
         id: {type: String},
         token: {type: String}
-    },
-    requests : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Request' }]
+    }
 });
 
 UserSchema.methods.apiRepr = function() {
@@ -47,7 +46,7 @@ const RequestSchema = mongoose.Schema({
     rate: { type: String },
     description: { type: String, required: true },
     status: { type: String, required: true },
-    interested: { type: Array },
+    interested: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 

@@ -1,20 +1,48 @@
 <% include head %>
 
-<h2>Profile - <%= profileUser.username %></h2>
-<p>Username: <%= profileUser.username %></p>
-<p>email: <%= profileUser.email %></p>
+<h2><%= profileUser.username %></h2>
 
-<% if (requests) { %>
-	<div class="profile-requests">
-	<h3>My requests:</h3>
-	<% requests.forEach(request => { %>
-		<div class="request-container">
-			<%= request.description %><br>
-			Status: <%= request.status %><br>
-			<% if (request.status === 'deleted') { %><a href='/request/remove/<%= request.id %>'>Remove</a><% } %>
+<% if (user) { %>
+	<% if (String(profileUser._id) == String(user._id)) { %>
+	<div id="profile-tabs">
+		<ul>
+			<li><a href="#tabs-1">Profile</a></li>
+			<li><a href="#tabs-2">Requests</a></li>
+			<li><a href="#tabs-3">Services</a></li>
+			<li><a href="#tabs-4">Messages</a></li>
+		</ul>
+
+		<div id="tabs-1">
+			<h3>My info</h3>
+			<p>Username: <%= profileUser.username %></p>
+			<p>Email: <%= profileUser.email %></p>
 		</div>
-	<% }); %> 
-</div> 
-<%} %>
+
+		<div id="tabs-2">
+			<% if (requests) { %>
+				<div class="profile-requests">
+				<h3>My requests:</h3>
+				<% requests.forEach(request => { %>
+					<div class="request-container">
+						<%= request.description %><br>
+						Status: <%= request.status %><br>
+						<% if (request.status === 'deleted') { %><a href='/request/remove/<%= request.id %>'>Remove</a><% } %>
+					</div>
+				<% }); %> 
+			</div> 
+			<%} %>
+		</div>
+
+		<div id="tabs-3">
+			<h3>Requests you have anwered to:</h3>
+		</div>
+
+		<div id="tabs-4">
+			<h3>My messages</h3>
+		</div>
+
+	</div>
+	<% } %>
+<% } %>
 
 <% include footer %>

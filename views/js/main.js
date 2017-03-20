@@ -8,9 +8,12 @@ $(function() {
 	$( document ).tooltip();
 	$('.alert-banner').delay(5000).fadeOut(1000);
 	$('.error-banner').delay(10000).fadeOut(1000);
+	$( "#profile-tabs" ).tabs();
+
     if ($('.request-list').length !== 0) {
     	getList();
     }
+
     $('.request-list').on('click', '.button-details', function() {
     	expandDetails($(this));
     });

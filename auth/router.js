@@ -192,7 +192,9 @@ router.get('/profile/:id', (req, res, next) => {
             .then(profileUser => {
                 Request
                     .find({author : profileUser._id})
+                    .populate('interested')
                     .then((requests) => {
+                        console.log(profileUser);
                         res.render('profile', {profileUser : profileUser, currentuser : req.user, requests : requests});
                     })
             })
