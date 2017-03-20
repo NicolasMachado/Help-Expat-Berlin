@@ -1,5 +1,17 @@
-let listParams = {
-
+let ajaxTemplate = {
+    async: true,
+    crossDomain: false,
+    url: '',
+    method: 'GET',
+    headers: {},
+    data: {},
+    success: '',
+    error: function (result, status, error) {
+        console.log(result + " - " + status + " - " + error);
+    	if (error === 'Unauthorized') {
+    		window.location.href = '/auth/account-login-request';
+    	}
+    }
 };
 
 $(function() {
@@ -28,58 +40,28 @@ $(function() {
 });
 
 function clickRevokHelp (button, id) {
-	$.ajax ({
-	    async: true,
-	    crossDomain: false,
-	    url: '/request/revokehelp/' + id,
-	    method: 'GET',
-	    headers: {},
-	    data: {},
-	    success: function() { 
+	ajaxTemplate.url = '/request/revokehelp/' + id;
+	ajaxTemplate.success = function() { 
 			updateRequestDisplay(button, id);
-	    },
-	    error: function (result, status, error) {
-	        console.log(result + " - " + status + " - " + error);
-	    }
-	});
+	    };
+	$.ajax (ajaxTemplate);
 }
 
 function clickICanHelp (button, id) {
-	$.ajax ({
-	    async: true,
-	    crossDomain: false,
-	    url: '/request/proposehelp/' + id,
-	    method: 'GET',
-	    headers: {},
-	    data: {},
-	    success: function(res, err, conf) { 
+	ajaxTemplate.url = '/request/proposehelp/' + id;
+	ajaxTemplate.success = function() { 
 			updateRequestDisplay(button, id);
-	    },
-	    error: function (result, status, error) {
-	        console.log(result + " - " + status + " - " + error);
-	    	if (error === 'Unauthorized') {
-	    		window.location.href = '/auth/account-login-request';
-	    	}
-	    }
-	});
+	    };
+	$.ajax (ajaxTemplate);
 }
 
 function updateRequestDisplay (triggerElement, id) {
-	$.ajax ({
-	    async: true,
-	    crossDomain: false,
-	    url: '/request/update-display/' + id,
-	    method: 'GET',
-	    headers: {},
-	    data: {},
-	    success: function(request) { 
+	ajaxTemplate.url = '/request/update-display/' + id;
+	ajaxTemplate.success = function(request) { 
 	    	container = triggerElement.parent().parent();
 	    	refreshRequest(container, request.result, request.user);
-	    },
-	    error: function (result, status, error) {
-	        console.log(result + " - " + status + " - " + error);
-	    }
-	});
+	    };
+	$.ajax (ajaxTemplate);
 }
 
 function refreshRequest(container, request, user) {
@@ -97,19 +79,11 @@ function expandDetails (button) {
 }
 
 function getList (listParams) {
-	$.ajax ({
-	    crossDomain: false,
-	    url: '/request',
-	    method: 'GET',
-	    headers: {},
-	    data: {},
-	    success: function (ajaxResult) {
+	ajaxTemplate.url = '/request';
+	ajaxTemplate.success = function (ajaxResult) {
 	    	displayAllRequests(ajaxResult.results, ajaxResult.user);
-	    },
-	    error: function (result, status, error) {
-	        console.log(result + " - " + status + " - " + error);
-	    }
-	});
+	    };
+	$.ajax (ajaxTemplate);
 }
 
 function displayDate (date) {

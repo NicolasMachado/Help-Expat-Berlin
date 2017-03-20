@@ -1,9 +1,9 @@
 <% include head %>
 
-<h2><%= profileUser.username %></h2>
+<h2><%= profile.user.username %></h2>
 
 <% if (user) { %>
-	<% if (String(profileUser._id) == String(user._id)) { %>
+	<% if (String(profile.user._id) == String(profile.currentUser._id)) { %>
 	<div id="profile-tabs">
 		<ul>
 			<li><a href="#tabs-1">Profile</a></li>
@@ -14,15 +14,15 @@
 
 		<div id="tabs-1">
 			<h3>My info</h3>
-			<p>Username: <%= profileUser.username %></p>
-			<p>Email: <%= profileUser.email %></p>
+			<p>Username: <%= profile.user.username %></p>
+			<p>Email: <%= profile.user.email %></p>
 		</div>
 
 		<div id="tabs-2">
-			<% if (requests) { %>
+			<% if (profile.requests.length > 0) { %>
 				<div class="profile-requests">
 				<h3>My requests:</h3>
-				<% requests.forEach(request => { %>
+				<% profile.requests.forEach(request => { %>
 					<div class="request-container">
 						<%= request.description %><br>
 						Status: <%= request.status %><br>
@@ -30,11 +30,26 @@
 					</div>
 				<% }); %> 
 			</div> 
-			<%} %>
+			<% } else { %>
+				<h3>No request posted yet</h3>
+			<% } %>
 		</div>
 
 		<div id="tabs-3">
-			<h3>Requests you have anwered to:</h3>
+			<% if (profile.services.length > 0) { %>
+				<div class="profile-requests">
+				<h3>Requests you have anwered to:</h3>
+				<% profile.services.forEach(request => { %>
+					<div class="request-container">
+						<%= request.description %><br>
+						Status: <%= request.status %><br>
+						<% if (request.status === 'deleted') { %><a href='/request/remove/<%= request.id %>'>Remove</a><% } %>
+					</div>
+				<% }); %> 
+			</div> 
+			<% } else { %>
+				<h3>No service provided yet</h3>
+			<% } %>
 		</div>
 
 		<div id="tabs-4">

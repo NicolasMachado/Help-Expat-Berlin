@@ -186,16 +186,24 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
 
 // PROFILE
 router.get('/profile/:id', (req, res, next) => {
+    let profile = {user: {}, requests: {}, services: {}, currentUser: req.user};
     if (req.isAuthenticated()) {
         User
             .findOne({ _id: req.params.id })
             .then(profileUser => {
+                profile.user = profileUser;
                 Request
                     .find({author : profileUser._id})
                     .populate('interested')
                     .then((requests) => {
-                        console.log(profileUser);
-                        res.render('profile', {profileUser : profileUser, currentuser : req.user, requests : requests});
+                        profile.requests = requests;
+                            Request
+                            .find({interested: req.user._id})
+                            .then((requests) => {
+                                profile.services = requests;
+                                console.log(profile);
+                                res.render('profile', {profile});
+                            })
                     })
             })
     } else { 
