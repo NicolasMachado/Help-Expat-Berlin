@@ -1,6 +1,6 @@
 const express = require('express');
 const passport = require('passport');
-const {Request, User} = require('../config/models');
+const {Request, User, Conversation} = require('../config/models');
 const router = express.Router();
 router.use(express.static('./views'));
 
@@ -33,6 +33,24 @@ router.get('/accepthelp', (req, res) => {
         return Request
             .findById(req.query.request)
             .update({$push : {accepted : req.query.helper}})
+            .then(() => {
+                Conversation
+                    .findOne({$and: [{users: {$in: [req.user._id]}}, {users: {$in: [req.query.helper]}}] })
+                    .then(conv => {
+                        if (!conv) {
+                            console.log('conversation doesnt exist, creating one');
+                            Conversation
+                                .create({
+                                    users: [req.user._id, req.query.helper]
+                                })
+                        } else {
+                            console.log('conversation already exists, updating dateLast');
+                            Conversation
+                                .findById(conv._id)
+                                .update({$currentDate: { dateLast: true }})
+                        }
+                    })
+            })
             .then(() => {
                 Request
                 .findById(req.query.request)

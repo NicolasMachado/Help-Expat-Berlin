@@ -107,3 +107,10 @@ main {
 .now-loading {
 	padding: 20px;
 }
+
+.conversation-container-list {
+	background-color: #EDF4DA;
+	margin-top: 10px;
+	padding: 10px;
+	cursor: pointer;	
+}

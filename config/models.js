@@ -52,7 +52,19 @@ const RequestSchema = mongoose.Schema({
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
+// CONVERSATION SCHEMA
+const ConversationSchema = mongoose.Schema({
+    users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }],
+    dateLast: { type: Date, default: Date.now },
+    messages: [{
+        date: { type: Date },
+        from: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        body: { type: String }
+    }]
+});
+
 const User = mongoose.model('User', UserSchema);
 const Request = mongoose.model('Request', RequestSchema);
+const Conversation = mongoose.model('Conversation', ConversationSchema);
 
-module.exports = {Request, User}; 
+module.exports = {Request, User, Conversation}; 

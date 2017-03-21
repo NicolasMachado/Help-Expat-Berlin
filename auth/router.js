@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
-const {User, Request} = require('../config/models');
+const {User, Request, Conversation} = require('../config/models');
 const router = express.Router();
 const faker = require('faker');
 const fs = require('fs');
@@ -183,6 +183,23 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
     } else { 
         req.flash('errorMessage', 'Couldn\'t login');
         res.redirect('/');
+    } 
+});
+
+// AJAX RETURN PROFILE CONVERSATIONS
+router.get('/get-profile-messages', (req, res) => {
+    if (req.isAuthenticated()) {
+        Conversation
+            .find({users: req.user._id})
+            .sort({dateLast: -1})
+            .populate('users')
+            .then(reqs => res.send({conversations: reqs, user: req.user}))
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error'})
+            })
+    } else {
+        res.status(401).json({message: 'You need to login first'});
     } 
 });
 

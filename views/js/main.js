@@ -53,6 +53,9 @@ $(function() {
     $('.profile-body').on('click', '.services-tab', function() {
     	getProfileServices();
     });
+    $('.profile-body').on('click', '.messages-tab', function() {
+    	getListMessages();
+    });
     $('.profile-body').on('click', '.button-revokehelp', function() {
 		$(this).removeClass('button-revokehelp').text('Please wait');
     	clickRevokHelpProfile($(this));
@@ -62,6 +65,27 @@ $(function() {
     	clickAcceptHelpProfile($(this));
     });
 });
+
+function getListMessages () {
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/auth/get-profile-messages/';
+	thisAjax.success = function(response) {
+			$('.now-loading').hide();
+			$('#title-profile-section').text(response.conversations.length > 0 ? 'Your conversations:' : 'No conversation open yet');
+			response.conversations.forEach(function (conv) {
+				const otherUser = conv.users[0]._id === response.user._id ? conv.users[1] : conv.users[0];
+				$('#profile-container').append(returnIndividualConvListProfile(conv, otherUser));
+			});
+	    };
+	$.ajax (thisAjax);
+}
+
+function returnIndividualConvListProfile (conv, otherUser) {
+	return '<div class="conversation-container-list proftab" data-id="' + conv._id + '">' +
+			'With ' + otherUser.username + '<br>' + 
+			conv.messages.length + ' messages' +
+			'</div>';	
+}
 
 function clickAcceptHelpProfile (button) {
 	let thisAjax = ajaxTemplate;
