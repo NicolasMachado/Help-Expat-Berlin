@@ -45,9 +45,8 @@ router.get('/accepthelp', (req, res) => {
                                 })
                         } else {
                             console.log('conversation already exists, updating dateLast');
-                            Conversation
-                                .findById(conv._id)
-                                .update({$currentDate: { dateLast: true }})
+                            return Conversation
+                                .findByIdAndUpdate(conv._id, { dateLast: new Date() });
                         }
                     })
             })

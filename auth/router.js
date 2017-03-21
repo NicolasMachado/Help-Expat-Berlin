@@ -190,7 +190,7 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
 router.get('/get-profile-messages', (req, res) => {
     if (req.isAuthenticated()) {
         Conversation
-            .find({users: req.user._id})
+            .find({users: {$in: [req.user._id]}})
             .sort({dateLast: -1})
             .populate('users')
             .then(reqs => res.send({conversations: reqs, user: req.user}))
