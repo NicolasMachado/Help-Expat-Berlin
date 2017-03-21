@@ -95,7 +95,6 @@ router.get('/showall', (req, res) => {
     .find()
     .populate('requests')
     .then(users => {
-        console.log(users);
         res.render('userlist', {users});
     })
     .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
@@ -243,7 +242,6 @@ router.get('/profile/:id', (req, res, next) => {
                             .find({interested: req.user._id})
                             .then((requests) => {
                                 profile.services = requests;
-                                console.log(profile);
                                 res.render('profile', {profile});
                             })
                     })

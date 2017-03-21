@@ -60,7 +60,6 @@ app.get('/', (req, res) => {
 });
 
 app.use('*', (req, res) => {
-    console.log(req.user);
     return res.status(404).json({message: '404 - Not Found'});
 });
 
