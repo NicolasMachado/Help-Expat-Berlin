@@ -13,7 +13,7 @@ router.get('/new', (req, res) => {
     }
 });
 
-// SHOW ALL
+// AJAX SHOW ALL
 router.get('/', (req, res) => {
     return Request
         .find()
@@ -26,7 +26,25 @@ router.get('/', (req, res) => {
         });
 });
 
-// UPDATE REQUEST DISPLAY
+// AJAX ACCEPT HELP
+router.get('/accepthelp', (req, res) => {
+    if (req.isAuthenticated()) {
+        let thisRequest;
+        return Request
+            .findById(req.query.request)
+            .update({$push : {accepted : req.query.helper}})
+            .then(() => {
+                Request
+                .findById(req.query.request)
+                .populate('interested')
+                .then(request => res.send(request))
+            });
+    } else { 
+        res.status(401).json({message: 'You need to login first'});
+    }
+});
+
+// AJAX UPDATE REQUEST DISPLAY
 router.get('/update-display/:id', (req, res) => {
     return Request
         .findById(req.params.id)
@@ -38,7 +56,7 @@ router.get('/update-display/:id', (req, res) => {
         });
 });
 
-// PROPOSE HELP
+// AJAX PROPOSE HELP
 router.get('/proposehelp/:id', (req, res) => {
     if (req.isAuthenticated()) {
         return Request
@@ -55,7 +73,7 @@ router.get('/proposehelp/:id', (req, res) => {
     }
 });
 
-// REVOKE HELP
+// AJAX REVOKE HELP
 router.get('/revokehelp/:id', (req, res) => {
     if (req.isAuthenticated()) {
         return Request

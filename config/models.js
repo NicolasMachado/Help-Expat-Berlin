@@ -48,6 +48,7 @@ const RequestSchema = mongoose.Schema({
     description: { type: String, required: true },
     status: { type: String, required: true },
     interested: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    accepted: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 

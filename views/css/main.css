@@ -96,6 +96,14 @@ main {
 	background-color: #366933;
 }
 
+.button-accept {
+	background-color: #366933;
+}
+
 .button-revokehelp {
 	background-color: #69333B;
+}
+
+.now-loading {
+	padding: 20px;
 }

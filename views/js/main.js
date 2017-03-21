@@ -20,6 +20,7 @@ $(function() {
 	$( document ).tooltip();
 	$('.alert-banner').delay(5000).fadeOut(1000);
 	$('.error-banner').delay(10000).fadeOut(1000);
+	$('.now-loading').hide();
 
     if ($('.request-list').length !== 0) {
     	getList();
@@ -36,36 +37,59 @@ $(function() {
 		$(this).removeClass('button-revokehelp').text('Please wait');
     	clickRevokHelp($(this));
     });
-    $('.profile-body').on('click', '.profile-tab', function() {
+    // empty profile section when tab switch
+    $('.profile-body').on('click', '.proftab', function() {
+		$('.now-loading').show();
+    	$('#title-profile-section').empty();
     	$('#profile-container').empty();
+    });
+    // profile tabs
+    $('.profile-body').on('click', '.profile-tab', function() {
     	getProfileInfo();
     });
     $('.profile-body').on('click', '.requests-tab', function() {
-    	$('#profile-container').empty();
     	getProfileRequests();
     });
     $('.profile-body').on('click', '.services-tab', function() {
-    	$('#profile-container').empty();
     	getProfileServices();
     });
     $('.profile-body').on('click', '.button-revokehelp', function() {
 		$(this).removeClass('button-revokehelp').text('Please wait');
     	clickRevokHelpProfile($(this));
     });
+    $('.profile-body').on('click', '.button-accept', function() {
+		$(this).removeClass('button-accept').text('Please wait');
+    	clickAcceptHelpProfile($(this));
+    });
 });
+
+function clickAcceptHelpProfile (button) {
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/request/accepthelp/';
+	thisAjax.data = {
+		request : button.data('id'),
+		helper : button.data('helper')
+	};
+	thisAjax.success = function(request) {
+			button.parents('.request-container').replaceWith(returnIndividualProfileRequest(request));
+	    };
+	$.ajax (thisAjax);
+}
 
 function getProfileServices() {
 	let thisAjax = ajaxTemplate;
 	thisAjax.url = '/auth/get-profile-services/';
 	thisAjax.success = function(requests) {
+			$('.now-loading').hide();
+			$('#title-profile-section').text(requests.length > 0 ? 'Your services:' : 'No service proposed yet');
 			requests.forEach(function (request) {
-				$('#profile-container').append(displayIndividualServiceProfile(request));
+				$('#profile-container').append(returnIndividualServiceProfile(request));
 			});
 	    };
 	$.ajax (thisAjax);
 }
 
-function displayIndividualServiceProfile(request) {
+function returnIndividualServiceProfile(request) {
 	return '<div class="request-container" data-id="' + request._id + '">' +
 				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
 				'<div data-id="' + request._id + '" class="button button-revokehelp">Revoke help</div>' +
@@ -76,7 +100,7 @@ function clickRevokHelp (button) {
 	let thisAjax = ajaxTemplate;
 	thisAjax.url = '/request/revokehelp/' + button.data('id');
 	thisAjax.success = function() { 
-			updateRequestDisplay(button, button.data('id'));
+			updateRequestDisplay(button);
 	    };
 	$.ajax (thisAjax);
 }
@@ -94,7 +118,7 @@ function clickICanHelp (button) {
 	let thisAjax = ajaxTemplate;
 	thisAjax.url = '/request/proposehelp/' + button.data('id');
 	thisAjax.success = function() { 
-			updateRequestDisplay(button, button.data('id'));
+			updateRequestDisplay(button);
 	    };
 	$.ajax (thisAjax);
 }
@@ -103,39 +127,45 @@ function getProfileRequests() {
 	let thisAjax = ajaxTemplate;
 	thisAjax.url = '/auth/get-profile-requests/';
 	thisAjax.success = function(requests) {
-			$('#profile-container').html(display(requests));
+			$('.now-loading').hide();
+			$('#title-profile-section').text(requests.length > 0 ? 'Your requests:' : 'No request posted yet');			
+			requests.forEach(function (request) {
+				$('#profile-container').append(returnIndividualProfileRequest(request));
+			});
 	    };
 	$.ajax (thisAjax);
 	function display (requests) {
-		let listRequests = '';
-		let listInterested = '';
-		const title = requests.length > 0 ? '<h3>Your requests:</h3>' : '<h3>No request posted yet</h3>';
-		requests.forEach(function (request) {
-			if (request.interested.length > 0) {
-				listInterested += '<h4>The following users proposed their help</h4>';
-				request.interested.forEach(function(interestedUser) {
-					listInterested += '<div class="interested-container">' +
-					'<a href="/auth/profile/' + interestedUser._id + '">' + interestedUser.username + '</a> - ' +
-					'<div data-helper="' + interestedUser._id + '" data-id="' + request._id + '" class="button">Accept</div>' +
-					'</div>'
-				});
-			}
-			const removeButton = request.status === 'deleted' ? '<p><a href="/request/remove/' + request._id + '">Remove</a></p>' : '';
-			listRequests += '<div class="request-container" data-id="' + request._id + '">' +
+	}
+}
+
+function returnIndividualProfileRequest (request) {
+	let listInterested = '';
+	if (request.interested.length > 0) {
+		listInterested += '<h5>The following users proposed their help:</h5>';
+		request.interested.forEach(function(interestedUser) {
+			const classButtonHelp = _.contains(request.accepted, interestedUser._id) ? {class: '', text: 'Accepted'} : {class: 'button-accept', text: 'Accept'};
+			listInterested += '<div class="interested-container">' +
+			'<a href="/auth/profile/' + interestedUser._id + '">' + interestedUser.username + '</a> - ' +
+			'<div data-helper="' + interestedUser._id + '" data-id="' + request._id + '" class="button ' + classButtonHelp.class + '">' + classButtonHelp.text + '</div>' +
+			'</div>'
+		});
+	} else {
+		listInterested += '<h5>No help proposed yet</h5>';	
+	}
+	const removeButton = request.status === 'deleted' ? '<p><a href="/request/remove/' + request._id + '">Remove</a></p>' : '';
+	return '<div class="request-container" data-id="' + request._id + '">' +
 				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
 				removeButton +
 				listInterested +
 			'</div>';
-			listInterested = '';
-		});
-		return title + listRequests;
-	}
 }
 
 function getProfileInfo() {
 	let thisAjax = ajaxTemplate;
 	thisAjax.url = '/auth/get-current-user/';
 	thisAjax.success = function(user) {
+			$('.now-loading').hide();
+			$('#title-profile-section').text('User info');
 			$('#profile-container').html(
 					'<p>Username: ' + user.username + '</p>' +
 					'<p>Email: ' + user.email + '</p>'
@@ -144,12 +174,11 @@ function getProfileInfo() {
 	$.ajax (thisAjax);
 }
 
-function updateRequestDisplay (triggerElement, id) {
+function updateRequestDisplay (triggerElement) {
 	let thisAjax = ajaxTemplate;
-	thisAjax.url = '/request/update-display/' + id;
+	thisAjax.url = '/request/update-display/' + triggerElement.data('id');
 	thisAjax.success = function(request) { 
-	    	container = triggerElement.parent().parent();
-	    	refreshRequest(container, request.result, request.user);
+	    	refreshRequest(triggerElement.parent().parent(), request.result, request.user);
 	    };
 	$.ajax (thisAjax);
 }
