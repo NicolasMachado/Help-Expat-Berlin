@@ -22,10 +22,26 @@ $(function() {
 	$('.error-banner').delay(10000).fadeOut(1000);
 	$('.now-loading').hide();
 
+	// TAB SELECTION
+	const tabParam = getUrlParam('tab');
+	if (tabParam === 'requests') {
+    	getProfileRequests();		
+	}
+	if (tabParam === 'profile') {
+    	getProfileInfo();		
+	}
+	if (tabParam === 'messages') {
+    	getListMessages();	
+	}
+	if (tabParam === 'services') {
+    	getProfileServices();		
+	}
+
     if ($('.request-list').length !== 0) {
     	getList();
     }
 
+    // CLICKS
     $('.request-list').on('click', '.button-details', function() {
     	expandDetails($(this));
     });
@@ -72,6 +88,15 @@ $(function() {
     	postNewMessage($('#message-textarea').val().replace(/&/g, '&amp;').replace(/</g, '&lt;'), $('#form-send-message').data('id'), $('#form-send-message').data('other'));
     });
 });
+
+getUrlParam = function(name){
+	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	if (results==null){
+		return null;
+	}else{
+		return results[1] || 0;
+	}	
+}
 
 function postNewMessage (messageBody, convId, other) {
 	let thisAjax = ajaxTemplate;
@@ -144,7 +169,7 @@ function getListMessages () {
 function returnIndividualConvListProfile (conv, otherUser, currentuser) {
 	const unread = (conv.nbUnread > 0 && currentuser._id == conv.unreadUser) ? ' <b>(' + conv.nbUnread + ' new)<b/>' : '';
 	return '<div class="conversation-container-list proftab" data-id="' + conv._id + '">' +
-			'With ' + otherUser.username + unread +
+			'With ' + otherUser.username + ' - ' +  conv.messages.length +' messages' + unread +
 			'</div>';	
 }
 
