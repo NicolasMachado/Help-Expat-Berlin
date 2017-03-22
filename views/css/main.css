@@ -12,8 +12,7 @@ body {
 header {
 	background-color: #484848;
 	color: white;
-	text-align: center;
-    position:fixed;
+    position: fixed;
     width: 100%;
     top: 0px;
 }
@@ -21,7 +20,6 @@ header {
 main {
 	max-width: 1000px;
 	padding: 20px;
-    margin-top: 150px;
     margin-left: auto;
     margin-right: auto;
 }
