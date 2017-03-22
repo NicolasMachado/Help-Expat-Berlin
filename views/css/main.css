@@ -114,3 +114,23 @@ main {
 	padding: 10px;
 	cursor: pointer;	
 }
+
+.message-container {
+	margin-top: 10px;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+.message-other {
+	background-color: #EFF2DC;
+	margin-right: auto;
+	max-width: 80%;
+	text-align: left;
+}
+
+.message-mine {
+	background-color: #DAF4DB;
+	margin-left: auto;
+	max-width: 80%;
+	text-align: right;
+}

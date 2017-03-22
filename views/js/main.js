@@ -64,7 +64,63 @@ $(function() {
 		$(this).removeClass('button-accept').text('Please wait');
     	clickAcceptHelpProfile($(this));
     });
+    $('.profile-body').on('click', '.conversation-container-list', function() {
+    	getConversation($(this).data('id'));
+    });
+    $('.profile-body').on('submit', '#form-send-message', function(e) {
+    	e.preventDefault();
+    	postNewMessage($('#message-textarea').val().replace(/&/g, '&amp;').replace(/</g, '&lt;'), $('#form-send-message').data('id'), $('#form-send-message').data('other'));
+    });
 });
+
+function postNewMessage (messageBody, convId, other) {
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/auth/newmessage/' + convId;
+	thisAjax.data = {
+		messageBody : messageBody,
+		other: other
+	};
+	thisAjax.method = 'POST';
+	thisAjax.success = function(response) {
+			thisAjax.method = 'GET';
+			getConversation(convId);
+	    };
+	$.ajax (thisAjax);
+}
+
+function getConversation (id) {
+	let thisAjax = ajaxTemplate;
+	thisAjax.url = '/auth/get-conversation/' + id;
+	thisAjax.success = function(response) {
+			$('.now-loading').hide();
+			const otherUser = response.conversation.users[0]._id === response.user._id ? response.conversation.users[1] : response.conversation.users[0];
+			$('#title-profile-section').html(response.conversation.messages.length > 0 ? otherUser.username + '<br>Messages:' : otherUser.username + '<br>No message yet');
+			$('#profile-container').empty();
+			response.conversation.messages.forEach(function (message) {
+				$('#profile-container').append(returnIndividualMessage(message, otherUser));
+			});
+			$('#profile-container').append(
+				'<form id="form-send-message" method="post" data-other="' + otherUser._id + '" data-id="' + response.conversation._id + '">' +
+				'<input name="other" value="' + otherUser._id + '" hidden>' +
+			    '<label for="messageBody">Send a message</label>' +
+			    '<br>' +
+			    '<textarea id="message-textarea" name="messageBody" cols="40" rows="5" placeholder="Send a message" required></textarea><br>' +
+    			'<input type="submit" value="Send">' +
+				'</form>'
+				);
+	    };
+	$.ajax (thisAjax);	
+}
+
+function returnIndividualMessage (message, otherUser) {
+	console.log(otherUser);
+	console.log(message);
+	const messageClass = message.from._id === otherUser._id ? 'message-other' : 'message-mine';
+	return '<div class="message-container ' + messageClass + '" data-id="' + message._id + '">' +
+			message.body + '</br>'
+			message.date +
+			'</div>';	
+}
 
 function getListMessages () {
 	let thisAjax = ajaxTemplate;

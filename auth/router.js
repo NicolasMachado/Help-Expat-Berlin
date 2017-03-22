@@ -186,6 +186,46 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
     } 
 });
 
+// POST NEW MESSAGE
+router.post('/newmessage/:id', (req, res) => {
+    if (req.isAuthenticated()) {
+        Conversation
+            .findById(req.params.id)
+            .update({$push : {
+                messages : {
+                    date: new Date (),
+                    from: req.user._id,
+                    body: req.body.messageBody,
+                    notReadBy: req.body.other
+                }
+            }})
+            .then(conv => res.send({conversation: conv, user: req.user}))
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error'})
+            })
+    } else {
+        res.status(401).json({message: 'You need to login first'});
+    } 
+});
+
+// AJAX RETURN INDIVIDUAL CONVERSATION
+router.get('/get-conversation/:id', (req, res) => {
+    if (req.isAuthenticated()) {
+        Conversation
+            .findById(req.params.id)
+            .populate('users')
+            .populate('messages.from')
+            .then(conv => res.send({conversation: conv, user: req.user}))
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error'})
+            })
+    } else {
+        res.status(401).json({message: 'You need to login first'});
+    } 
+});
+
 // AJAX RETURN PROFILE CONVERSATIONS
 router.get('/get-profile-messages', (req, res) => {
     if (req.isAuthenticated()) {

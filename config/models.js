@@ -59,7 +59,8 @@ const ConversationSchema = mongoose.Schema({
     messages: [{
         date: { type: Date },
         from: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-        body: { type: String }
+        body: { type: String },
+        notReadBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
     }]
 });
 
