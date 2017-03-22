@@ -195,9 +195,13 @@ router.post('/newmessage/:id', (req, res) => {
                 messages : {
                     date: new Date (),
                     from: req.user._id,
-                    body: req.body.messageBody,
-                    notReadBy: req.body.other
+                    body: req.body.messageBody
                 }
+            }, $set: {
+                dateLast: new Date (),
+                unreadUser: req.body.other
+            }, $inc: {
+                nbUnread: 1
             }})
             .then(conv => res.send({conversation: conv, user: req.user}))
             .catch(err => {
@@ -212,11 +216,21 @@ router.post('/newmessage/:id', (req, res) => {
 // AJAX RETURN INDIVIDUAL CONVERSATION
 router.get('/get-conversation/:id', (req, res) => {
     if (req.isAuthenticated()) {
+        let currentConv = '';
         Conversation
             .findById(req.params.id)
             .populate('users')
             .populate('messages.from')
-            .then(conv => res.send({conversation: conv, user: req.user}))
+            .then(conv => currentConv = conv)
+            .then(() => {
+                if (currentConv.unreadUser === String(req.user._id)) {
+                    console.log('this is unread user');
+                    return Conversation
+                        .findByIdAndUpdate(currentConv._id, {$set: {unreadUser: '', nbUnread: 0}}) // mark as read
+                }
+            })
+            .then(() => res.send({conversation: currentConv, user: req.user}))
+
             .catch(err => {
                 console.error(err);
                 res.status(500).json({message: 'Internal server error'})

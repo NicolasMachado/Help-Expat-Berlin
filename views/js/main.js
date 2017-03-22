@@ -127,17 +127,24 @@ function getListMessages () {
 			$('.now-loading').hide();
 			$('#title-profile-section').text(response.conversations.length > 0 ? 'Your conversations:' : 'No conversation open yet');
 			response.conversations.forEach(function (conv) {
-				const otherUser = conv.users[0]._id === response.user._id ? conv.users[1] : conv.users[0];
-				$('#profile-container').append(returnIndividualConvListProfile(conv, otherUser));
+				let otherUser, currentuser;
+				if (conv.users[0]._id === response.user._id) {
+					otherUser = conv.users[1];
+					currentuser = conv.users[0];
+				} else {
+					otherUser = conv.users[0];
+					currentuser = conv.users[1];
+				}
+				$('#profile-container').append(returnIndividualConvListProfile(conv, otherUser, currentuser));
 			});
 	    };
 	$.ajax (thisAjax);
 }
 
-function returnIndividualConvListProfile (conv, otherUser) {
+function returnIndividualConvListProfile (conv, otherUser, currentuser) {
+	const unread = (conv.nbUnread > 0 && currentuser._id == conv.unreadUser) ? ' <b>(' + conv.nbUnread + ' new)<b/>' : ''
 	return '<div class="conversation-container-list proftab" data-id="' + conv._id + '">' +
-			'With ' + otherUser.username + '<br>' + 
-			conv.messages.length + ' messages' +
+			'With ' + otherUser.username + unread +
 			'</div>';	
 }
 
