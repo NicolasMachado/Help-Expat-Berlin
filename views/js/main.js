@@ -94,12 +94,12 @@ function getConversation (id) {
 	thisAjax.success = function(response) {
 			$('.now-loading').hide();
 			const otherUser = response.conversation.users[0]._id === response.user._id ? response.conversation.users[1] : response.conversation.users[0];
-			$('#title-profile-section').html(response.conversation.messages.length > 0 ? otherUser.username + '<br>Messages:' : otherUser.username + '<br>No message yet');
-			$('#profile-container').empty();
+			$('#title-profile-section').html(response.conversation.messages.length > 0 ? otherUser.username + '' : otherUser.username + '<br>No message yet');
+			$('#profile-container').empty().append('<div class="conv-container"></div>');
 			response.conversation.messages.forEach(function (message) {
-				$('#profile-container').append(returnIndividualMessage(message, otherUser));
+				$('.conv-container').append(returnIndividualMessage(message, otherUser));
 			});
-			$('#profile-container').append(
+			$('.conv-container').append(
 				'<form id="form-send-message" method="post" data-other="' + otherUser._id + '" data-id="' + response.conversation._id + '">' +
 				'<input name="other" value="' + otherUser._id + '" hidden>' +
 			    '<label for="messageBody">Send a message</label>' +
@@ -113,8 +113,6 @@ function getConversation (id) {
 }
 
 function returnIndividualMessage (message, otherUser) {
-	console.log(otherUser);
-	console.log(message);
 	const messageClass = message.from._id === otherUser._id ? 'message-other' : 'message-mine';
 	return '<div class="message-container ' + messageClass + '" data-id="' + message._id + '">' +
 			message.body + '</br>'
