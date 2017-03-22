@@ -17,19 +17,19 @@
 <body>
 <header>
 	<h1>Help Expat Berlin</h1>
+	<nav>
+		<a href="/">Home</a>
+		<% if (user) { %>
+		<a href="/request/new">New request</a>
+		<a href='/auth/profile/<%= user.id %>'>Profile</a>
+		<a href="/auth/logout">Logout</a>
+		<% } %>
+		<% if (!user) { %>
+		<a href="/auth/account-login">Log in</a>
+		<% } %>
+		<a href="/auth/showall">All users</a>
+	</nav>
 </header>
-<nav>
-	<a href="/">Home</a>
-	<% if (user) { %>
-	<a href="/request/new">New request</a>
-	<a href='/auth/profile/<%= user.id %>'>Profile</a>
-	<a href="/auth/logout">Logout</a>
-	<% } %>
-	<% if (!user) { %>
-	<a href="/auth/account-login">Log in</a>
-	<% } %>
-	<a href="/auth/showall">All users</a>
-</nav>
 <% if (errorMessage) { %> <div class="error-banner">Error: <%= errorMessage %></div><% } %>
 <% if (alertMessage) { %> <div class="alert-banner"><%= alertMessage %></div><% } %>
 <main>

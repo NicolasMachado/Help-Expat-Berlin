@@ -9,7 +9,7 @@ const UserSchema = mongoose.Schema({
     authType: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    rating: { type: Number },
+    rating: [{ type: Number }, { type : String }], // score + comment
     facebook: {
         id: {type: String},
         token: {type: String}

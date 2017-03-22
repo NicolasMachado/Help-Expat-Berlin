@@ -4,17 +4,26 @@ html {
 }
 
 body {
-	max-width: 1000px;
-	margin-right: auto;
-	margin-left: auto;
 	min-height: 100%;
 	background-color: #F5F8F0;
+	text-align: center;
 }
 
 header {
 	background-color: #484848;
 	color: white;
 	text-align: center;
+    position:fixed;
+    width: 100%;
+    top: 0px;
+}
+
+main {
+	max-width: 1000px;
+	padding: 20px;
+    margin-top: 150px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 a {
@@ -42,11 +51,6 @@ nav a:hover {
 h1 {
 	padding: 30px;
 	margin: 0px;
-}
-
-main {
-	padding: 20px;
-	text-align: center;
 }
 
 .error-banner {

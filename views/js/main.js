@@ -142,7 +142,7 @@ function getListMessages () {
 }
 
 function returnIndividualConvListProfile (conv, otherUser, currentuser) {
-	const unread = (conv.nbUnread > 0 && currentuser._id == conv.unreadUser) ? ' <b>(' + conv.nbUnread + ' new)<b/>' : ''
+	const unread = (conv.nbUnread > 0 && currentuser._id == conv.unreadUser) ? ' <b>(' + conv.nbUnread + ' new)<b/>' : '';
 	return '<div class="conversation-container-list proftab" data-id="' + conv._id + '">' +
 			'With ' + otherUser.username + unread +
 			'</div>';	
@@ -238,10 +238,12 @@ function returnIndividualProfileRequest (request) {
 		listInterested += '<h5>No help proposed yet</h5>';	
 	}
 	const removeButton = request.status === 'deleted' ? '<p><a href="/request/remove/' + request._id + '">Remove</a></p>' : '';
+	const closeRequest = request.accepted.length > 0 ? '<br><a class="button close-request" href="">Close request</a>' : '';
 	return '<div class="request-container" data-id="' + request._id + '">' +
 				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
 				removeButton +
 				listInterested +
+				closeRequest +
 			'</div>';
 }
 
