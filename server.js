@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const flash = require('connect-flash');
 const fs = require('fs');
+const {checkLogin} = require('./utils');
 
 const {router: authRouter} = require('./auth');
 const {router: requestRouter} = require('./request');
@@ -27,15 +28,6 @@ function loadConfig (configPath) {
 }
 
 const app = express();
-
-const checkLogin = (req, res, next) => {
-    res.locals.user = req.user || false; // check if authenticated
-    const alertMessage = req.flash('alertMessage');
-    const errorMessage = req.flash('errorMessage');
-    alertMessage.length > 0 ? res.locals.alertMessage = alertMessage : res.locals.alertMessage = false;
-    errorMessage.length > 0 ? res.locals.errorMessage = errorMessage : res.locals.errorMessage = false;
-    next();
-};
 
 app.use(morgan('common'));
 app.use(cookieParser);

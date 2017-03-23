@@ -25,16 +25,16 @@ $(function() {
 	// TAB SELECTION
 	const tabParam = getUrlParam('tab');
 	if (tabParam === 'requests') {
-    	getProfileRequests();		
+    	getProfileRequests();
 	}
 	if (tabParam === 'profile') {
-    	getProfileInfo();		
+    	getProfileInfo();
 	}
 	if (tabParam === 'messages') {
-    	getListMessages();	
+    	getListMessages();
 	}
 	if (tabParam === 'services') {
-    	getProfileServices();		
+    	getProfileServices();
 	}
 
     if ($('.request-list').length !== 0) {

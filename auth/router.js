@@ -6,6 +6,7 @@ const {User, Request, Conversation, Rating} = require('../config/models');
 const router = express.Router();
 const faker = require('faker');
 const fs = require('fs');
+const {ensureLoginAjax, ensureLoginNormal} = require('../utils');
 
 // Load either local config or regular config
 if (fs.existsSync('./config/local')) {
@@ -174,197 +175,156 @@ router.post('/new', (req, res) => {
 });
 
 // LOG IN
-router.post('/login', passport.authenticate('local'), (req, res, next) => {
-    if (req.isAuthenticated()) {
-        User.findOne({ email: req.body.email }, (err, user) => {
-            req.flash('alertMessage', `Welcome, ${user.username}`);
-            res.redirect('/auth/profile/' + user._id);
-        });
-    } else { 
-        req.flash('errorMessage', 'Couldn\'t login');
-        res.redirect('/');
-    } 
+router.post('/login', passport.authenticate('local'), ensureLoginNormal, (req, res, next) => {
+    User.findOne({ email: req.body.email }, (err, user) => {
+        req.flash('alertMessage', `Welcome, ${user.username}`);
+        res.redirect('/auth/profile/' + user._id);
+    });
 });
 
 // POST NEW MESSAGE
-router.post('/newmessage/:id', (req, res) => {
-    if (req.isAuthenticated()) {
-        Conversation
-            .findById(req.params.id)
-            .update({$push : {
-                messages : {
-                    date: new Date (),
-                    from: req.user._id,
-                    body: req.body.messageBody
-                }
-            }, $set: {
-                dateLast: new Date (),
-                unreadUser: req.body.other
-            }, $inc: {
-                nbUnread: 1
-            }})
-            .then(conv => res.send({conversation: conv, user: req.user}))
-            .catch(err => {
-                console.error(err);
-                res.status(500).json({message: 'Internal server error'})
-            })
-    } else {
-        res.status(401).json({message: 'You need to login first'});
-    } 
+router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
+    Conversation
+        .findById(req.params.id)
+        .update({$push : {
+            messages : {
+                date: new Date (),
+                from: req.user._id,
+                body: req.body.messageBody
+            }
+        }, $set: {
+            dateLast: new Date (),
+            unreadUser: req.body.other
+        }, $inc: {
+            nbUnread: 1
+        }})
+        .then(conv => res.send({conversation: conv, user: req.user}))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'})
+        })
 });
 
 // AJAX SAVE NEW RATING FROM AUTHOR
-router.get('/add-rating', (req, res) => {
+router.get('/add-rating', ensureLoginAjax, (req, res) => {
     const helper = req.query.iam === 'author' ? req.query.user : null;
-    if (req.isAuthenticated()) {
-        return Rating
-            .create({
-                rating: req.query.rating,
-                comment: req.query.comment,
-                user: req.query.user,
-                request: req.query.request,
-                from: req.user._id
-            })
-            .then(() => {
-                return Request
-                    .findByIdAndUpdate(req.query.request, { status: 'closed', helper: helper })
-            })
-            .then(() => {
-                res.status(200).send('Success');
-            })
-            .catch(err => {
-                console.error(err);
-                res.status(500).json({message: 'Internal server error'})
-            })
-    } else {
-        res.status(401).json({message: 'You need to login first'});
-    } 
+    return Rating
+        .create({
+            rating: req.query.rating,
+            comment: req.query.comment,
+            user: req.query.user,
+            request: req.query.request,
+            from: req.user._id
+        })
+        .then(() => {
+            return Request
+                .findByIdAndUpdate(req.query.request, { status: 'closed', helper: helper })
+        })
+        .then(() => {
+            res.status(200).send('Success');
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'})
+        })
 });
 
 // AJAX RETURN USER RATINGS
-router.get('/get-user-ratings', (req, res) => {
-    if (req.isAuthenticated()) {
-        return Rating
-            .find({ user : req.user._id })
-            .populate('from')
-            .populate('request')
-            .then(ratings => res.send(ratings))
-            .catch(err => {
-                console.error(err);
-                res.status(500).json({message: 'Internal server error'})
-            })
-    } else {
-        res.status(401).json({message: 'You need to login first'});
-    } 
+router.get('/get-user-ratings', ensureLoginAjax, (req, res) => {
+    return Rating
+        .find({ user : req.user._id })
+        .populate('from')
+        .populate('request')
+        .then(ratings => res.send(ratings))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'})
+        })
 });
 
 // AJAX RETURN INDIVIDUAL CONVERSATION
-router.get('/get-conversation/:id', (req, res) => {
-    if (req.isAuthenticated()) {
-        let currentConv = '';
-        Conversation
-            .findById(req.params.id)
-            .populate('users')
-            .populate('messages.from')
-            .then(conv => currentConv = conv)
-            .then(() => {
-                if (currentConv.unreadUser === String(req.user._id)) {
-                    console.log('this is unread user');
-                    return Conversation
-                        .findByIdAndUpdate(currentConv._id, {$set: {unreadUser: '', nbUnread: 0}}) // mark as read
-                }
-            })
-            .then(() => res.send({conversation: currentConv, user: req.user}))
+router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
+    let currentConv = '';
+    Conversation
+        .findById(req.params.id)
+        .populate('users')
+        .populate('messages.from')
+        .then(conv => currentConv = conv)
+        .then(() => {
+            if (currentConv.unreadUser === String(req.user._id)) {
+                console.log('this is unread user');
+                return Conversation
+                    .findByIdAndUpdate(currentConv._id, {$set: {unreadUser: '', nbUnread: 0}}) // mark as read
+            }
+        })
+        .then(() => res.send({conversation: currentConv, user: req.user}))
 
-            .catch(err => {
-                console.error(err);
-                res.status(500).json({message: 'Internal server error'})
-            })
-    } else {
-        res.status(401).json({message: 'You need to login first'});
-    } 
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'})
+        })
 });
 
 // AJAX RETURN PROFILE CONVERSATIONS
-router.get('/get-profile-messages', (req, res) => {
-    if (req.isAuthenticated()) {
-        Conversation
-            .find({users: {$in: [req.user._id]}})
-            .sort({dateLast: -1})
-            .populate('users')
-            .then(reqs => res.send({conversations: reqs, user: req.user}))
-            .catch(err => {
-                console.error(err);
-                res.status(500).json({message: 'Internal server error'})
-            })
-    } else {
-        res.status(401).json({message: 'You need to login first'});
-    } 
+router.get('/get-profile-messages', ensureLoginAjax, (req, res) => {
+    Conversation
+        .find({users: {$in: [req.user._id]}})
+        .sort({dateLast: -1})
+        .populate('users')
+        .then(reqs => res.send({conversations: reqs, user: req.user}))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'})
+        })
 });
 
 // AJAX RETURN PROFILE SERVICES
-router.get('/get-profile-services', (req, res, next) => {
-    if (req.isAuthenticated()) {
-        Request
-            .find({interested: req.user._id})
-            .then(requests => {
-                res.json({requests: requests, currentUser: req.user});
-            })
-    } else {
-        res.status(401).json({message: 'You need to login first'});
-    } 
+router.get('/get-profile-services', ensureLoginAjax, (req, res, next) => {
+    Request
+        .find({interested: req.user._id})
+        .then(requests => {
+            res.json({requests: requests, currentUser: req.user});
+        })
 });
 
 // AJAX RETURN PROFILE REQUESTS
-router.get('/get-profile-requests', (req, res, next) => {
-    if (req.isAuthenticated()) {
-        Request
-            .find({author : req.user.id})
-            .populate('interested')
-            .then(requests => {
-                res.json(requests);
-            })
-    } else {
-        res.status(401).json({message: 'You need to login first'});
-    } 
+router.get('/get-profile-requests', ensureLoginAjax, (req, res, next) => {
+    Request
+        .find({author : req.user.id})
+        .populate('interested')
+        .then(requests => {
+            res.json(requests);
+        })
 });
 
 // AJAX RETURN CURRENT USER
-router.get('/get-current-user', (req, res, next) => {
-    if (req.isAuthenticated()) {
-        User.findById(req.user.id)
-            .then(user => {
-                res.json(user);
-            })
-    } else {
-        res.status(401).json({message: 'You need to login first'});
-    } 
+router.get('/get-current-user', ensureLoginAjax, (req, res, next) => {
+    User.findById(req.user.id)
+        .then(user => {
+            res.json(user);
+        })
 });
 
 // PROFILE
-router.get('/profile/:id', (req, res, next) => {
+router.get('/profile/:id', ensureLoginNormal, (req, res, next) => {
     let profile = {user: {}, requests: {}, services: {}, currentUser: req.user};
-    if (req.isAuthenticated()) {
-        User
-            .findOne({ _id: req.params.id })
-            .then(profileUser => {
-                profile.user = profileUser;
-                Request
-                    .find({author : profileUser._id})
-                    .populate('interested')
-                    .then((requests) => {
-                        profile.requests = requests;
-                            Request
-                            .find({interested: req.user._id})
-                            .then((requests) => {
-                                profile.services = requests;
-                                res.render('profile', {profile});
-                            })
-                    })
-            })
-    } else { 
-        res.redirect('/auth/account-login-request');
-    }
+    User
+        .findOne({ _id: req.params.id })
+        .then(profileUser => {
+            profile.user = profileUser;
+            Request
+                .find({author : profileUser._id})
+                .populate('interested')
+                .then((requests) => {
+                    profile.requests = requests;
+                        Request
+                        .find({interested: req.user._id})
+                        .then((requests) => {
+                            profile.services = requests;
+                            res.render('profile', {profile});
+                        })
+                })
+        })
 });
 
 // CREATE ACCOUNT PAGE
@@ -383,7 +343,7 @@ router.get('/account-login-request', (req, res) => {
     res.redirect('/auth/account-login');
 });
 
-// DELETE
+// DELETE To be removed
 router.get('/delete/:id', (req, res) => {
     User
     .findByIdAndRemove(req.params.id)
@@ -405,14 +365,9 @@ router.get('/logout', (req, res) => {
 router.get('/facebook', passport.authenticate('facebook', { scope : ['email'] }));
 
 // FB CALLBACK
-router.get('/facebook/callback', passport.authenticate('facebook', { scope : ['email'] }), (req, res) => {
-    if (req.isAuthenticated()) {
-        req.flash('alertMessage', 'You are logged in with Facebook');
-        res.redirect('/');
-    } else { 
-        req.flash('errorMessage', 'Not authenticated!');
-        res.redirect('/');
-    }
+router.get('/facebook/callback', passport.authenticate('facebook', { scope : ['email'] }), ensureLoginNormal, (req, res) => {
+    req.flash('alertMessage', 'You are logged in with Facebook');
+    res.redirect('/');
 });
 
 module.exports = {router};
