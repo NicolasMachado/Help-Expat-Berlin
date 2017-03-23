@@ -1,12 +1,12 @@
-const ajaxTemplate = {
-    async: true,
-    crossDomain: false,
-    url: '',
-    method: 'GET',
-    headers: {},
-    data: {},
-    success: '',
-    error: function (result, status, error) {
+function AjaxTemplate () {
+    this.async = true,
+    this.crossDomain = false,
+    this.url = '',
+    this.method = 'GET',
+    this.headers = {},
+    this.data = {},
+    this.success = '',
+    this.error = function (result, status, error) {
         console.log(result + " - " + status + " - " + error);
     	if (error === 'Unauthorized') {
     		window.location.href = '/auth/account-login-request';
@@ -99,7 +99,7 @@ getUrlParam = function(name){
 }
 
 function postNewMessage (messageBody, convId, other) {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/auth/newmessage/' + convId;
 	thisAjax.data = {
 		messageBody : messageBody,
@@ -114,7 +114,7 @@ function postNewMessage (messageBody, convId, other) {
 }
 
 function getConversation (id) {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/auth/get-conversation/' + id;
 	thisAjax.success = function(response) {
 			$('.now-loading').hide();
@@ -146,7 +146,7 @@ function returnIndividualMessage (message, otherUser) {
 }
 
 function getListMessages () {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/auth/get-profile-messages/';
 	thisAjax.success = function(response) {
 			$('.now-loading').hide();
@@ -174,7 +174,7 @@ function returnIndividualConvListProfile (conv, otherUser, currentuser) {
 }
 
 function clickAcceptHelpProfile (button) {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/request/accepthelp/';
 	thisAjax.data = {
 		request : button.data('id'),
@@ -187,7 +187,7 @@ function clickAcceptHelpProfile (button) {
 }
 
 function getProfileServices() {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/auth/get-profile-services/';
 	thisAjax.success = function(requests) {
 			$('.now-loading').hide();
@@ -207,7 +207,7 @@ function returnIndividualServiceProfile(request) {
 }
 
 function clickRevokHelp (button) {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/request/revokehelp/' + button.data('id');
 	thisAjax.success = function() { 
 			updateRequestDisplay(button);
@@ -216,7 +216,7 @@ function clickRevokHelp (button) {
 }
 
 function clickRevokHelpProfile (button) {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/request/revokehelp/' + button.data('id');
 	thisAjax.success = function() { 
 			button.parent().remove();
@@ -225,7 +225,7 @@ function clickRevokHelpProfile (button) {
 }
 
 function clickICanHelp (button) {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/request/proposehelp/' + button.data('id');
 	thisAjax.success = function() { 
 			updateRequestDisplay(button);
@@ -234,7 +234,7 @@ function clickICanHelp (button) {
 }
 
 function getProfileRequests() {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/auth/get-profile-requests/';
 	thisAjax.success = function(requests) {
 			$('.now-loading').hide();
@@ -273,7 +273,7 @@ function returnIndividualProfileRequest (request) {
 }
 
 function getProfileInfo() {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/auth/get-current-user/';
 	thisAjax.success = function(user) {
 			$('.now-loading').hide();
@@ -287,7 +287,7 @@ function getProfileInfo() {
 }
 
 function updateRequestDisplay (triggerElement) {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/request/update-display/' + triggerElement.data('id');
 	thisAjax.success = function(request) { 
 	    	refreshRequest(triggerElement.parent().parent(), request.result, request.user);
@@ -310,7 +310,7 @@ function expandDetails (button) {
 }
 
 function getList (listParams) {
-	let thisAjax = ajaxTemplate;
+	let thisAjax = new AjaxTemplate();
 	thisAjax.url = '/request';
 	thisAjax.success = function (ajaxResult) {
 	    	displayAllRequests(ajaxResult.results, ajaxResult.user);
