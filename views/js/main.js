@@ -18,8 +18,8 @@ $(function() {
 	$.ajaxSetup({ cache: false });
 	$( "#datepicker" ).datetimepicker();
 	$( document ).tooltip();
-	$('.alert-banner').delay(5000).fadeOut(1000);
-	$('.error-banner').delay(10000).fadeOut(1000);
+	$('.alert-banner').delay(5000).slideUp( 300 );
+	$('.error-banner').delay(10000).slideUp( 300 );
 	$('.now-loading').hide();
 
 	// TAB SELECTION

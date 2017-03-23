@@ -21,7 +21,7 @@
 		<a href="/">Home</a>
 		<% if (user) { %>
 		<a href="/request/new">New request</a>
-		<a href='/auth/profile/<%= user.id %>'>Profile</a>
+		<a href='/auth/profile/<%= user.id %>/?tab=profile'>Profile</a>
 		<a href="/auth/logout">Logout</a>
 		<% } %>
 		<% if (!user) { %>
@@ -29,8 +29,8 @@
 		<% } %>
 		<a href="/auth/showall">All users</a>
 	</nav>
-<% if (errorMessage) { %> <div class="error-banner">Error: <%= errorMessage %></div><% } %>
-<% if (alertMessage) { %> <div class="alert-banner"><%= alertMessage %></div><% } %>
+	<% if (errorMessage) { %> <div class="error-banner">Error: <%= errorMessage %></div><% } %>
+	<% if (alertMessage) { %> <div class="alert-banner"><%= alertMessage %></div><% } %>
 </header>
 
 <!-- HACK TO PUSH HEADER DOWN -->
@@ -40,7 +40,7 @@
 		<a href="/">Home</a>
 		<% if (user) { %>
 		<a href="/request/new">New request</a>
-		<a href='/auth/profile/<%= user.id %>'>Profile</a>
+		<a href='/auth/profile/<%= user.id %>?tab=profile'>Profile</a>
 		<a href="/auth/logout">Logout</a>
 		<% } %>
 		<% if (!user) { %>
@@ -48,8 +48,8 @@
 		<% } %>
 		<a href="/auth/showall">All users</a>
 	</nav>
-<% if (errorMessage) { %> <div class="error-banner">Error: <%= errorMessage %></div><% } %>
-<% if (alertMessage) { %> <div class="alert-banner"><%= alertMessage %></div><% } %>
+	<% if (errorMessage) { %> <div class="error-banner">&nbsp;</div><% } %>
+	<% if (alertMessage) { %> <div class="alert-banner">&nbsp;</div><% } %>
 </div>
 <!-- HACK END -->
 

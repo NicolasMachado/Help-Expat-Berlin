@@ -17,6 +17,11 @@ header {
     top: 0px;
 }
 
+.header-push {
+    width: 100%;
+    top: 0px;
+}
+
 main {
 	max-width: 1000px;
 	padding: 20px;
