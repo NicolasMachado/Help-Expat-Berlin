@@ -49,7 +49,8 @@ const RequestSchema = mongoose.Schema({
     status: { type: String, required: true },
     interested: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     accepted: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    helper: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 // CONVERSATION SCHEMA
@@ -65,8 +66,18 @@ const ConversationSchema = mongoose.Schema({
     }]
 });
 
+// RATING SCHEMA
+const RatingSchema = mongoose.Schema({
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    from: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    request: { type: mongoose.Schema.Types.ObjectId, ref: 'Request', required: true },
+    rating: { type: Number, required: true },
+    comment: { type: String }
+});
+
 const User = mongoose.model('User', UserSchema);
 const Request = mongoose.model('Request', RequestSchema);
 const Conversation = mongoose.model('Conversation', ConversationSchema);
+const Rating = mongoose.model('Rating', RatingSchema);
 
-module.exports = {Request, User, Conversation}; 
+module.exports = {Request, User, Conversation, Rating}; 

@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
-const {User, Request, Conversation} = require('../config/models');
+const {User, Request, Conversation, Rating} = require('../config/models');
 const router = express.Router();
 const faker = require('faker');
 const fs = require('fs');
@@ -213,6 +213,51 @@ router.post('/newmessage/:id', (req, res) => {
     } 
 });
 
+// AJAX SAVE NEW RATING FROM AUTHOR
+router.get('/add-rating', (req, res) => {
+    const helper = req.query.iam === 'author' ? req.query.user : null;
+    if (req.isAuthenticated()) {
+        return Rating
+            .create({
+                rating: req.query.rating,
+                comment: req.query.comment,
+                user: req.query.user,
+                request: req.query.request,
+                from: req.user._id
+            })
+            .then(() => {
+                return Request
+                    .findByIdAndUpdate(req.query.request, { status: 'closed', helper: helper })
+            })
+            .then(() => {
+                res.status(200).send('Success');
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error'})
+            })
+    } else {
+        res.status(401).json({message: 'You need to login first'});
+    } 
+});
+
+// AJAX RETURN USER RATINGS
+router.get('/get-user-ratings', (req, res) => {
+    if (req.isAuthenticated()) {
+        return Rating
+            .find({ user : req.user._id })
+            .populate('from')
+            .populate('request')
+            .then(ratings => res.send(ratings))
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({message: 'Internal server error'})
+            })
+    } else {
+        res.status(401).json({message: 'You need to login first'});
+    } 
+});
+
 // AJAX RETURN INDIVIDUAL CONVERSATION
 router.get('/get-conversation/:id', (req, res) => {
     if (req.isAuthenticated()) {
@@ -263,7 +308,7 @@ router.get('/get-profile-services', (req, res, next) => {
         Request
             .find({interested: req.user._id})
             .then(requests => {
-                res.json(requests);
+                res.json({requests: requests, currentUser: req.user});
             })
     } else {
         res.status(401).json({message: 'You need to login first'});

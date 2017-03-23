@@ -72,6 +72,9 @@ $(function() {
     $('.profile-body').on('click', '.messages-tab', function() {
     	getListMessages();
     });
+    $('.profile-body').on('click', '.ratings-tab', function() {
+    	getProfileRatings();
+    });
     $('.profile-body').on('click', '.button-revokehelp', function() {
 		$(this).removeClass('button-revokehelp').text('Please wait');
     	clickRevokHelpProfile($(this));
@@ -85,8 +88,6 @@ $(function() {
 		$(this).hide();
     });
     $('.profile-body').on('change', '.select-to-rate', function() {
-		console.log($(this).val());
-		console.log($(this).parents('.request-container').data('id'));
 		displayRateForm($(this));
     });
     $('.profile-body').on('click', '.conversation-container-list', function() {
@@ -98,22 +99,61 @@ $(function() {
     });
     $('.profile-body').on('submit', '.rate-user', function(e) {
     	e.preventDefault();
-    	console.log($(this).find('option:selected').text());
-    	console.log($(this).children('.ratetext').val());
+    	saveRating($(this).find('option:selected').text(), $(this).children('.ratetext').val(), $(this).parents('.request-container').data('id'), $(this).data('user'), $(this), $(this).data('iam'));
     });
 });
+
+function saveRating (rating, comment, request, user, triggerElement, iam) {
+	console.log(iam);
+	let thisAjax = new AjaxTemplate('/auth/add-rating');
+	thisAjax.data = {
+		rating: rating,
+		comment: comment,
+		request: request,
+		user: user,
+		iam: iam
+	}
+	thisAjax.success = function() {
+			triggerElement.parents('.request-container').html('<div class="alert-banner">Thank you. Your rating has been saved</div>').delay(5000).fadeOut(1000);
+	    };
+	$.ajax (thisAjax);
+}
+
+function getProfileRatings () {
+	let thisAjax = new AjaxTemplate('/auth/get-user-ratings');
+	thisAjax.success = function(ratings) {
+			displayRatings(ratings);
+	    };
+	$.ajax (thisAjax);
+}
+
+function displayRatings (ratings) {
+	$('.now-loading').hide();
+	$('#title-profile-section').text('Your ratings');
+	ratings.forEach(rating => {
+		$('#profile-container').append(
+			'<div class="request-container">' + 
+			'From: ' + rating.from.username + '<br>' +
+			'Rating: ' + rating.rating + '<br>' +
+			'Service: ' + rating.request.title + '<br>' +
+			'Comment: ' + rating.comment +
+			'</div>'
+
+		);
+	});
+}
 
 function displayRateForm (triggerElement) {
 	if (triggerElement.val() === 'none') {
 		triggerElement.parents('.request-container').children('.rate-form').html('');
 	} else {
 		let ratings = '';
-		for (let i = 0; i<5; i += 0.5) {
+		for (let i = 0; i<=5; i += 0.5) {
 			ratings += '</option><option value="' + i + '">' + i + '</option>'
 		}
 		triggerElement.parents('.request-container').children('.rate-form').html(
 			'Please rate your interaction with ' + triggerElement.find('option:selected').text() +
-			'<form class="rate-user">' +
+			'<form data-iam="author" data-user="' + triggerElement.find('option:selected').val() + '" class="rate-user">' +
 			'<select class="select-rating-number" name="select-rating-number" required>' +
 			'<option value="">Rating</option>' + ratings +
 			'</select>' + ' / 5' + '<br>' +
@@ -149,11 +189,11 @@ function getWhoHelped (triggerElement, requestId) {
 	$.ajax (thisAjax);
 }
 
-getUrlParam = function(name){
-	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-	if (results==null){
+const getUrlParam = function(name){
+	const results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	if (results==null) {
 		return null;
-	}else{
+	} else {
 		return results[1] || 0;
 	}	
 }
@@ -244,20 +284,39 @@ function clickAcceptHelpProfile (button) {
 
 function getProfileServices() {
 	let thisAjax = new AjaxTemplate('/auth/get-profile-services/');
-	thisAjax.success = function(requests) {
+	thisAjax.success = function(response) {
 			$('.now-loading').hide();
-			$('#title-profile-section').text(requests.length > 0 ? 'Your services:' : 'No service proposed yet');
-			requests.forEach(function (request) {
-				$('#profile-container').append(returnIndividualServiceProfile(request));
+			$('#title-profile-section').text(response.requests.length > 0 ? 'Your services:' : 'No service proposed yet');
+			response.requests.forEach(function (request) {
+				if (request.status !== 'deleted' && (request.status !== 'closed' || request.helper === response.currentUser._id)) {
+					$('#profile-container').append(returnIndividualServiceProfile(request, response.currentUser));
+				}
 			});
 	    };
 	$.ajax (thisAjax);
 }
 
-function returnIndividualServiceProfile(request) {
+function returnIndividualServiceProfile(request, currentUser) {
+	let option = '';
+	if (request.helper && request.helper === currentUser._id) {
+		let ratings = '';
+		for (let i = 0; i<=5; i += 0.5) {
+			ratings += '</option><option value="' + i + '">' + i + '</option>'
+		}
+		option = 'You have provided a service to this user, please rate your interaction.' +
+			'<form data-iam="helper" data-user="' + request.author + '" class="rate-user">' +
+			'<select class="select-rating-number" name="select-rating-number" required>' +
+			'<option value="">Rating</option>' + ratings +
+			'</select>' + ' / 5' + '<br>' +
+    		'<textarea class="ratetext" name="rating-comment" cols="40" rows="5" placeholder="Leave a comment to explain your rating"></textarea><br>' +
+    		'<input class="button" type="submit" value="Submit">' +
+			'</form>'
+	} else {
+		option = '<div data-id="' + request._id + '" class="button button-revokehelp">Revoke help</div>';
+	}
 	return '<div class="request-container" data-id="' + request._id + '">' +
 				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
-				'<div data-id="' + request._id + '" class="button button-revokehelp">Revoke help</div>' +
+				option +
 			'</div>';
 }
 
@@ -291,7 +350,9 @@ function getProfileRequests() {
 			$('.now-loading').hide();
 			$('#title-profile-section').text(requests.length > 0 ? 'Your requests:' : 'No request posted yet');			
 			requests.forEach(function (request) {
-				$('#profile-container').append(returnIndividualProfileRequest(request));
+				if (request.status !== 'closed') {
+					$('#profile-container').append(returnIndividualProfileRequest(request));
+				}
 			});
 	    };
 	$.ajax (thisAjax);
