@@ -66,6 +66,7 @@ router.get('/update-display/:id', (req, res) => {
     return Request
         .findById(req.params.id)
         .populate('author')
+        .populate('accepted')
         .then(request => res.json({result: request, user: req.user}))
         .catch(err => {
             console.error(err);

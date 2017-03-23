@@ -1,7 +1,7 @@
-function AjaxTemplate () {
+function AjaxTemplate (url) {
     this.async = true,
     this.crossDomain = false,
-    this.url = '',
+    this.url = url,
     this.method = 'GET',
     this.headers = {},
     this.data = {},
@@ -18,8 +18,8 @@ $(function() {
 	$.ajaxSetup({ cache: false });
 	$( "#datepicker" ).datetimepicker();
 	$( document ).tooltip();
-	$('.alert-banner').delay(5000).slideUp( 300 );
-	$('.error-banner').delay(10000).slideUp( 300 );
+	$('.alert-banner').delay(5000).slideUp(300);
+	$('.error-banner').delay(10000).slideUp(300);
 	$('.now-loading').hide();
 
 	// TAB SELECTION
@@ -80,6 +80,15 @@ $(function() {
 		$(this).removeClass('button-accept').text('Please wait');
     	clickAcceptHelpProfile($(this));
     });
+    $('.profile-body').on('click', '.close-request', function() {
+		$(this).parent('.request-container').append(getWhoHelped($(this)));
+		$(this).hide();
+    });
+    $('.profile-body').on('change', '.select-to-rate', function() {
+		console.log($(this).val());
+		console.log($(this).parents('.request-container').data('id'));
+		displayRateForm($(this));
+    });
     $('.profile-body').on('click', '.conversation-container-list', function() {
     	getConversation($(this).data('id'));
     });
@@ -87,7 +96,58 @@ $(function() {
     	e.preventDefault();
     	postNewMessage($('#message-textarea').val().replace(/&/g, '&amp;').replace(/</g, '&lt;'), $('#form-send-message').data('id'), $('#form-send-message').data('other'));
     });
+    $('.profile-body').on('submit', '.rate-user', function(e) {
+    	e.preventDefault();
+    	console.log($(this).find('option:selected').text());
+    	console.log($(this).children('.ratetext').val());
+    });
 });
+
+function displayRateForm (triggerElement) {
+	if (triggerElement.val() === 'none') {
+		triggerElement.parents('.request-container').children('.rate-form').html('');
+	} else {
+		let ratings = '';
+		for (let i = 0; i<5; i += 0.5) {
+			ratings += '</option><option value="' + i + '">' + i + '</option>'
+		}
+		triggerElement.parents('.request-container').children('.rate-form').html(
+			'Please rate your interaction with ' + triggerElement.find('option:selected').text() +
+			'<form class="rate-user">' +
+			'<select class="select-rating-number" name="select-rating-number" required>' +
+			'<option value="">Rating</option>' + ratings +
+			'</select>' + ' / 5' + '<br>' +
+    		'<textarea class="ratetext" name="rating-comment" cols="40" rows="5" placeholder="Leave a comment to explain your rating"></textarea><br>' +
+    		'<input class="button" type="submit" value="Submit">' +
+			'</form>'
+		);
+	}
+}
+
+function displayListHelpersRate (triggerElement, listAccepted) {
+	triggerElement.parent('.request-container').children('.who-helped').remove();
+	const accepted = listAccepted.result.accepted.map(accepted => {
+		return '<option data-username="' + accepted.username + '" value="' + accepted._id + '">' + accepted.username + '</option>'
+	});
+	triggerElement.parent('.request-container').append(
+		'<div class="who-helped">' +
+		'Who helped?' + 
+		'<select class="select-to-rate" name="accepted">' +
+		'<option value="none">No one</option>' +
+		accepted +
+		'</select>' +
+		'</div><div class="rate-form"></div>' +
+		'<div class="button button-no-rating">Close without rating</div>'
+		);
+}
+
+function getWhoHelped (triggerElement, requestId) {
+	let thisAjax = new AjaxTemplate('/request/update-display/' + triggerElement.data('id'));
+	thisAjax.success = function(listAccepted) {
+			displayListHelpersRate(triggerElement, listAccepted);
+	    };
+	$.ajax (thisAjax);
+}
 
 getUrlParam = function(name){
 	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
@@ -99,23 +159,21 @@ getUrlParam = function(name){
 }
 
 function postNewMessage (messageBody, convId, other) {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/auth/newmessage/' + convId;
+	let thisAjax = new AjaxTemplate('/auth/newmessage/' + convId);
 	thisAjax.data = {
 		messageBody : messageBody,
 		other: other
 	};
 	thisAjax.method = 'POST';
 	thisAjax.success = function(response) {
-			thisAjax.method = 'GET';
+			//thisAjax.method = 'GET';
 			getConversation(convId);
 	    };
 	$.ajax (thisAjax);
 }
 
 function getConversation (id) {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/auth/get-conversation/' + id;
+	let thisAjax = new AjaxTemplate('/auth/get-conversation/' + id);
 	thisAjax.success = function(response) {
 			$('.now-loading').hide();
 			const otherUser = response.conversation.users[0]._id === response.user._id ? response.conversation.users[1] : response.conversation.users[0];
@@ -130,7 +188,7 @@ function getConversation (id) {
 			    '<label for="messageBody">Send a message</label>' +
 			    '<br>' +
 			    '<textarea id="message-textarea" name="messageBody" cols="40" rows="5" placeholder="Send a message" required></textarea><br>' +
-    			'<input type="submit" value="Send">' +
+    			'<input class="button" type="submit" value="Send">' +
 				'</form>'
 				);
 	    };
@@ -146,8 +204,7 @@ function returnIndividualMessage (message, otherUser) {
 }
 
 function getListMessages () {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/auth/get-profile-messages/';
+	let thisAjax = new AjaxTemplate('/auth/get-profile-messages/');
 	thisAjax.success = function(response) {
 			$('.now-loading').hide();
 			$('#title-profile-section').text(response.conversations.length > 0 ? 'Your conversations:' : 'No conversation open yet');
@@ -174,8 +231,7 @@ function returnIndividualConvListProfile (conv, otherUser, currentuser) {
 }
 
 function clickAcceptHelpProfile (button) {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/request/accepthelp/';
+	let thisAjax = new AjaxTemplate('/request/accepthelp/');
 	thisAjax.data = {
 		request : button.data('id'),
 		helper : button.data('helper')
@@ -187,8 +243,7 @@ function clickAcceptHelpProfile (button) {
 }
 
 function getProfileServices() {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/auth/get-profile-services/';
+	let thisAjax = new AjaxTemplate('/auth/get-profile-services/');
 	thisAjax.success = function(requests) {
 			$('.now-loading').hide();
 			$('#title-profile-section').text(requests.length > 0 ? 'Your services:' : 'No service proposed yet');
@@ -207,8 +262,7 @@ function returnIndividualServiceProfile(request) {
 }
 
 function clickRevokHelp (button) {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/request/revokehelp/' + button.data('id');
+	let thisAjax = new AjaxTemplate('/request/revokehelp/' + button.data('id'));
 	thisAjax.success = function() { 
 			updateRequestDisplay(button);
 	    };
@@ -216,8 +270,7 @@ function clickRevokHelp (button) {
 }
 
 function clickRevokHelpProfile (button) {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/request/revokehelp/' + button.data('id');
+	let thisAjax = new AjaxTemplate('/request/revokehelp/' + button.data('id'));
 	thisAjax.success = function() { 
 			button.parent().remove();
 	    };
@@ -225,8 +278,7 @@ function clickRevokHelpProfile (button) {
 }
 
 function clickICanHelp (button) {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/request/proposehelp/' + button.data('id');
+	let thisAjax = new AjaxTemplate('/request/proposehelp/' + button.data('id'));
 	thisAjax.success = function() { 
 			updateRequestDisplay(button);
 	    };
@@ -234,8 +286,7 @@ function clickICanHelp (button) {
 }
 
 function getProfileRequests() {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/auth/get-profile-requests/';
+	let thisAjax = new AjaxTemplate('/auth/get-profile-requests/');
 	thisAjax.success = function(requests) {
 			$('.now-loading').hide();
 			$('#title-profile-section').text(requests.length > 0 ? 'Your requests:' : 'No request posted yet');			
@@ -263,7 +314,7 @@ function returnIndividualProfileRequest (request) {
 		listInterested += '<h5>No help proposed yet</h5>';	
 	}
 	const removeButton = request.status === 'deleted' ? '<p><a href="/request/remove/' + request._id + '">Remove</a></p>' : '';
-	const closeRequest = request.accepted.length > 0 ? '<br><a class="button close-request" href="">Close request</a>' : '';
+	const closeRequest = request.accepted.length > 0 ? '<br><div data-id="' + request._id + '" class="button close-request">Close request</div>' : '';
 	return '<div class="request-container" data-id="' + request._id + '">' +
 				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
 				removeButton +
@@ -273,8 +324,7 @@ function returnIndividualProfileRequest (request) {
 }
 
 function getProfileInfo() {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/auth/get-current-user/';
+	let thisAjax = new AjaxTemplate('/auth/get-current-user/');
 	thisAjax.success = function(user) {
 			$('.now-loading').hide();
 			$('#title-profile-section').text('User info');
@@ -287,8 +337,7 @@ function getProfileInfo() {
 }
 
 function updateRequestDisplay (triggerElement) {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/request/update-display/' + triggerElement.data('id');
+	let thisAjax = new AjaxTemplate('/request/update-display/' + triggerElement.data('id'));
 	thisAjax.success = function(request) { 
 	    	refreshRequest(triggerElement.parent().parent(), request.result, request.user);
 	    };
@@ -310,8 +359,7 @@ function expandDetails (button) {
 }
 
 function getList (listParams) {
-	let thisAjax = new AjaxTemplate();
-	thisAjax.url = '/request';
+	let thisAjax = new AjaxTemplate('/request');
 	thisAjax.success = function (ajaxResult) {
 	    	displayAllRequests(ajaxResult.results, ajaxResult.user);
 	    };

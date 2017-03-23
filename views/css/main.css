@@ -89,6 +89,11 @@ h1 {
 	padding: 10px;
 }
 
+input[type="submit"]{
+	border: 0px;
+	background-color: #417143;	
+}
+
 .button {
 	display: inline-block;
 	border-radius: 3px;
@@ -96,7 +101,9 @@ h1 {
 	background-color: #5B5B5B;
 	color: #DADADA;
 	cursor: pointer;
-	width: 150px;
+	min-width: 150px;
+	font-weight: normal;
+	margin: 5px;
 }
 
 .button-help {
