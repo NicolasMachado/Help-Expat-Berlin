@@ -485,7 +485,7 @@ function requestTemplate (request, user, open) {
 
 function displayAllRequests (results, user) {
 	results.forEach(function(request) {
-		if (request.status !== 'deleted') {
+		if (request.status !== 'deleted' && request.status !== 'closed') {
 			$('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, user) + '</div>');
 		}
 	});
