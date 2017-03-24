@@ -12,9 +12,25 @@ router.get('/new', ensureLoginNormal, (req, res) => {
 
 // AJAX SHOW ALL
 router.get('/', (req, res) => {
+    // filters
+    let filters = {
+        sort: {
+            datePosted: req.query.date
+        },
+        filter: {}
+    }
+
+    console.log(req.query);
+    // paid
+    if (req.query.paid === 'paid') {
+        filters.filter.price = { $gt: 0 };
+    } else if (req.query.paid === 'free') {
+        filters.filter.price = { $eq: null };
+    }
+
     return Request
-        .find()
-        .sort({datePosted: -1})
+        .find(filters.filter)
+        .sort(filters.sort)
         .populate('author')
         .then(reqs => res.send({results: reqs, user: req.user}))
         .catch(err => {
@@ -93,6 +109,17 @@ router.get('/revokehelp/:id', ensureLoginAjax, (req, res) => {
         });
 });
 
+// AJAX CLOSE REQUEST NO RATING
+router.get('/close-no-rating/:id', ensureLoginAjax, (req, res) => {
+    return Request
+        .findByIdAndUpdate(req.params.id, {status: `closed`})
+        .then(() => res.json({alertMessage: `Update successful`}))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'})
+        });
+});
+
 // DELETE REQUEST
 router.get('/delete/:id', ensureLoginNormal, (req, res) => {
     return Request
@@ -101,6 +128,10 @@ router.get('/delete/:id', ensureLoginNormal, (req, res) => {
             req.flash('alertMessage', 'Your request has been deleted.');
             res.redirect('/');
         })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'})
+        });
 });
 
 // REMOVE REQUEST

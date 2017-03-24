@@ -13,6 +13,10 @@ const UserSchema = mongoose.Schema({
     facebook: {
         id: {type: String},
         token: {type: String}
+    },
+    myfilters: {
+        dateorder: { type: Number },
+        paid: { type: Boolean }
     }
 });
 

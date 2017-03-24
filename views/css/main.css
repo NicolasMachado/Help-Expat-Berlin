@@ -154,3 +154,10 @@ input[type="submit"]{
 	max-width: 80%;
 	text-align: right;
 }
+
+#show-hide-filters {
+	background-color: #B8C2A7;
+	padding: 3px;
+	color: white;
+	cursor: pointer;
+}

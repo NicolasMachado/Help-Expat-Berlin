@@ -38,8 +38,14 @@ $(function() {
 	}
 
     if ($('.request-list').length !== 0) {
+		$('#filters').html(returnFilterForm());
+		toggleShowFilters();
     	getList();
     }
+
+    $('#show-hide-filters').click(function() {
+    	toggleShowFilters();
+    });
 
     // CLICKS
     $('.request-list').on('click', '.button-details', function() {
@@ -101,10 +107,37 @@ $(function() {
     	e.preventDefault();
     	saveRating($(this).find('option:selected').text(), $(this).children('.ratetext').val(), $(this).parents('.request-container').data('id'), $(this).data('user'), $(this), $(this).data('iam'));
     });
+    $('.profile-body').on('click', '.button-no-rating', function(e) {
+    	e.preventDefault();
+    	saveNoRating($(this).parents('.request-container').data('id'), $(this));
+    });
+    $('main').on('change', '#filters', function(e) {
+    	e.preventDefault();
+    	$('.request-list').empty();
+		getList();
+    });
 });
 
+function toggleShowFilters () {
+	if ($('#show-hide-filters').data('state') === 'open') {
+		$('#show-hide-filters').data('state', 'closed').html('Show filters');
+		$('#filters-form').hide();
+	} else {
+		$('#show-hide-filters').data('state', 'open').html('Hide filters');  
+		$('#filters-form').show(); 		
+	}
+}
+
+function saveNoRating (request, triggerElement) {
+	console.log(request);
+	let thisAjax = new AjaxTemplate('/request/close-no-rating/' + request );
+	thisAjax.success = function() {
+			triggerElement.parents('.request-container').html('<div class="alert-banner">Thank you. Your request has been closed.</div>').delay(5000).fadeOut(1000);
+	    };
+	$.ajax (thisAjax);
+}
+
 function saveRating (rating, comment, request, user, triggerElement, iam) {
-	console.log(iam);
 	let thisAjax = new AjaxTemplate('/auth/add-rating');
 	thisAjax.data = {
 		rating: rating,
@@ -248,6 +281,7 @@ function getListMessages () {
 	thisAjax.success = function(response) {
 			$('.now-loading').hide();
 			$('#title-profile-section').text(response.conversations.length > 0 ? 'Your conversations:' : 'No conversation open yet');
+			$('#profile-container').empty();
 			response.conversations.forEach(function (conv) {
 				let otherUser, currentuser;
 				if (conv.users[0]._id === response.user._id) {
@@ -287,6 +321,7 @@ function getProfileServices() {
 	thisAjax.success = function(response) {
 			$('.now-loading').hide();
 			$('#title-profile-section').text(response.requests.length > 0 ? 'Your services:' : 'No service proposed yet');
+			$('#profile-container').empty();
 			response.requests.forEach(function (request) {
 				if (request.status !== 'deleted' && (request.status !== 'closed' || request.helper === response.currentUser._id)) {
 					$('#profile-container').append(returnIndividualServiceProfile(request, response.currentUser));
@@ -311,8 +346,11 @@ function returnIndividualServiceProfile(request, currentUser) {
     		'<textarea class="ratetext" name="rating-comment" cols="40" rows="5" placeholder="Leave a comment to explain your rating"></textarea><br>' +
     		'<input class="button" type="submit" value="Submit">' +
 			'</form>'
+	} else if (_.contains(request.accepted, currentUser._id)) {
+		option = 'The user has accepted your help. You can now communicate with them in the messages section.'
 	} else {
-		option = '<div data-id="' + request._id + '" class="button button-revokehelp">Revoke help</div>';
+		option = 'The user has not accepted your help yet.<br>' +
+		'<div data-id="' + request._id + '" class="button button-revokehelp">Revoke help</div>';
 	}
 	return '<div class="request-container" data-id="' + request._id + '">' +
 				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
@@ -348,7 +386,8 @@ function getProfileRequests() {
 	let thisAjax = new AjaxTemplate('/auth/get-profile-requests/');
 	thisAjax.success = function(requests) {
 			$('.now-loading').hide();
-			$('#title-profile-section').text(requests.length > 0 ? 'Your requests:' : 'No request posted yet');			
+			$('#title-profile-section').text(requests.length > 0 ? 'Your requests:' : 'No request posted yet');
+			$('#profile-container').empty();
 			requests.forEach(function (request) {
 				if (request.status !== 'closed') {
 					$('#profile-container').append(returnIndividualProfileRequest(request));
@@ -399,7 +438,7 @@ function getProfileInfo() {
 
 function updateRequestDisplay (triggerElement) {
 	let thisAjax = new AjaxTemplate('/request/update-display/' + triggerElement.data('id'));
-	thisAjax.success = function(request) { 
+	thisAjax.success = function(request) {
 	    	refreshRequest(triggerElement.parent().parent(), request.result, request.user);
 	    };
 	$.ajax (thisAjax);
@@ -419,12 +458,30 @@ function expandDetails (button) {
 	}	
 }
 
+function returnFilterForm () {
+	return '<form id="filters-form">' +	
+		'<h4>Filters</h2>' +
+	    'Fee: <select name="paid"><option value="all">All</option><option value="paid">Paid</option><option value="free">Free</option></select>' +
+	    'Date: <select name="date"><option value="1">Asc</option><option value="-1">Desc</option></select>' +
+		'</form>'
+}
+
 function getList (listParams) {
-	let thisAjax = new AjaxTemplate('/request');
+	let thisAjax = new AjaxTemplate('/request?' + $('#filters-form').serialize());
+	console.log($('#filters-form').serialize());
 	thisAjax.success = function (ajaxResult) {
+			// load filters and display them
 	    	displayAllRequests(ajaxResult.results, ajaxResult.user);
 	    };
 	$.ajax (thisAjax);
+}
+
+function displayAllRequests (results, user) {
+	results.forEach(function(request) {
+		if (request.status !== 'deleted' && request.status !== 'closed') {
+			$('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, user) + '</div>');
+		}
+	});
 }
 
 function displayDate (date) {
@@ -481,12 +538,4 @@ function requestTemplate (request, user, open) {
 				helpbutton +
 			'</div>' +
 			'<div data-state="' + openOrclosed.buttonState + '" data-id="' + request._id + '" class="button button-details">' + openOrclosed.buttonText + '</div>'
-}
-
-function displayAllRequests (results, user) {
-	results.forEach(function(request) {
-		if (request.status !== 'deleted' && request.status !== 'closed') {
-			$('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, user) + '</div>');
-		}
-	});
 }
