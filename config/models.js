@@ -15,8 +15,13 @@ const UserSchema = mongoose.Schema({
         token: {type: String}
     },
     myfilters: {
-        dateorder: { type: Number },
-        paid: { type: Boolean }
+        sort: {
+            datePosted: { type: Number }
+        },
+        filter: {
+            price: { type: String },
+            type: { type: String }
+        }
     }
 });
 

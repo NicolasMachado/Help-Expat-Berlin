@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const {Request, User, Conversation} = require('../config/models');
 const router = express.Router();
-const {ensureLoginAjax, ensureLoginNormal} = require('../utils');
+const {ensureLoginAjax, ensureLoginNormal, saveFilters} = require('../utils');
 router.use(express.static('./views'));
 
 // NEW REQUEST SCREEN
@@ -11,27 +11,12 @@ router.get('/new', ensureLoginNormal, (req, res) => {
 });
 
 // AJAX SHOW ALL
-router.get('/', (req, res) => {
-    // filters
-    let filters = {
-        sort: {
-            datePosted: req.query.date
-        },
-        filter: {}
-    }
-
-    console.log(req.query);
-    // paid
-    if (req.query.paid === 'paid') {
-        filters.filter.price = { $gt: 0 };
-    } else if (req.query.paid === 'free') {
-        filters.filter.price = { $eq: null };
-    }
-
+router.get('/', saveFilters, (req, res) => {
     return Request
-        .find(filters.filter)
-        .sort(filters.sort)
+        .find()
         .populate('author')
+        .where(req.filters.filter)
+        .sort(req.filters.sort)
         .then(reqs => res.send({results: reqs, user: req.user}))
         .catch(err => {
             console.error(err);

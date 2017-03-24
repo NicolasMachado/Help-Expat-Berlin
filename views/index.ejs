@@ -1,5 +1,34 @@
 <% include head %>
-<div id="filters"></div>
+<% const loggedin = user ? "true" : "false"; %>
+<div id="filters" data-loggedin='<%= loggedin %>'>
+
+<% 
+	const userPrice = user ? user.myfilters.filter.price : "";
+	const userDate = user ? user.myfilters.sort.datePosted : "";
+	const userType = user ? user.myfilters.filter.type : "";
+ %>
+
+	<form id="filters-form">
+		<h4>Filters</h4>
+	    Fee: <select name="paid">
+		    <option value="all" <% if (userPrice === 'all') { %> selected <% } %> >Any</option>
+		    <option value="paid" <% if (userPrice === 'paid') { %> selected <% } %> >Paid</option>
+		    <option value="free" <% if (userPrice === 'free') { %> selected <% } %> >Free</option>
+	    </select>
+	    Order by: <select name="date">
+		    <option value="-1" <% if (userDate === -1) { %> selected <% } %> >Newest</option>
+		    <option value="1" <% if (userDate === 1) { %> selected <% } %> >Oldest</option>
+	    </select>
+	    Type: <select name="type">
+		    <option value="all" <% if (userType === 'all') { %> selected <% } %> >Any</option>
+		    <option value="On site Assistance" <% if (userType === 'On site Assistance') { %> selected <% } %> >On site Assistance</option>
+		    <option value="Translation" <% if (userType === 'Translation') { %> selected <% } %> >Translation</option>
+		    <option value="Phone Call" <% if (userType === 'Phone Call') { %> selected <% } %> >Phone Call</option>
+		    <option value="Other" <% if (userType === 'Other') { %> selected <% } %> >Other</option>
+	    </select>
+	</form>
+
+</div>
 <div data-state="closed" id="show-hide-filters">Hide filters</div>
 <div class="request-list"></div>
 

@@ -1,3 +1,5 @@
+const {User} = require('./config/models');
+
 const checkLogin = (req, res, next) => {
     res.locals.user = req.user || false; // check if authenticated
     const alertMessage = req.flash('alertMessage');
@@ -23,4 +25,42 @@ const ensureLoginNormal = (req, res, next) => {
     } 
 }
 
-module.exports = {ensureLoginAjax, ensureLoginNormal, checkLogin};
+const saveFilters = (req, res, next) => {
+    let filters = { sort: {}, filter: {} };
+    filters.sort.datePosted = req.query.date;
+    if (req.query.type !== 'all') {
+        filters.filter.type = req.query.type;
+    }
+    
+    // paid
+    if (req.query.paid === 'paid') {
+        filters.filter.price = { $gt: 0 };
+    } else if (req.query.paid === 'free') {
+        filters.filter.price = { $eq: null };
+    }
+
+    if (req.isAuthenticated()) {
+        return User
+        .findByIdAndUpdate(req.user._id, { 
+            myfilters: { 
+                sort: {
+                    datePosted: req.query.date
+                }, 
+                filter: {
+                    price: req.query.paid,
+                    type: req.query.type
+                } 
+            }
+        })
+        .then(() => {
+            req.filters = filters;
+            next();
+        })
+        .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
+    } else {
+        req.filters = filters;
+        next();
+    }
+}
+
+module.exports = {ensureLoginAjax, ensureLoginNormal, checkLogin, saveFilters};

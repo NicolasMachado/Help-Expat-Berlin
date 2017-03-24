@@ -38,9 +38,13 @@ $(function() {
 	}
 
     if ($('.request-list').length !== 0) {
-		$('#filters').html(returnFilterForm());
-		toggleShowFilters();
-    	getList();
+    	if ($('#filters').data('loggedin')) {
+			toggleShowFilters();
+	    	getList();
+		} else {
+			toggleShowFilters();
+	    	getList();		
+		}
     }
 
     $('#show-hide-filters').click(function() {
@@ -114,7 +118,7 @@ $(function() {
     $('main').on('change', '#filters', function(e) {
     	e.preventDefault();
     	$('.request-list').empty();
-		getList();
+    	getList();
     });
 });
 
@@ -129,7 +133,6 @@ function toggleShowFilters () {
 }
 
 function saveNoRating (request, triggerElement) {
-	console.log(request);
 	let thisAjax = new AjaxTemplate('/request/close-no-rating/' + request );
 	thisAjax.success = function() {
 			triggerElement.parents('.request-container').html('<div class="alert-banner">Thank you. Your request has been closed.</div>').delay(5000).fadeOut(1000);
@@ -458,19 +461,9 @@ function expandDetails (button) {
 	}	
 }
 
-function returnFilterForm () {
-	return '<form id="filters-form">' +	
-		'<h4>Filters</h2>' +
-	    'Fee: <select name="paid"><option value="all">All</option><option value="paid">Paid</option><option value="free">Free</option></select>' +
-	    'Date: <select name="date"><option value="1">Asc</option><option value="-1">Desc</option></select>' +
-		'</form>'
-}
-
-function getList (listParams) {
+function getList () {
 	let thisAjax = new AjaxTemplate('/request?' + $('#filters-form').serialize());
-	console.log($('#filters-form').serialize());
 	thisAjax.success = function (ajaxResult) {
-			// load filters and display them
 	    	displayAllRequests(ajaxResult.results, ajaxResult.user);
 	    };
 	$.ajax (thisAjax);

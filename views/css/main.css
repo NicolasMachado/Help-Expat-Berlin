@@ -161,3 +161,16 @@ input[type="submit"]{
 	color: white;
 	cursor: pointer;
 }
+
+form {
+	background-color: #DBEDC4;
+	padding: 10px;
+}
+
+select, input, textarea {
+	border: 1px solid;
+	border-color: #ADC091;
+	padding: 2px;
+	border-radius: 2px;
+	background-color: #EFF4EB;
+}
