@@ -15,6 +15,10 @@ header {
     position: fixed;
     width: 100%;
     top: 0px;
+    background-image: url("/images/berlin.png");
+    background-repeat: no-repeat;
+  	background-size: cover;
+  	background-position: center;
 }
 
 .header-push {
@@ -163,14 +167,20 @@ input[type="submit"]{
 }
 
 form {
-	background-color: #DBEDC4;
+	background-color: #EDF4DA;
 	padding: 10px;
+	margin: 5px 0 5px 0;
+	border-radius: 10px;
 }
 
 select, input, textarea {
 	border: 1px solid;
 	border-color: #ADC091;
-	padding: 2px;
-	border-radius: 2px;
+	padding: 2px 5px 2px 5px;
+	border-radius: 4px;
 	background-color: #EFF4EB;
+}
+
+#filters-form {
+	background-color: #E6EEE0;
 }

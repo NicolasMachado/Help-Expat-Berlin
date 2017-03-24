@@ -10,16 +10,19 @@
 
 	<form id="filters-form">
 		<h4>Filters</h4>
-	    Fee: <select name="paid">
+	    <label for="paid">Requested fee</label>
+	    <select name="paid">
 		    <option value="all" <% if (userPrice === 'all') { %> selected <% } %> >Any</option>
 		    <option value="paid" <% if (userPrice === 'paid') { %> selected <% } %> >Paid</option>
 		    <option value="free" <% if (userPrice === 'free') { %> selected <% } %> >Free</option>
 	    </select>
-	    Order by: <select name="date">
+	    <label for="date">Order by</label>
+	    <select name="date">
 		    <option value="-1" <% if (userDate === -1) { %> selected <% } %> >Newest</option>
 		    <option value="1" <% if (userDate === 1) { %> selected <% } %> >Oldest</option>
 	    </select>
-	    Type: <select name="type">
+	    <label for="type">Type</label>
+	    <select name="type">
 		    <option value="all" <% if (userType === 'all') { %> selected <% } %> >Any</option>
 		    <option value="On site Assistance" <% if (userType === 'On site Assistance') { %> selected <% } %> >On site Assistance</option>
 		    <option value="Translation" <% if (userType === 'Translation') { %> selected <% } %> >Translation</option>
