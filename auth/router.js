@@ -209,6 +209,7 @@ router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
 router.get('/add-rating', ensureLoginAjax, (req, res) => {
     const helper = req.query.iam === 'author' ? req.query.user : null;
     let avgRating, nbRatings, sumRatings;
+    console.log(req.query);
     return Rating
         .create({
             rating: req.query.rating,

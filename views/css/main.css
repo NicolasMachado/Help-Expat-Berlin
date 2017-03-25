@@ -47,7 +47,7 @@ a {
 
 nav {
 	text-align: center;
-	background-color: #565656;
+	background-color: #404040;
 }
 
 nav a {
@@ -58,7 +58,7 @@ nav a {
 }
 
 nav a:hover {
-	background-color: #666;
+	background-color: #292929;
 }
 
 h1 {
@@ -222,9 +222,18 @@ input[type="number"] {
 }
 
 textarea {
-	width: 300px;
-	max-width: 500px;
-	min-width: 200px;
+	width: 90%;
+	max-width: 400px;
+	resize: vertical;
+}
+
+.comment {
+	background-color: #DFECD4;
+    font-style: italic;
+    padding: 10px;
+	max-width: 400px;
+	border-radius: 5px;
+	margin: 0 auto 0 auto;
 }
 
 .small {

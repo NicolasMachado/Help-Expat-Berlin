@@ -169,10 +169,9 @@ function displayRatings (ratings) {
 	ratings.forEach(rating => {
 		$('#profile-container').append(
 			'<div class="request-container">' + 
-				'<p>From: ' + rating.from.username + '</p>' +
-				'<p>Rating: ' + rating.rating + '</p>' +
-				'<p>Service: ' + rating.request.title + '</p>' +
-				'<p>Comment: ' + rating.comment + '</p>' +
+				'<p small>Request: <b>' + rating.request.title + '</b></p>' +
+				'<p>Rated ' + displayStars(rating.rating, 15) + ' by ' + rating.from.username + '</p>' +
+				'<p class="comment">' + rating.comment.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
 			'</div>'
 
 		);
@@ -188,13 +187,13 @@ function displayRateForm (triggerElement) {
 			ratings += '</option><option value="' + i + '">' + i + '</option>'
 		}
 		triggerElement.parents('.request-container').children('.rate-form').html(
-			'<p>Please rate your interaction with ' + triggerElement.find('option:selected').text() + '</p>' +
+			'Please rate your interaction with ' + triggerElement.find('option:selected').text() +
 			'<form data-iam="author" data-user="' + triggerElement.find('option:selected').val() + '" class="rate-user">' +
 			'<p><select class="select-rating-number" name="select-rating-number" required>' +
 			'<option value="">Rating</option>' + ratings +
 			'</select>' + ' / 5' + '</p>' +
-    		'<p><textarea class="ratetext" name="rating-comment" cols="40" rows="5" placeholder="Leave a comment to explain your rating"></textarea></p>' +
-    		'<input class="button" type="submit" value="Submit">' +
+    		'<textarea class="ratetext" name="rating-comment" rows="5" placeholder="Leave a comment to explain your rating"></textarea>' +
+    		'<p><input class="button" type="submit" value="Submit"></p>' +
 			'</form>'
 		);
 	}
@@ -262,8 +261,8 @@ function getConversation (id) {
 				'<form id="form-send-message" method="post" data-other="' + otherUser._id + '" data-id="' + response.conversation._id + '">' +
 				'<input name="other" value="' + otherUser._id + '" hidden>' +
 			    '<p><label for="messageBody">Send a message</label></p>' +
-			    '<p><textarea id="message-textarea" name="messageBody" cols="40" rows="5" placeholder="Send a message" required></textarea></p>' +
-    			'<input class="button" type="submit" value="Send">' +
+			    '<textarea id="message-textarea" name="messageBody" rows="5" placeholder="Send a message" required></textarea>' +
+    			'<p><input class="button" type="submit" value="Send"></p>' +
 				'</form>'
 				);
 	    };
@@ -273,7 +272,7 @@ function getConversation (id) {
 function returnIndividualMessage (message, otherUser) {
 	const messageClass = message.from._id === otherUser._id ? 'message-other' : 'message-mine';
 	return '<div class="message-container ' + messageClass + '" data-id="' + message._id + '">' +
-			message.body + '</br>'
+			message.body.replace(/\r?\n/g, '<br />') + '</br>'
 			message.date +
 			'</div>';	
 }
@@ -341,12 +340,12 @@ function returnIndividualServiceProfile(request, currentUser) {
 			ratings += '</option><option value="' + i + '">' + i + '</option>'
 		}
 		option = 'You have provided a service to this user, please rate your interaction.' +
-			'<form data-iam="helper" data-user="' + request.author + '" class="rate-user">' +
+			'<form data-iam="helper" data-user="' + request.author._id + '" class="rate-user">' +
 			'<p><select class="select-rating-number" name="select-rating-number" required>' +
 			'<option value="">Rating</option>' + ratings +
 			'</select> / 5</p>' +
-    		'<p><textarea class="ratetext" name="rating-comment" cols="40" rows="5" placeholder="Leave a comment to explain your rating"></textarea></p>' +
-    		'<input class="button" type="submit" value="Submit">' +
+    		'<textarea class="ratetext" name="rating-comment" rows="5" placeholder="Leave a comment to explain your rating"></textarea>' +
+    		'<p><input class="button" type="submit" value="Submit"></p>' +
 			'</form>'
 	} else if (_.contains(request.accepted, currentUser._id)) {
 		option = request.author.username + ' has accepted your help.<br>You can now communicate with them in the <a href="./' + currentUser._id + '?tab=messages">messages</a> section.'
@@ -355,7 +354,7 @@ function returnIndividualServiceProfile(request, currentUser) {
 		'<p data-id="' + request._id + '" class="button button-revokehelp">Revoke help</p>';
 	}
 	return '<div class="request-container" data-id="' + request._id + '">' +
-				'<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</b></p>' +
+				'<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</b></p>' +
 				option +
 			'</div>';
 }
@@ -418,7 +417,7 @@ function returnIndividualProfileRequest (request) {
 	const removeButton = request.status === 'deleted' ? '<p><a href="/request/remove/' + request._id + '">Remove</a></p>' : '';
 	const closeRequest = request.accepted.length > 0 ? '<div data-id="' + request._id + '" class="button close-request">Close request</div>' : '';
 	return '<div class="request-container" data-id="' + request._id + '">' +
-				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
+				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
 				removeButton +
 				listInterested +
 				'<p>' + closeRequest + '</p>' +
@@ -548,7 +547,7 @@ function requestTemplate (request, user, open) {
 			'<div class="request-details" data-id="' + request._id + '" ' + openOrclosed.classDetails + '>' +
 				'<p class="no-lb small">When: ' + dateEvent + '</p>' +
 				'<p>Requested fee: ' + price + rate + '</p>' +
-				'<p>' + request.description.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
+				'<p>' + request.description.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
 				helpbutton +
 			'</div>' +
 			'<div data-state="' + openOrclosed.buttonState + '" data-id="' + request._id + '" class="button button-details">' + openOrclosed.buttonText + '</div>'
