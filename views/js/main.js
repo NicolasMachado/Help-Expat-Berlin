@@ -90,7 +90,7 @@ $(function() {
     	clickRevokHelpProfile($(this));
     });
     $('.profile-body').on('click', '.button-accept', function() {
-		$(this).removeClass('button-accept').text('Please wait');
+		$(this).removeClass('button-accept').removeClass('fakelink').text('Please wait');
     	clickAcceptHelpProfile($(this));
     });
     $('.profile-body').on('click', '.close-request', function() {
@@ -169,10 +169,10 @@ function displayRatings (ratings) {
 	ratings.forEach(rating => {
 		$('#profile-container').append(
 			'<div class="request-container">' + 
-			'From: ' + rating.from.username + '<br>' +
-			'Rating: ' + rating.rating + '<br>' +
-			'Service: ' + rating.request.title + '<br>' +
-			'Comment: ' + rating.comment +
+				'<p>From: ' + rating.from.username + '</p>' +
+				'<p>Rating: ' + rating.rating + '</p>' +
+				'<p>Service: ' + rating.request.title + '</p>' +
+				'<p>Comment: ' + rating.comment + '</p>' +
 			'</div>'
 
 		);
@@ -188,12 +188,12 @@ function displayRateForm (triggerElement) {
 			ratings += '</option><option value="' + i + '">' + i + '</option>'
 		}
 		triggerElement.parents('.request-container').children('.rate-form').html(
-			'Please rate your interaction with ' + triggerElement.find('option:selected').text() +
+			'<p>Please rate your interaction with ' + triggerElement.find('option:selected').text() + '</p>' +
 			'<form data-iam="author" data-user="' + triggerElement.find('option:selected').val() + '" class="rate-user">' +
-			'<select class="select-rating-number" name="select-rating-number" required>' +
+			'<p><select class="select-rating-number" name="select-rating-number" required>' +
 			'<option value="">Rating</option>' + ratings +
-			'</select>' + ' / 5' + '<br>' +
-    		'<textarea class="ratetext" name="rating-comment" cols="40" rows="5" placeholder="Leave a comment to explain your rating"></textarea><br>' +
+			'</select>' + ' / 5' + '</p>' +
+    		'<p><textarea class="ratetext" name="rating-comment" cols="40" rows="5" placeholder="Leave a comment to explain your rating"></textarea></p>' +
     		'<input class="button" type="submit" value="Submit">' +
 			'</form>'
 		);
@@ -207,11 +207,11 @@ function displayListHelpersRate (triggerElement, listAccepted) {
 	});
 	triggerElement.parent('.request-container').append(
 		'<div class="who-helped">' +
-		'Who helped?' + 
-		'<select class="select-to-rate" name="accepted">' +
+		'<p>Who helped?</p>' + 
+		'<p><select class="select-to-rate" name="accepted">' +
 		'<option value="none">No one</option>' +
 		accepted +
-		'</select>' +
+		'</select></p>' +
 		'</div><div class="rate-form"></div>' +
 		'<div class="button button-no-rating">Close without rating</div>'
 		);
@@ -253,7 +253,7 @@ function getConversation (id) {
 	thisAjax.success = function(response) {
 			$('.now-loading').hide();
 			const otherUser = response.conversation.users[0]._id === response.user._id ? response.conversation.users[1] : response.conversation.users[0];
-			$('#title-profile-section').html(response.conversation.messages.length > 0 ? otherUser.username + '' : otherUser.username + '<br>No message yet');
+			$('#title-profile-section').html(response.conversation.messages.length > 0 ? otherUser.username + '' : otherUser.username + '<p>No message yet<p>');
 			$('#profile-container').empty().append('<div class="conv-container"></div>');
 			response.conversation.messages.forEach(function (message) {
 				$('.conv-container').append(returnIndividualMessage(message, otherUser));
@@ -261,9 +261,8 @@ function getConversation (id) {
 			$('.conv-container').append(
 				'<form id="form-send-message" method="post" data-other="' + otherUser._id + '" data-id="' + response.conversation._id + '">' +
 				'<input name="other" value="' + otherUser._id + '" hidden>' +
-			    '<label for="messageBody">Send a message</label>' +
-			    '<br>' +
-			    '<textarea id="message-textarea" name="messageBody" cols="40" rows="5" placeholder="Send a message" required></textarea><br>' +
+			    '<p><label for="messageBody">Send a message</label></p>' +
+			    '<p><textarea id="message-textarea" name="messageBody" cols="40" rows="5" placeholder="Send a message" required></textarea></p>' +
     			'<input class="button" type="submit" value="Send">' +
 				'</form>'
 				);
@@ -343,20 +342,20 @@ function returnIndividualServiceProfile(request, currentUser) {
 		}
 		option = 'You have provided a service to this user, please rate your interaction.' +
 			'<form data-iam="helper" data-user="' + request.author + '" class="rate-user">' +
-			'<select class="select-rating-number" name="select-rating-number" required>' +
+			'<p><select class="select-rating-number" name="select-rating-number" required>' +
 			'<option value="">Rating</option>' + ratings +
-			'</select>' + ' / 5' + '<br>' +
-    		'<textarea class="ratetext" name="rating-comment" cols="40" rows="5" placeholder="Leave a comment to explain your rating"></textarea><br>' +
+			'</select> / 5</p>' +
+    		'<p><textarea class="ratetext" name="rating-comment" cols="40" rows="5" placeholder="Leave a comment to explain your rating"></textarea></p>' +
     		'<input class="button" type="submit" value="Submit">' +
 			'</form>'
 	} else if (_.contains(request.accepted, currentUser._id)) {
-		option = 'The user has accepted your help. You can now communicate with them in the messages section.'
+		option = request.author.username + ' has accepted your help.<br>You can now communicate with them in the <a href="./' + currentUser._id + '?tab=messages">messages</a> section.'
 	} else {
-		option = 'The user has not accepted your help yet.<br>' +
-		'<div data-id="' + request._id + '" class="button button-revokehelp">Revoke help</div>';
+		option = '<p>' + request.author.username + ' has not accepted your help yet.</p>' +
+		'<p data-id="' + request._id + '" class="button button-revokehelp">Revoke help</p>';
 	}
 	return '<div class="request-container" data-id="' + request._id + '">' +
-				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
+				'<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</b></p>' +
 				option +
 			'</div>';
 }
@@ -407,22 +406,22 @@ function returnIndividualProfileRequest (request) {
 	if (request.interested.length > 0) {
 		listInterested += '<h5>The following users proposed their help:</h5>';
 		request.interested.forEach(function(interestedUser) {
-			const classButtonHelp = _.contains(request.accepted, interestedUser._id) ? {class: '', text: 'Accepted'} : {class: 'button-accept', text: 'Accept'};
+			const classButtonHelp = _.contains(request.accepted, interestedUser._id) ? {class: '', text: 'You can now send messaged to this user'} : {class: 'fakelink button-accept', text: 'Accept'};
 			listInterested += '<div class="interested-container">' +
 			'<a href="/auth/profile/' + interestedUser._id + '">' + interestedUser.username + '</a> - ' +
-			'<div data-helper="' + interestedUser._id + '" data-id="' + request._id + '" class="button ' + classButtonHelp.class + '">' + classButtonHelp.text + '</div>' +
+			'<span data-helper="' + interestedUser._id + '" data-id="' + request._id + '" class="' + classButtonHelp.class + '">' + classButtonHelp.text + '</span>' +
 			'</div>'
 		});
 	} else {
 		listInterested += '<h5>No help proposed yet</h5>';	
 	}
 	const removeButton = request.status === 'deleted' ? '<p><a href="/request/remove/' + request._id + '">Remove</a></p>' : '';
-	const closeRequest = request.accepted.length > 0 ? '<br><div data-id="' + request._id + '" class="button close-request">Close request</div>' : '';
+	const closeRequest = request.accepted.length > 0 ? '<div data-id="' + request._id + '" class="button close-request">Close request</div>' : '';
 	return '<div class="request-container" data-id="' + request._id + '">' +
 				'<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
 				removeButton +
 				listInterested +
-				closeRequest +
+				'<p>' + closeRequest + '</p>' +
 			'</div>';
 }
 
@@ -490,12 +489,31 @@ function displayDate (date) {
 	return day + '/' + month + '/' + d.getFullYear() + ' at ' + hour + ':' + minute
 }
 
+function displayStars (rating, size) {
+	if (!rating) {
+		return '<span class="small">No rating yet</span>';
+	}
+	let htmlStars = '';
+	for (let i = 0; i < 5; i++ ) { 
+		if (rating > i+.75 ) { 
+			htmlStars += '<img src="/images/star-full.png" width="' + size + 'px">';
+		} else if (rating > i+.25 ) { 
+			htmlStars += '<img src="/images/star-half.png" width="' + size + 'px">';
+		} else {
+			htmlStars += '<img src="/images/star-empty.png" width="' + size + 'px">';
+		}
+	}
+	return htmlStars
+}
+
 function requestTemplate (request, user, open) {
 
 	var deleteButton = '', helpbutton = '';
 	if (user) {
 		const buttonHelpClass =  $.inArray( user._id, request.interested ) > -1 ? {class : 'button-revokehelp', text: 'Revoke help' } : {class : 'button-help', text : 'I can help!'};
 		helpbutton = '<div data-id="' + request._id + '" class="button ' + buttonHelpClass.class + '">' + buttonHelpClass.text + '</div>';
+	} else {
+		helpbutton = '<div data-id="' + request._id + '" class="button button-help">I can help!</div>';
 	}
 	if ((user) && (user._id === request.author._id)) {
 		deleteButton = '<a href="/request/delete/' + request._id + '">Delete</a>';
@@ -506,6 +524,7 @@ function requestTemplate (request, user, open) {
 	const dateEvent = displayDate(request.dateEvent) || 'Anytime';
 	const datePosted = displayDate(request.datePosted) || 'Unknown';
 	const rate = request.rate === 'perhour' ? '/hour' : '';
+	const nbPlural = request.author.nbRatings > 1 ? 's' : '';
 	const openOrclosed = open ? { 
 		classDetails : '', 
 		buttonText: 'Hide details',
@@ -516,18 +535,19 @@ function requestTemplate (request, user, open) {
 		buttonState: 'closed'
 	};
 	return '<div class="request-details-less">' +
-				'<b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</b><br>' +
-				'Author: ' + author + '<br>' +
-				'Interested: ' + request.interested.length + '<br>' +
-				'Type: ' + request.type + '<br>' +
-				'Posted: ' + datePosted + '<br>' +
+				'<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</b></p>' +
+				'<p class="no-lb">' + author + '</p>' +
+				'<p class="no-lb">' + displayStars(request.author.rating, 20) + '</p>' +
+				'<p class="no-lb small">(' + request.author.nbRatings + ' rating' + nbPlural + ')</p><p> </p>' +
+				'<p class="no-lb small">Posted: ' + datePosted + '</span></p>' +
+				'<p class="no-lb small">When: ' + dateEvent + '</span></p>' +
+				'<p>Interested: ' + request.interested.length + '</p>' +
+				'<p>Type: ' + request.type + '</p>' +
 				deleteButton +
 			'</div>' +
 			'<div class="request-details" data-id="' + request._id + '" ' + openOrclosed.classDetails + '>' +
-				'When: ' + dateEvent + '<br>' +
-				'Requested fee: ' + price + rate + '<br>' +
-				'Status: ' + request.status + '<br>' +
-				request.description.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '<br>' +
+				'<p>Requested fee: ' + price + rate + '</p>' +
+				'<p>' + request.description.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
 				helpbutton +
 			'</div>' +
 			'<div data-state="' + openOrclosed.buttonState + '" data-id="' + request._id + '" class="button button-details">' + openOrclosed.buttonText + '</div>'

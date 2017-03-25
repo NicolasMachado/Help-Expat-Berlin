@@ -3,7 +3,6 @@
 <form name="login-form" id="login-form" method="post" action="/request/new">
     <h2>Post a new request</h2>
     <label for="type">Type</label>
-    <br>
     <select name="type" required>
     	<option value="">---</option>
     	<option value="On site Assistance">On site Assistance</option>
@@ -11,32 +10,21 @@
     	<option value="Phone Call">Phone Call</option>
     	<option value="Other">Other</option>
     </select>
-    <br><br>
     <label for="title">Title</label>
-    <br>
-    <input class="title" type="text" name="title" required>
-    <br>
+    <input class="title" type="text" name="title"  maxlength="40" required>
     <label for="dateevent">Date</label>
-    <br>
     <input  class="date" id="datepicker" type="dateTime" name="dateevent">
-    <br>
     <label for="price">Price</label>
-    <br>
-    <input class="price" type="number" name="price">
-    <br>
+    <input class="price" type="number"  placeholder="€" size="10" name="price"> €
     <label for="rate">Rate</label>
-    <br>
     <select name="rate">
     	<option value="">---</option>
     	<option value="flat">flat</option>
     	<option value="perhour">per hour</option>
     </select>
-    <br>
     <label for="description">Description</label>
-    <br>
     <textarea name="description"  placeholder="Please provide a description of the service you are looking for" required></textarea>
-    <br><br>
-    <input class="button" type="submit" value="Submit">
+    <p><input class="button" type="submit" value="Submit"></p>
 </form>
 
 <% include footer %>

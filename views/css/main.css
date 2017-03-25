@@ -38,6 +38,13 @@ a {
     text-decoration: none;
 }
 
+.fakelink {
+	cursor: pointer;
+	color: #075F7C;
+	font-weight: bold;
+    text-decoration: none;	
+}
+
 nav {
 	text-align: center;
 	background-color: #565656;
@@ -57,6 +64,11 @@ nav a:hover {
 h1 {
 	padding: 30px;
 	margin: 0px;
+}
+
+.no-lb {
+	margin: 0;
+	padding: 0;
 }
 
 .error-banner {
@@ -110,10 +122,6 @@ input[type="submit"]{
 }
 
 .button-help {
-	background-color: #366933;
-}
-
-.button-accept {
 	background-color: #366933;
 }
 
@@ -185,12 +193,28 @@ form {
 	border-radius: 10px;
 }
 
+label {
+	display:block;
+	padding: 5px;
+}
+
 select, input, textarea {
 	border: 1px solid;
 	border-color: #ADC091;
 	padding: 2px 5px 2px 5px;
 	border-radius: 4px;
 	background-color: #EFF4EB;
+}
+
+/* Hack to remove number input arrows */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+	width: 50px;
 }
 
 #filters-form {
@@ -201,4 +225,8 @@ textarea {
 	width: 300px;
 	max-width: 500px;
 	min-width: 200px;
+}
+
+.small {
+	font-size: 13px;
 }

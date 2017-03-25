@@ -299,6 +299,7 @@ router.get('/get-profile-messages', ensureLoginAjax, (req, res) => {
 router.get('/get-profile-services', ensureLoginAjax, (req, res, next) => {
     Request
         .find({interested: req.user._id})
+        .populate('author')
         .then(requests => {
             res.json({requests: requests, currentUser: req.user});
         })

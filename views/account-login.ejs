@@ -2,13 +2,13 @@
 
 <form id="login-form" method="post" action="/auth/login">
     <h2>Login </h2>
-    <label for="email">Email</label><br>
-    <input class="username" type="text" name="email" required><br>
-    <label for="password">Password</label><br>
-    <input class="password" type="password" name="password" required><br>
-    <input class="button" type="submit" value="Log in">
-</form><br>
-<a href="/auth/facebook" class="fb_connect">Connect with Facebook</a><br><br>
-Don't have an account yet? <a href="/auth/account-create">Create a new account</a>.
+    <label for="email">Email</label>
+    <input type="email" name="email" required>
+    <label for="password">Password</label>
+    <input type="password" name="password" required>
+    <p><input class="button" type="submit" value="Log in"></p>
+</form>
+<p><a href="/auth/facebook" class="fb_connect">Connect with Facebook</a></p>
+<p>Don't have an account yet? <a href="/auth/account-create">Create a new account</a>.</p>
 
 <% include footer %>
