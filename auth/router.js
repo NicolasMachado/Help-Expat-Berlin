@@ -208,6 +208,7 @@ router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
 // AJAX SAVE NEW RATING FROM AUTHOR
 router.get('/add-rating', ensureLoginAjax, (req, res) => {
     const helper = req.query.iam === 'author' ? req.query.user : null;
+    let avgRating, nbRatings, sumRatings;
     return Rating
         .create({
             rating: req.query.rating,
@@ -215,6 +216,22 @@ router.get('/add-rating', ensureLoginAjax, (req, res) => {
             user: req.query.user,
             request: req.query.request,
             from: req.user._id
+        })
+        .then(() => {
+            return Rating
+                .find({user: req.query.user})
+                .then((ratings) => {
+                    const allRatings = ratings.map((rating) => {
+                        return rating.rating
+                    });
+                    nbRatings = allRatings.length;
+                    sumRatings = allRatings.reduce((a, b) => { return a + b; }, 0);
+                    avgRating = (sumRatings/nbRatings).toFixed(2);
+                })
+        })
+        .then(() => {
+            return User
+                .findByIdAndUpdate(req.query.user, { rating: avgRating, nbRatings: nbRatings })
         })
         .then(() => {
             return Request

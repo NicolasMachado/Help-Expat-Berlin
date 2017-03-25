@@ -16,7 +16,6 @@ header {
     width: 100%;
     top: 0px;
     background-image: url("/images/berlin.png");
-    background-repeat: no-repeat;
   	background-size: cover;
   	background-position: center;
 }
@@ -41,7 +40,7 @@ a {
 
 nav {
 	text-align: center;
-	background-color: #777;
+	background-color: #565656;
 }
 
 nav a {
@@ -122,6 +121,19 @@ input[type="submit"]{
 	background-color: #69333B;
 }
 
+.button-profile {
+	display: inline-block;
+	color: white;
+	width: 20%;
+	padding: 8px 0 8px 0;
+	background-color: #6F7469;
+	cursor: pointer;
+}
+
+.button-profile:hover {
+	background-color: #484C44;
+}
+
 .now-loading {
 	padding: 20px;
 }
@@ -183,4 +195,10 @@ select, input, textarea {
 
 #filters-form {
 	background-color: #E6EEE0;
+}
+
+textarea {
+	width: 300px;
+	max-width: 500px;
+	min-width: 200px;
 }
