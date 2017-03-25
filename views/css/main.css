@@ -113,8 +113,8 @@ input[type="submit"]{
 	display: inline-block;
 	border-radius: 3px;
 	padding: 10px;
-	background-color: #5B5B5B;
-	color: #DADADA;
+	background-color: #B8C2A7;
+	color: white;
 	cursor: pointer;
 	min-width: 150px;
 	font-weight: normal;
@@ -229,4 +229,17 @@ textarea {
 
 .small {
 	font-size: 13px;
+}
+
+.floatright {
+	float: right;
+}
+
+.floatleft {
+	float: left;
+}
+
+.inline-filter {
+	display: inline-block;
+	padding: 0 10px 0 10px;
 }

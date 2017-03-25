@@ -406,7 +406,7 @@ function returnIndividualProfileRequest (request) {
 	if (request.interested.length > 0) {
 		listInterested += '<h5>The following users proposed their help:</h5>';
 		request.interested.forEach(function(interestedUser) {
-			const classButtonHelp = _.contains(request.accepted, interestedUser._id) ? {class: '', text: 'You can now send messaged to this user'} : {class: 'fakelink button-accept', text: 'Accept'};
+			const classButtonHelp = _.contains(request.accepted, interestedUser._id) ? {class: '', text: 'You can now send messages to this user'} : {class: 'fakelink button-accept', text: 'Accept'};
 			listInterested += '<div class="interested-container">' +
 			'<a href="/auth/profile/' + interestedUser._id + '">' + interestedUser.username + '</a> - ' +
 			'<span data-helper="' + interestedUser._id + '" data-id="' + request._id + '" class="' + classButtonHelp.class + '">' + classButtonHelp.text + '</span>' +
@@ -469,10 +469,11 @@ function getList () {
 }
 
 function displayAllRequests (results, user) {
+	if (results.length <= 0) {
+		$('.request-list').html('<h3>No request found</h3>');
+	}
 	results.forEach(function(request) {
-		if (request.status !== 'deleted' && request.status !== 'closed') {
-			$('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, user) + '</div>');
-		}
+		$('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, user) + '</div>');
 	});
 }
 
@@ -525,6 +526,7 @@ function requestTemplate (request, user, open) {
 	const datePosted = displayDate(request.datePosted) || 'Unknown';
 	const rate = request.rate === 'perhour' ? '/hour' : '';
 	const nbPlural = request.author.nbRatings > 1 ? 's' : '';
+	const nbRatingString = request.author.nbRatings > 0 ? '<p class="no-lb small">(' + request.author.nbRatings + ' rating' + nbPlural + ')</p>' : '';
 	const openOrclosed = open ? { 
 		classDetails : '', 
 		buttonText: 'Hide details',
@@ -535,17 +537,16 @@ function requestTemplate (request, user, open) {
 		buttonState: 'closed'
 	};
 	return '<div class="request-details-less">' +
+				'<div class="no-lb small floatright">Posted: ' + datePosted + '</div>' +
 				'<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</b></p>' +
+				'<p class="small">' + request.type + ' - <b>' + request.interested.length + '</b> interested</p>' +
 				'<p class="no-lb">' + author + '</p>' +
 				'<p class="no-lb">' + displayStars(request.author.rating, 20) + '</p>' +
-				'<p class="no-lb small">(' + request.author.nbRatings + ' rating' + nbPlural + ')</p><p> </p>' +
-				'<p class="no-lb small">Posted: ' + datePosted + '</span></p>' +
-				'<p class="no-lb small">When: ' + dateEvent + '</span></p>' +
-				'<p>Interested: ' + request.interested.length + '</p>' +
-				'<p>Type: ' + request.type + '</p>' +
+				nbRatingString + '<p> </p>' +
 				deleteButton +
 			'</div>' +
 			'<div class="request-details" data-id="' + request._id + '" ' + openOrclosed.classDetails + '>' +
+				'<p class="no-lb small">When: ' + dateEvent + '</p>' +
 				'<p>Requested fee: ' + price + rate + '</p>' +
 				'<p>' + request.description.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</p>' +
 				helpbutton +

@@ -26,7 +26,9 @@ const ensureLoginNormal = (req, res, next) => {
 }
 
 const saveFilters = (req, res, next) => {
-    let filters = { sort: {}, filter: {} };
+    let filters = { sort: {}, filter: {
+        status: {$nin: ['deleted', 'closed']}
+    }};
     filters.sort.datePosted = req.query.date;
     if (req.query.type !== 'all') {
         filters.filter.type = req.query.type;

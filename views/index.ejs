@@ -9,18 +9,22 @@
  %>
 
 	<form id="filters-form">
-		<h4>Filters</h4>
+		<div class="inline-filter">
 	    <label for="paid">Fee</label>
 	    <select name="paid">
 		    <option value="all" <% if (userPrice === 'all') { %> selected <% } %> >Any</option>
 		    <option value="paid" <% if (userPrice === 'paid') { %> selected <% } %> >Paid</option>
 		    <option value="free" <% if (userPrice === 'free') { %> selected <% } %> >Free</option>
 	    </select>
+	    </div>
+		<div class="inline-filter">
 	    <label for="date">Order by</label>
 	    <select name="date">
 		    <option value="-1" <% if (userDate === -1) { %> selected <% } %> >Newest</option>
 		    <option value="1" <% if (userDate === 1) { %> selected <% } %> >Oldest</option>
 	    </select>
+	    </div>
+		<div class="inline-filter">
 	    <label for="type">Type</label>
 	    <select name="type">
 		    <option value="all" <% if (userType === 'all') { %> selected <% } %> >Any</option>
@@ -29,6 +33,7 @@
 		    <option value="Phone Call" <% if (userType === 'Phone Call') { %> selected <% } %> >Phone Call</option>
 		    <option value="Other" <% if (userType === 'Other') { %> selected <% } %> >Other</option>
 	    </select>
+	    </div>
 	</form>
 
 </div>
