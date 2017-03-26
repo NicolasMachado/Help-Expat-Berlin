@@ -241,15 +241,15 @@ function requestTemplate (request, user, open) {
         buttonState: 'closed'
     };
     return '<div class="request-details-less">' +
-                '<div class="no-lb small floatright">Posted: ' + datePosted + '</div>' +
                 '<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</b></p>' +
+                '<div class="no-lb small">Posted: ' + datePosted + '</div>' +
                 '<p class="small">' + request.type + ' - <b>' + request.interested.length + '</b> interested</p>' +
                 '<p class="no-lb">' + author + '</p>' +
                 '<p class="no-lb">' + displayStars(request.author.rating, 20) + '</p>' +
                 nbRatingString + '<p> </p>' +
             '</div>' +
             '<div class="request-details" data-id="' + request._id + '" ' + openOrclosed.classDetails + '>' +
-                '<p class="no-lb small">When: ' + dateEvent + '</p>' +
+                '<p class="no-lb">When: ' + dateEvent + '</p>' +
                 '<p>Requested fee: ' + price + rate + '</p>' +
                 '<p>' + request.description.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
                 helpbutton +

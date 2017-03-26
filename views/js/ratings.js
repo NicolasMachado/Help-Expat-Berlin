@@ -52,7 +52,7 @@ function getProfileRatings () {
 
 function displayRatings (ratings) {
     $('.now-loading').hide();
-    $('#title-profile-section').text('Your ratings');
+    ratings.length > 0 ? $('#title-profile-section').text('Your ratings') : $('#title-profile-section').text('Not rated yet');
     ratings.forEach(rating => {
         $('#profile-container').append(
             '<div class="request-container">' + 
