@@ -1,3 +1,7 @@
+# Help Expat Berlin
+
+
+## Description
 help-expat-berlin is a website that lets users obtain or provide help to each others, especially for administrative
 tasks, or anything that poses a language barrier issue to foreigners in Berlin.
 
@@ -9,7 +13,7 @@ Once the help is provided, the requester can select which user helped him and cl
 can rate each others out of 5 and optionnally leave a comment.
 The ratings are public. They are a way to screen potential abuse.
 
-To work on the project locally:
+## To work on the project locally:
 - Install node
 - Install mongo
 - Run npm install
