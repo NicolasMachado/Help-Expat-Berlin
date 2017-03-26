@@ -75,7 +75,8 @@ function getProfileInfo() {
 			$('#title-profile-section').text('User info');
 			$('#profile-container').html(
 					'<p>Username: ' + user.username + '</p>' +
-					'<p>Email: ' + user.email + '</p>'
+					'<p>Email: ' + user.email + '</p>' + 
+					'<p><a href="/auth/logout">Sign out</a></p>'
 				);
 	    };
 	$.ajax (thisAjax);

@@ -90,6 +90,7 @@ passport.deserializeUser(function(id, cb) {
     });
 });
 
+/*
 // SHOW ALL USERS (to be removed eventually)
 router.get('/showall', (req, res) => {
     return User
@@ -100,6 +101,19 @@ router.get('/showall', (req, res) => {
     })
     .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
 });
+
+// DELETE To be removed
+router.get('/delete/:id', (req, res) => {
+    User
+    .findByIdAndRemove(req.params.id)
+    .then(() => {
+        return Request
+            .find({author : req.params.id})
+            .remove()
+    })
+    .then(res.redirect('/auth/showall'))
+});
+*/
 
 // CREATE NEW USER
 router.post('/new', (req, res) => {
@@ -360,18 +374,6 @@ router.get('/account-login', (req, res) => {
 router.get('/account-login-request', (req, res) => {
     req.flash('errorMessage', 'Please log in first.');
     res.redirect('/auth/account-login');
-});
-
-// DELETE To be removed
-router.get('/delete/:id', (req, res) => {
-    User
-    .findByIdAndRemove(req.params.id)
-    .then(() => {
-        return Request
-            .find({author : req.params.id})
-            .remove()
-    })
-    .then(res.redirect('/auth/showall'))
 });
 
 // LOG OUT

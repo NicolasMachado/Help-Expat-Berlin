@@ -125,7 +125,7 @@ router.get('/remove/:id', ensureLoginNormal, (req, res) => {
         .findByIdAndRemove(req.params.id)
         .then(() => {
             req.flash('alertMessage', 'Your request has been deleted.');
-            res.redirect('/auth/profile/' + req.user.id);
+            res.redirect('/auth/profile/' + req.user.id + '?tab=requests');
         })
 });
 

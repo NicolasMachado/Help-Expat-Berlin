@@ -46,6 +46,12 @@ $(function() {
         $(this).parent('.request-container').append(getWhoHelped($(this)));
         $(this).hide();
     });
+    $('.profile-body').on('click', '.delete-request', function() {
+        $(this).parent().siblings('.confirm-delete').show();
+    });
+    $('.profile-body').on('click', '.cancel-delete', function() {
+        $(this).parent().hide();
+    });
 });
 
 function clickAcceptHelpProfile (button) {
@@ -155,13 +161,13 @@ function returnIndividualProfileRequest (request) {
             '</div>'
         });
     } else {
-        listInterested += '<h5>No help proposed yet</h5>';  
+        listInterested += '<h5>No help proposed yet</h5>';
     }
-    const removeButton = request.status === 'deleted' ? '<p><a href="/request/remove/' + request._id + '">Remove</a></p>' : '';
     const closeRequest = request.accepted.length > 0 ? '<div data-id="' + request._id + '" class="button close-request">Close request</div>' : '';
     return '<div class="request-container" data-id="' + request._id + '">' +
                 '<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
-                removeButton +
+                '<p><span class="fakelink delete-request">Delete</span></p>' +
+                '<p class="confirm-delete">Your request will be deleted permanently, are you sure ?<br><br><a href="/request/remove/' + request._id + '">Confirm</a> - <span class="cancel-delete fakelink">Cancel</span></p>' +
                 listInterested +
                 '<p>' + closeRequest + '</p>' +
             '</div>';
@@ -208,7 +214,7 @@ function displayAllRequests (results, user) {
 
 function requestTemplate (request, user, open) {
 
-    var deleteButton = '', helpbutton = '';
+    var helpbutton = '';
     if (user) {
         const buttonHelpClass =  $.inArray( user._id, request.interested ) > -1 ? {class : 'button-revokehelp', text: 'Revoke help' } : {class : 'button-help', text : 'I can help!'};
         helpbutton = '<div data-id="' + request._id + '" class="button ' + buttonHelpClass.class + '">' + buttonHelpClass.text + '</div>';
@@ -216,7 +222,6 @@ function requestTemplate (request, user, open) {
         helpbutton = '<div data-id="' + request._id + '" class="button button-help">I can help!</div>';
     }
     if ((user) && (user._id === request.author._id)) {
-        deleteButton = '<a href="/request/delete/' + request._id + '">Delete</a>';
         helpbutton = '';
     }
     const price = request.price ? request.price + ' €' : 'None';
@@ -242,7 +247,6 @@ function requestTemplate (request, user, open) {
                 '<p class="no-lb">' + author + '</p>' +
                 '<p class="no-lb">' + displayStars(request.author.rating, 20) + '</p>' +
                 nbRatingString + '<p> </p>' +
-                deleteButton +
             '</div>' +
             '<div class="request-details" data-id="' + request._id + '" ' + openOrclosed.classDetails + '>' +
                 '<p class="no-lb small">When: ' + dateEvent + '</p>' +
