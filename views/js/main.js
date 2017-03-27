@@ -55,7 +55,10 @@ $(function() {
     	$('#realnav').toggle();
     });
     $('main').click(function() {
-    	$('#realnav').hide();
+    	console.log($('#realnav').css('font-size'))
+    	if ($('#realnav').css('font-size') !== '16px') {
+    		$('#realnav').hide();
+    	}
     });
 });
 

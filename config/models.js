@@ -82,7 +82,8 @@ const RatingSchema = mongoose.Schema({
     from: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     request: { type: mongoose.Schema.Types.ObjectId, ref: 'Request', required: true },
     rating: { type: Number, required: true },
-    comment: { type: String, default: '' }
+    comment: { type: String, default: '' },
+    date: { type: Date, default: Date.now, required: true  }
 });
 
 const User = mongoose.model('User', UserSchema);

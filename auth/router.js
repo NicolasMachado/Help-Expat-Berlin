@@ -267,6 +267,7 @@ router.get('/get-user-ratings', ensureLoginAjax, (req, res) => {
         .find({ user : req.user._id })
         .populate('from')
         .populate('request')
+        .sort({date: -1})
         .then(ratings => res.send(ratings))
         .catch(err => {
             console.error(err);
@@ -281,6 +282,7 @@ router.get('/get-other-ratings/:id', ensureLoginAjax, (req, res) => {
         .find({ user : req.params.id })
         .populate('from')
         .populate('request')
+        .sort({date: -1})
         .then(ratings => res.send(ratings))
         .catch(err => {
             console.error(err);

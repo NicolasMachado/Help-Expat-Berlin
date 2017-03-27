@@ -279,11 +279,11 @@ textarea {
 
 	#realnav > a {
 		display : block;
-		z-index: -20;
 	}
 
 	#realnav {
-		display : none;	
+		display : none;
+		font-size: 18px;
 	}
 
 	header {
