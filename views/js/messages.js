@@ -12,6 +12,7 @@ $(function() {
     });
     if (tabParam === 'messages') {
         getListMessages();
+        $('.ratings-tab').css('color', 'red');
     }
 });
 
