@@ -1,6 +1,8 @@
 $(function() {
     $('.profile-body').on('click', '.messages-tab', function() {
         getListMessages();
+        $('.proftab').css('background-color',  '#6F7469');
+        $('.messages-tab').css('background-color',  '#484C44');
         window.history.pushState('', 'Ratings', window.location.href.split('?')[0] + '?tab=messages');
     });
     $('.profile-body').on('click', '.conversation-container-list', function() {
@@ -12,7 +14,8 @@ $(function() {
     });
     if (tabParam === 'messages') {
         getListMessages();
-        $('.ratings-tab').css('color', 'red');
+        $('.proftab').css('background-color',  '#6F7469');
+        $('.messages-tab').css('background-color',  '#484C44');
     }
 });
 

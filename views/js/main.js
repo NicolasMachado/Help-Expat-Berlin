@@ -29,10 +29,14 @@ $(function() {
 
 	if (tabParam === 'profile') {
     	getProfileInfo();
+        $('.proftab').css('background-color',  '#6F7469');
+        $('.profile-tab').css('background-color',  '#484C44');
 	}
     $('.profile-body').on('click', '.profile-tab', function() {
     	getProfileInfo();
         window.history.pushState('', 'Ratings', window.location.href.split('?')[0] + '?tab=profile');
+        $('.proftab').css('background-color',  '#6F7469');
+        $('.profile-tab').css('background-color',  '#484C44');
     });
     $('#show-hide-filters').click(function() {
     	toggleShowFilters();

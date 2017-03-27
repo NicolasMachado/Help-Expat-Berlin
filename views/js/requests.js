@@ -10,9 +10,13 @@ $(function() {
     }
     if (tabParam === 'requests') {
         getProfileRequests();
+        $('.proftab').css('background-color',  '#6F7469');
+        $('.requests-tab').css('background-color',  '#484C44');
     }
     if (tabParam === 'services') {
         getProfileServices();
+        $('.proftab').css('background-color',  '#6F7469');
+        $('.services-tab').css('background-color',  '#484C44');
     }
 
     $('.request-list').on('click', '.button-details', function() {
@@ -29,10 +33,14 @@ $(function() {
     $('.profile-body').on('click', '.requests-tab', function() {
         getProfileRequests();
         window.history.pushState('', 'Ratings', window.location.href.split('?')[0] + '?tab=requests');
+        $('.proftab').css('background-color',  '#6F7469');
+        $('.requests-tab').css('background-color',  '#484C44');
     });
     $('.profile-body').on('click', '.services-tab', function() {
         getProfileServices();
         window.history.pushState('', 'Ratings', window.location.href.split('?')[0] + '?tab=services');
+        $('.proftab').css('background-color',  '#6F7469');
+        $('.services-tab').css('background-color',  '#484C44');
     });
     $('.profile-body').on('click', '.button-revokehelp', function() {
         $(this).removeClass('button-revokehelp').text('Please wait');
