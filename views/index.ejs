@@ -12,39 +12,42 @@
 	const types = ['Any', 'On site Assistance', 'Translation', 'Phone Call', 'Other'];
  %>
 
-	<form id="filters-form">
-		<div class="inline-filter">
-	    <label class="small" for="paid">Fee</label>
-	    <select class="small"name="paid">
-		    <option value="all" <% if (userPrice === 'all') { %> selected <% } %> >Any</option>
-		    <option value="paid" <% if (userPrice === 'paid') { %> selected <% } %> >Paid</option>
-		    <option value="free" <% if (userPrice === 'free') { %> selected <% } %> >Free</option>
+<form id="filters-form">
+	<div class="inline-filter">
+    <label class="small" for="paid">Fee</label>
+    <select class="small"name="paid">
+	    <option value="all" <% if (userPrice === 'all') { %> selected <% } %> >Any</option>
+	    <option value="paid" <% if (userPrice === 'paid') { %> selected <% } %> >Paid</option>
+	    <option value="free" <% if (userPrice === 'free') { %> selected <% } %> >Free</option>
+    </select>
+    </div>
+	<div class="inline-filter">
+    <label class="small" for="date">Order by</label>
+    <select class="small"name="date">
+	    <option value="-1" <% if (userDate === -1) { %> selected <% } %> >Newest</option>
+	    <option value="1" <% if (userDate === 1) { %> selected <% } %> >Oldest</option>
+    </select>
+    </div>
+	<div class="inline-filter">
+	    <label class="small" for="type">Type</label>
+	    <select class="small"name="type">
+	    	<% types.forEach((type) => { %>
+	    		<option value='<%= type %>' <% if (userType === type) { %> selected <% } %> ><%= type %></option>
+	    	<% }); %>
 	    </select>
-	    </div>
-		<div class="inline-filter">
-	    <label class="small" for="date">Order by</label>
-	    <select class="small"name="date">
-		    <option value="-1" <% if (userDate === -1) { %> selected <% } %> >Newest</option>
-		    <option value="1" <% if (userDate === 1) { %> selected <% } %> >Oldest</option>
+    </div>
+	<div class="inline-filter">
+	    <label class="small" for="location">Area</label>
+	    <select class="small" name="location" required>
+	    	<% locations.forEach((location) => { %>
+	    		<option value='<%= location %>' <% if (userLocation === location) { %> selected <% } %> ><%= location %></option>
+	    	<% }); %>
 	    </select>
-	    </div>
-		<div class="inline-filter">
-		    <label class="small" for="type">Type</label>
-		    <select class="small"name="type">
-		    	<% types.forEach((type) => { %>
-		    		<option value='<%= type %>' <% if (userType === type) { %> selected <% } %> ><%= type %></option>
-		    	<% }); %>
-		    </select>
-	    </div>
-		<div class="inline-filter">
-		    <label class="small" for="location">Area</label>
-		    <select class="small" name="location" required>
-		    	<% locations.forEach((location) => { %>
-		    		<option value='<%= location %>' <% if (userLocation === location) { %> selected <% } %> ><%= location %></option>
-		    	<% }); %>
-		    </select>
-	    </div>
-	</form>
+    </div>
+<% if (!user) { %>
+	<p class="small tiplogin"><a href="/auth/facebook">Log in</a> to automatically save your filters</p>
+<% } %>
+</form>
 
 </div>
 <div data-state="closed" id="show-hide-filters">Hide filters</div>

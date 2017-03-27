@@ -395,6 +395,7 @@ router.get('/account-login-request', (req, res) => {
 // LOG OUT
 router.get('/logout', (req, res) => {
     req.logout();
+    req.flash('alertMessage', 'You are now logged out.');
     res.redirect('/');
 });
 
@@ -403,7 +404,7 @@ router.get('/facebook', passport.authenticate('facebook', { scope : ['email'] })
 
 // FB CALLBACK
 router.get('/facebook/callback', passport.authenticate('facebook', { scope : ['email'] }), ensureLoginNormal, (req, res) => {
-    req.flash('alertMessage', 'You are logged in with Facebook');
+    req.flash('alertMessage', 'Welcome, ' + req.user.username);
     res.redirect('/auth/profile/' + req.user._id + '?tab=profile');
 });
 
