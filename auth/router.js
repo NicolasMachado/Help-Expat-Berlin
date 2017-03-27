@@ -274,6 +274,20 @@ router.get('/get-user-ratings', ensureLoginAjax, (req, res) => {
         })
 });
 
+// AJAX RETURN OTHER RATINGS
+router.get('/get-other-ratings/:id', ensureLoginAjax, (req, res) => {
+    console.log(req.params.id);
+    return Rating
+        .find({ user : req.params.id })
+        .populate('from')
+        .populate('request')
+        .then(ratings => res.send(ratings))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'})
+        })
+});
+
 // AJAX RETURN INDIVIDUAL CONVERSATION
 router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
     let currentConv = '';

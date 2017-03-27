@@ -2,6 +2,9 @@ $(function() {
     if (tabParam === 'ratings') {
         getProfileRatings();
     }
+    if ($('#ratings-other').length > 0) {
+        getProfileOtherRatings();
+    }
     $('.profile-body').on('click', '.ratings-tab', function() {
         getProfileRatings();
         window.history.pushState('', 'Ratings', window.location.href.split('?')[0] + '?tab=ratings');
@@ -50,6 +53,29 @@ function getProfileRatings () {
     $.ajax (thisAjax);
 }
 
+function getProfileOtherRatings () {
+    let thisAjax = new AjaxTemplate('/auth/get-other-ratings/' + $('#ratings-other').data('id'));
+    thisAjax.success = function(ratings) {
+            displayOtherRatings(ratings);
+        };
+    $.ajax (thisAjax);
+}
+
+function displayOtherRatings (ratings) {
+    console.log(ratings)
+    $('.now-loading').hide();
+    ratings.length > 0 ? $('#title-profile-section').text('Ratings') : $('#title-profile-section').text('Not rated yet');
+    ratings.forEach(rating => {
+        $('#ratings-other').append(
+            '<div class="request-container">' + 
+                '<p small>Request: <b>' + rating.request.title + '</b></p>' +
+                '<p>Rated ' + displayStars(rating.rating, 15) + ' by ' + rating.from.username + '</p>' +
+                '<p class="comment">' + rating.comment.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
+            '</div>'
+        );
+    });
+}
+
 function displayRatings (ratings) {
     $('.now-loading').hide();
     ratings.length > 0 ? $('#title-profile-section').text('Your ratings') : $('#title-profile-section').text('Not rated yet');
@@ -60,7 +86,6 @@ function displayRatings (ratings) {
                 '<p>Rated ' + displayStars(rating.rating, 15) + ' by ' + rating.from.username + '</p>' +
                 '<p class="comment">' + rating.comment.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
             '</div>'
-
         );
     });
 }

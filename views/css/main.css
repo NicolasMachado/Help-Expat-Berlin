@@ -9,6 +9,10 @@ body {
 	text-align: center;
 }
 
+#burger {
+	display: none;
+}
+
 header {
 	background-color: #484848;
 	color: white;
@@ -260,4 +264,56 @@ textarea {
 .inline-filter {
 	display: inline-block;
 	padding: 0 10px 0 10px;
+}
+
+.mobile-profile-menu {
+	display: none;
+}
+
+
+/* mobile */
+@media only screen and (max-width: 500px) {
+	nav {
+		display : none;
+	}
+
+	#realnav > a {
+		display : block;
+		z-index: -20;
+	}
+
+	#realnav {
+		display : none;	
+	}
+
+	header {
+		text-align: left;
+  		background-size: 500px;
+  		background-position: top;
+	}
+
+	.proftab {
+		padding: 7px 0 4px 0;
+	}
+
+	h1 {
+		font-size: 22px;
+		padding: 20px;
+	}
+
+	#burger {
+		display: block;
+		position: absolute;
+		top: 30px;
+		right: 10px;
+		cursor: pointer;
+	}
+
+	.mobile-profile-menu {
+		display: block;
+	}
+
+	.normal-profile-menu {
+		display: none;
+	}
 }

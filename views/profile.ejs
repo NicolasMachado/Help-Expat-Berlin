@@ -15,18 +15,31 @@
 	<% } else { %>
 	<p>Not rated yet</p>
 	<% } %>
-
 </div>
 
 <% if (user) { %>
 	<% if (String(profile.user._id) == String(profile.currentUser._id)) { %>
 	<div class="profile-body">
-		<div class="button-profile proftab profile-tab">Profile</div><div class="button-profile proftab requests-tab">Requests</div><div class="button-profile proftab services-tab">Services</div><div class="button-profile proftab messages-tab">Messages</div><div class="button-profile proftab ratings-tab">Ratings</div>
+		<!-- Normal profile menu -->
+		<div class="normal-profile-menu">
+			<div class="button-profile proftab profile-tab">Profile</div><div class="button-profile proftab requests-tab">Requests</div><div class="button-profile proftab services-tab">Services</div><div class="button-profile proftab messages-tab">Messages</div><div class="button-profile proftab ratings-tab">Ratings</div>
+		</div>
+		<!-- Mobile profile menu -->
+		<div class="mobile-profile-menu">
+			<div class="button-profile proftab profile-tab"><img src="/images/user.png" height="20px"></div><div class="button-profile proftab requests-tab"><img src="/images/request.png" height="20px"></div><div class="button-profile proftab services-tab"><img src="/images/services.png" height="20px"></div><div class="button-profile proftab messages-tab"><img src="/images/messages.png" height="20px"></div><div class="button-profile proftab ratings-tab"><img src="/images/ratings.png" height="20px"></div>
+		</div>
 		<div class="now-loading"><img src="/images/ajax_loading.gif"></div>
 		<h3 id="title-profile-section"></h3>
 		<div id="profile-container"></div>
 	</div>
+	<% } else { %>
+	<div class="profile-body">
+		<div class="now-loading"><img src="/images/ajax_loading.gif"></div>
+		<div id="ratings-other" data-id='<%= String(profile.user._id) %>'></div>
+	</div>
 	<% } %>
+
 <% } %>
+
 
 <% include footer %>

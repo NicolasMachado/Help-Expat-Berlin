@@ -47,6 +47,12 @@ $(function() {
     	$('#title-profile-section').empty();
     	$('#profile-container').empty();
     });
+    $('#burger').click(function() {
+    	$('#realnav').toggle();
+    });
+    $('main').click(function() {
+    	$('#realnav').hide();
+    });
 });
 
 function toggleShowFilters () {
