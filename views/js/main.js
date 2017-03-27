@@ -55,12 +55,22 @@ $(function() {
     	$('#realnav').toggle();
     });
     $('main').click(function() {
-    	console.log($('#realnav').css('font-size'))
     	if ($('#realnav').css('font-size') !== '16px') {
     		$('#realnav').hide();
     	}
     });
 });
+
+function colorFilters () {
+    const selects = $('#filters-form').find('select  option:selected');
+    selects.each((index, select) => {
+        if (select.value !== 'all' && select.value !== '-1' && select.value !=='Any') {
+            $(select).parent().css('background-color', '#E9E5D4');
+        } else {
+            $(select).parent().css('background-color', '');        	
+        }
+    }); 
+}
 
 function toggleShowFilters () {
 	if ($('#show-hide-filters').data('state') === 'open') {

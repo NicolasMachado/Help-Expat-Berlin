@@ -73,7 +73,7 @@ function displayOtherRatings (ratings) {
         $('#ratings-other').append(
             '<div class="request-container">' + 
                 '<p small>Request: <b>' + rating.request.title + '</b></p>' +
-                '<p>Rated ' + displayStars(rating.rating, 15) + ' by ' + rating.from.username + '</p>' +
+                '<p>Rated ' + displayStars(rating.rating, 15) + ' by <a href="/auth/profile/' + rating.from._id + '">' + rating.from.username + '</a></p>' +
                 '<p class="comment">' + rating.comment.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
             '</div>'
         );
@@ -87,7 +87,7 @@ function displayRatings (ratings) {
         $('#profile-container').append(
             '<div class="request-container">' + 
                 '<p small>Request: <b>' + rating.request.title + '</b></p>' +
-                '<p>Rated ' + displayStars(rating.rating, 15) + ' by ' + rating.from.username + '</p>' +
+                '<p>Rated ' + displayStars(rating.rating, 15) + ' by <a href="/auth/profile/' + rating.from._id + '">' + rating.from.username + '</a></p>' +
                 '<p class="comment">' + rating.comment.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
             '</div>'
         );

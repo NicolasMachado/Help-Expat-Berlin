@@ -21,7 +21,8 @@ const UserSchema = mongoose.Schema({
         },
         filter: {
             price: { type: String },
-            type: { type: String }
+            type: { type: String },
+            location: { type: String }
         }
     }
 });
@@ -53,6 +54,7 @@ const RequestSchema = mongoose.Schema({
     datePosted: { type: Date, required: true },
     dateEvent: { type: Date },
     type: { type: String, required: true },
+    location: { type: String, required: true },
     price: { type: Number },
     rate: { type: String },
     description: { type: String, required: true },

@@ -96,7 +96,7 @@ function returnIndividualServiceProfile(request, currentUser) {
         for (let i = 0; i<=5; i += 0.5) {
             ratings += '</option><option value="' + i + '">' + i + '</option>'
         }
-        option = 'You have provided a service to this user, please rate your interaction.' +
+        option = 'You have provided a service for this request.</p><p>Please rate your interaction with <a href="/auth/profile/' + request.author._id + '">' + request.author.username + '</a>.' +
             '<form data-iam="helper" data-user="' + request.author._id + '" class="rate-user">' +
             '<p><select class="select-rating-number" name="select-rating-number" required>' +
             '<option value="">Rating</option>' + ratings +
@@ -207,6 +207,7 @@ function getList () {
     let thisAjax = new AjaxTemplate('/request?' + $('#filters-form').serialize());
     thisAjax.success = function (ajaxResult) {
             displayAllRequests(ajaxResult.results, ajaxResult.user);
+            colorFilters();
         };
     $.ajax (thisAjax);
 }

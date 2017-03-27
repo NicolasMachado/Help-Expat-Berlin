@@ -147,6 +147,7 @@ router.post('/new', ensureLoginNormal, (req, res) => {
             title: req.body.title,
             time: req.body.time,
             type: req.body.type,
+            location: req.body.location,
             price: req.body.price,
             rate: req.body.rate,
             description: req.body.description,

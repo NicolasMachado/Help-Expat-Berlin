@@ -30,8 +30,11 @@ const saveFilters = (req, res, next) => {
         status: {$nin: ['deleted', 'closed']}
     }};
     filters.sort.datePosted = req.query.date;
-    if (req.query.type !== 'all') {
+    if (req.query.type !== 'Any') {
         filters.filter.type = req.query.type;
+    }
+    if (req.query.location !== 'Any') {
+        filters.filter.location = req.query.location;
     }
     
     // paid
@@ -50,7 +53,8 @@ const saveFilters = (req, res, next) => {
                 }, 
                 filter: {
                     price: req.query.paid,
-                    type: req.query.type
+                    type: req.query.type,
+                    location: req.query.location
                 } 
             }
         })
