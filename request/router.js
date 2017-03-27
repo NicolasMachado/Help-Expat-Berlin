@@ -12,16 +12,26 @@ router.get('/new', ensureLoginNormal, (req, res) => {
 
 // AJAX SHOW ALL
 router.get('/', saveFilters, (req, res) => {
+    let totalResults;
     return Request
         .find()
-        .populate('author')
         .where(req.filters.filter)
-        .sort(req.filters.sort)
-        .then(reqs => res.send({results: reqs, user: req.user}))
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({message: 'Internal server error'})
-        });
+        .count()
+        .then(total => totalResults = total)
+        .then(() => {
+            return Request
+                .find()
+                .populate('author')
+                .where(req.filters.filter)
+                .sort(req.filters.sort)
+                .limit(Number(req.query.perpage))
+                .skip(req.query.page*2)
+                .then(reqs => res.send({results: reqs, user: req.user, nbResults: totalResults}))
+                .catch(err => {
+                    console.error(err);
+                    res.status(500).json({message: 'Internal server error'})
+                });           
+        })
 });
 
 // AJAX ACCEPT HELP

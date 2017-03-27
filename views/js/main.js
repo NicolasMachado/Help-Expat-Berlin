@@ -42,8 +42,10 @@ $(function() {
     	toggleShowFilters();
     });
     $('main').on('change', '#filters', function(e) {
+    	currentPage = 0;
     	e.preventDefault();
     	$('.request-list').empty();
+    	$('.prev-next').empty();
     	getList();
     });
     $('.profile-body').on('click', '.proftab', function() {

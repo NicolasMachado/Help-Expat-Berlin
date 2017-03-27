@@ -1,3 +1,6 @@
+let currentPage = 0;
+const resultsPerPage = 2;
+
 $(function() {
     if ($('.request-list').length !== 0) {
         if ($('#filters').data('loggedin')) {
@@ -59,6 +62,18 @@ $(function() {
     });
     $('.profile-body').on('click', '.cancel-delete', function() {
         $(this).parent().hide();
+    });
+    $('.prev-next').on('click', '.button-next', function() {
+        $('.request-list').empty();
+        $('.prev-next').empty();
+        currentPage++;
+        getList();
+    });
+    $('.prev-next').on('click', '.button-previous', function() {
+        $('.request-list').empty();
+        $('.prev-next').empty();
+        currentPage--;
+        getList();
     });
 });
 
@@ -204,12 +219,23 @@ function expandDetails (button) {
 }
 
 function getList () {
-    let thisAjax = new AjaxTemplate('/request?' + $('#filters-form').serialize());
+    let thisAjax = new AjaxTemplate('/request?' + $('#filters-form').serialize() + '&page=' + currentPage + '&perpage=' + resultsPerPage);
     thisAjax.success = function (ajaxResult) {
+            displayPrevNext(ajaxResult.nbResults);
             displayAllRequests(ajaxResult.results, ajaxResult.user);
             colorFilters();
         };
     $.ajax (thisAjax);
+}
+
+function displayPrevNext (total) {
+    if (currentPage > 0) {
+        $('.prev-next').append('<div class="button floatleft prevnext button-previous"><</div>')
+    }
+    if ((currentPage * resultsPerPage + resultsPerPage) < total) {
+        $('.prev-next').append('<div class="button floatright prevnext button-next">></div>')
+    }
+    resultsPerPage >= total ?  $('.prev-next').hide() : $('.prev-next').show();
 }
 
 function displayAllRequests (results, user) {

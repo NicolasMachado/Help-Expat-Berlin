@@ -98,6 +98,7 @@ h1 {
 	background-color: #EDF4DA;
 	margin-top: 10px;
 	padding: 10px;
+	margin-bottom: 10px;
 }
 
 .request-details {
@@ -143,6 +144,17 @@ input[type="submit"]{
 .button-details {
 	background-color: #A7B296;
 	padding: 5px;
+}
+
+.prevnext {
+	padding: 5px;
+	min-width: 50px;
+	background-color: #A7B296;
+	margin: 0;
+}
+
+.prev-next {
+	min-height: 30px;
 }
 
 .button-revokehelp {
@@ -200,10 +212,11 @@ input[type="submit"]{
 }
 
 #show-hide-filters {
-	background-color: #B8C2A7;
+	background-color: #A7B296;
 	padding: 3px;
 	color: white;
 	cursor: pointer;
+	margin-bottom: 10px;
 }
 
 form {
