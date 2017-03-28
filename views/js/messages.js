@@ -1,8 +1,4 @@
-const socket = io.connect('http://localhost:3000');
 let messagesLimit = 10;
-socket.on('newMessage', function (conv) {
-    updateConversation(conv.id);
-});
 
 $(function() {
     $('.profile-body').on('click', '.messages-tab', function() {
@@ -59,6 +55,10 @@ function updateConversation (id) {
 }
 
 function getConversation (id) {
+    const socket = io.connect(location.protocol + '//' + location.hostname + ':3000');
+    socket.on('newMessage', function (conv) {
+        updateConversation(conv.id);
+    });
     let thisAjax = new AjaxTemplate('/auth/get-conversation/' + id + '?limit=' + messagesLimit);
     thisAjax.success = function(response) {
             $('.now-loading').hide();
