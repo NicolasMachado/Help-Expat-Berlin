@@ -56,8 +56,8 @@ function updateConversation (id) {
 }
 
 function getConversation (id) {
-    const socket = io.connect(location.protocol + '//' + location.hostname + ':3000');
-    //const socket = io();
+    //const socket = io.connect(location.protocol + '//' + location.hostname + ':3000');
+    const socket = io();
     let thisAjax = new AjaxTemplate('/auth/get-conversation/' + id + '?limit=' + messagesLimit);
     thisAjax.success = function(response) {
             // initialize socket, only update if current chat
