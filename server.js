@@ -14,6 +14,8 @@ const {checkLogin} = require('./utils');
 const {router: authRouter} = require('./auth');
 const {router: requestRouter} = require('./request');
 
+let server;
+
 mongoose.Promise = global.Promise;
 
 // Load either local config or regular config
@@ -28,6 +30,7 @@ function loadConfig (configPath) {
 }
 
 const app = express();
+const io = require('socket.io')(app.listen(3000));
 
 app.use(morgan('common'));
 app.use(cookieParser);
@@ -39,6 +42,11 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static('views'));
+
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+});
 
 app.use('*', checkLogin);
 
@@ -54,8 +62,6 @@ app.get('/', (req, res) => {
 app.use('*', (req, res) => { 
     return res.status(404).json({message: '404 - Not Found'});
 });
-
-let server;
 
 function runServer() {
     return new Promise((resolve, reject) => {

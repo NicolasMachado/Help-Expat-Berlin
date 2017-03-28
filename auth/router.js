@@ -212,7 +212,10 @@ router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
         }, $inc: {
             nbUnread: 1
         }})
-        .then(conv => res.send({conversation: conv, user: req.user}))
+        .then(conv => {
+            req.io.sockets.emit('newMessage', {id: req.params.id}); 
+            res.send({conversation: conv, user: req.user})
+        })
         .catch(err => {
             console.error(err);
             res.status(500).json({message: 'Internal server error'})
@@ -300,7 +303,6 @@ router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
         .then(conv => currentConv = conv)
         .then(() => {
             if (currentConv.unreadUser === String(req.user._id)) {
-                console.log('this is unread user');
                 return Conversation
                     .findByIdAndUpdate(currentConv._id, {$set: {unreadUser: '', nbUnread: 0}}) // mark as read
             }

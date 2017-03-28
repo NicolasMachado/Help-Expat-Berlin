@@ -1,3 +1,9 @@
+const socket = io.connect('http://localhost:3000');
+let messagesLimit = 10;
+socket.on('newMessage', function (conv) {
+    updateConversation(conv.id);
+});
+
 $(function() {
     $('.profile-body').on('click', '.messages-tab', function() {
         getListMessages();
@@ -7,6 +13,10 @@ $(function() {
     });
     $('.profile-body').on('click', '.conversation-container-list', function() {
         getConversation($(this).data('id'));
+    });
+    $('.profile-body').on('click', '.button-older-messages', function() {
+        messagesLimit += 10;
+        updateConversation($(this).data('id'));
     });
     $('.profile-body').on('submit', '#form-send-message', function(e) {
         e.preventDefault();
@@ -33,24 +43,40 @@ function postNewMessage (messageBody, convId, other) {
     $.ajax (thisAjax);
 }
 
+function updateConversation (id) {
+    let thisAjax = new AjaxTemplate('/auth/get-conversation/' + id + '?limit=' + messagesLimit);
+    thisAjax.success = function(response) {
+            $('.now-loading').hide();
+            const otherUser = response.conversation.users[0]._id === response.user._id ? response.conversation.users[1] : response.conversation.users[0];            
+            const olderMessagesButton = response.conversation.messages.length > messagesLimit ? '<div data-id="' + response.conversation._id + '" class="button button-older-messages">Older messages</div>' : '';
+            $('.conv-container').empty();
+            response.conversation.messages.reverse().slice(0, messagesLimit).forEach(function (message) {
+                $('.conv-container').append(returnIndividualMessage(message, otherUser));
+            });
+            $('.conv-container').append(olderMessagesButton);
+        };
+    $.ajax (thisAjax);  
+}
+
 function getConversation (id) {
-    let thisAjax = new AjaxTemplate('/auth/get-conversation/' + id);
+    let thisAjax = new AjaxTemplate('/auth/get-conversation/' + id + '?limit=' + messagesLimit);
     thisAjax.success = function(response) {
             $('.now-loading').hide();
             const otherUser = response.conversation.users[0]._id === response.user._id ? response.conversation.users[1] : response.conversation.users[0];
+            const olderMessagesButton = response.conversation.messages.length > messagesLimit ? '<div data-id="' + response.conversation._id + '" class="button button-older-messages">Older messages</div>' : '';
             $('#title-profile-section').html(response.conversation.messages.length > 0 ? otherUser.username + '' : otherUser.username + '<p>No message yet<p>');
-            $('#profile-container').empty().append('<div class="conv-container"></div>');
-            response.conversation.messages.forEach(function (message) {
-                $('.conv-container').append(returnIndividualMessage(message, otherUser));
-            });
-            $('.conv-container').append(
+            $('#profile-container').empty().append('<div class="message-box"></div><div class="conv-container"></div>');
+            $('.message-box').html(
                 '<form id="form-send-message" method="post" data-other="' + otherUser._id + '" data-id="' + response.conversation._id + '">' +
                 '<input name="other" value="' + otherUser._id + '" hidden>' +
-                '<p><label for="messageBody">Send a message</label></p>' +
                 '<textarea id="message-textarea" name="messageBody" rows="5" placeholder="Send a message" required></textarea>' +
                 '<p><input class="button" type="submit" value="Send"></p>' +
                 '</form>'
                 );
+            response.conversation.messages.reverse().slice(0, messagesLimit).forEach(function (message) {
+                $('.conv-container').append(returnIndividualMessage(message, otherUser));
+            });
+            $('.conv-container').append(olderMessagesButton);
         };
     $.ajax (thisAjax);  
 }
