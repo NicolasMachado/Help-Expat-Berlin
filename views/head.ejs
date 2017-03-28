@@ -22,6 +22,7 @@
 		<% if (user) { %>
 		<a href="/request/new">New request</a>
 		<a href='/auth/profile/<%= user.id %>/?tab=profile'>Profile</a>
+		<a href='/auth/profile/<%= user.id %>?tab=messages'>Messages</a>
 		<% } %>
 		<% if (!user) { %>
 		<a href="/auth/account-login">Log in</a>
@@ -40,6 +41,7 @@
 		<% if (user) { %>
 		<a href="/request/new">New request</a>
 		<a href='/auth/profile/<%= user.id %>?tab=profile'>Profile</a>
+		<a href='/auth/profile/<%= user.id %>?tab=messages'>Messages</a>
 		<% } %>
 		<% if (!user) { %>
 		<a href="/auth/account-login">Log in</a>

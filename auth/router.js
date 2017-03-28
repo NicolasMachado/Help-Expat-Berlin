@@ -198,7 +198,7 @@ router.post('/login', passport.authenticate('local'), ensureLoginNormal, (req, r
 
 // POST NEW MESSAGE
 router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
-    Conversation
+    return Conversation
         .findById(req.params.id)
         .update({$push : {
             messages : {
@@ -212,9 +212,13 @@ router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
         }, $inc: {
             nbUnread: 1
         }})
-        .then(conv => {
-            req.io.sockets.emit('newMessage', {id: req.params.id}); 
-            res.send({conversation: req.params.id, user: req.user})
+        .then(() => {
+            return User
+                .findByIdAndUpdate(req.body.other, {$inc: { unreadMessages: 1 }})
+                .then(() => {
+                    req.io.sockets.emit('newMessage', {userID: req.user._id, convID: req.params.id, otherID: req.body.other}); 
+                    res.send({conversation: req.params.id, user: req.user});
+                })
         })
         .catch(err => {
             console.error(err);
@@ -301,6 +305,19 @@ router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
         .populate('users')
         .populate('messages.from')
         .then(conv => currentConv = conv)
+        // get number of unread messages
+        .then(() => {
+            return Conversation
+                .findById(currentConv._id)
+        })
+        // substract them from personal count
+        .then((conv) => {
+            if (conv) {
+                return User
+                    .findByIdAndUpdate(req.user._id, {$inc: {unreadMessages: -conv.nbUnread}})
+            }
+        })
+        // set unread to 0 in conversation
         .then(() => {
             if (currentConv.unreadUser === String(req.user._id)) {
                 return Conversation
@@ -354,6 +371,18 @@ router.get('/get-current-user', ensureLoginAjax, (req, res, next) => {
         .then(user => {
             res.json(user);
         })
+});
+
+// AJAX RETURN CURRENT USER EVEN IF DISCONNECTED
+router.get('/get-user', (req, res, next) => {
+    if (req.user) {
+        User.findById(req.user.id)
+            .then(user => {
+                res.json(user);
+            })       
+    } else {
+        res.send(null);       
+    }
 });
 
 // PROFILE

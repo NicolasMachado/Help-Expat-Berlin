@@ -33,14 +33,11 @@ function postNewMessage (messageBody, convId, other) {
         other: other
     };
     thisAjax.method = 'POST';
-    thisAjax.success = function(conv) {
-        updateConversation(conv.conversation); // remove if socket working
-    };
+    thisAjax.success = function() {};
     $.ajax (thisAjax);
 }
 
 function updateConversation (id) {
-    console.log('updating chat');
     let thisAjax = new AjaxTemplate('/auth/get-conversation/' + id + '?limit=' + messagesLimit);
     thisAjax.success = function(response) {
             $('.now-loading').hide();
@@ -56,22 +53,13 @@ function updateConversation (id) {
 }
 
 function getConversation (id) {
-    //const socket = io.connect(location.protocol + '//' + location.hostname + ':3000');
-    const socket = io();
     let thisAjax = new AjaxTemplate('/auth/get-conversation/' + id + '?limit=' + messagesLimit);
     thisAjax.success = function(response) {
-            // initialize socket, only update if current chat
-            socket.on('newMessage', function (conv) {
-                if (conv.id === id) {
-                    updateConversation(conv.id);
-                }
-            });
-
             $('.now-loading').hide();
             const otherUser = response.conversation.users[0]._id === response.user._id ? response.conversation.users[1] : response.conversation.users[0];
             const olderMessagesButton = response.conversation.messages.length > messagesLimit ? '<div data-id="' + response.conversation._id + '" class="button button-older-messages">Older messages</div>' : '';
             $('#title-profile-section').html(response.conversation.messages.length > 0 ? otherUser.username + '' : otherUser.username + '<p>No message yet<p>');
-            $('#profile-container').empty().append('<div class="message-box"></div><div class="conv-container"></div>');
+            $('#profile-container').empty().append('<div class="message-box"></div><div class="conv-container" data-id="' + id + '"></div>');
             $('.message-box').html(
                 '<form id="form-send-message" method="post" data-other="' + otherUser._id + '" data-id="' + response.conversation._id + '">' +
                 '<input name="other" value="' + otherUser._id + '" hidden>' +
@@ -122,3 +110,25 @@ function returnIndividualConvListProfile (conv, otherUser, currentuser) {
             'With ' + otherUser.username + ' - ' +  conv.messages.length +' messages' + unread +
             '</div>';   
 }
+
+function updateNewMessagesIndicator () {
+    if (unreadMessages > 0) {
+        $('.messages-tab').text('Messages (' + unreadMessages + ')');
+    } else {
+        $('.messages-tab').text('Messages');      
+    }
+}
+
+socket.on('newMessage', function (conv) {
+    if ((conv.otherID == currentUser._id) || (conv.userID == currentUser._id)) { //check if user concerned
+        // if viewing chat
+        if ($('.conv-container').data('id') == conv.convID) {
+            updateConversation(conv.convID);
+        } else { // if I received a new messages
+            if (conv.otherID == currentUser._id) {
+                unreadMessages++;
+                updateNewMessagesIndicator();
+            }
+        }
+    }
+});

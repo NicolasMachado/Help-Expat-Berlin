@@ -219,11 +219,13 @@ function expandDetails (button) {
 }
 
 function getList () {
+    $('.now-loading').show();
     let thisAjax = new AjaxTemplate('/request?' + $('#filters-form').serialize() + '&page=' + currentPage + '&perpage=' + resultsPerPage);
     thisAjax.success = function (ajaxResult) {
             displayPrevNext(ajaxResult.nbResults);
             displayAllRequests(ajaxResult.results, ajaxResult.user);
             colorFilters();
+            $('.now-loading').hide();
         };
     $.ajax (thisAjax);
 }

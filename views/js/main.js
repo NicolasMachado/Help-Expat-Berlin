@@ -14,12 +14,16 @@ function AjaxTemplate (url) {
     }
 };
 
+const socket = io();
+let currentUser, unreadMessages;
+
 const tabParam = getUrlParam('tab');
 $.getScript('/js/messages.js', function(){});
 $.getScript('/js/ratings.js', function(){});
 $.getScript('/js/requests.js', function(){});
 
 $(function() {
+	getUser();
 	$.ajaxSetup({ cache: false });
 	$( "#datepicker" ).datetimepicker();
 	$( document ).tooltip();
@@ -63,6 +67,15 @@ $(function() {
     });
 });
 
+function getUser () {
+    let thisAjax = new AjaxTemplate('/auth/get-user/');
+    thisAjax.success = function(user) {
+    	currentUser = user;
+        unreadMessages = currentUser.unreadMessages;
+    };
+    $.ajax (thisAjax);
+}
+
 function colorFilters () {
     const selects = $('#filters-form').find('select  option:selected');
     selects.each((index, select) => {
@@ -94,6 +107,7 @@ function getUrlParam (name) {
 }
 
 function getProfileInfo() {
+    $('.now-loading').show();
 	let thisAjax = new AjaxTemplate('/auth/get-current-user/');
 	thisAjax.success = function(user) {
 			$('.now-loading').hide();

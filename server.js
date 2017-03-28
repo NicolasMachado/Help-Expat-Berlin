@@ -16,7 +16,7 @@ const socketIO = require('socket.io');
 const {router: authRouter} = require('./auth');
 const {router: requestRouter} = require('./request');
 
-let server;
+let server, io;
 
 mongoose.Promise = global.Promise;
 
@@ -32,9 +32,8 @@ function loadConfig (configPath) {
 }
 
 const app = express();
-const serverIO = app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
-const io = socketIO(serverIO);
-//const io = require('socket.io')(app.listen(3000));
+/*const serverIO = app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
+const io = socketIO(serverIO);*/
 
 app.use(morgan('common'));
 app.use(cookieParser);
@@ -72,7 +71,7 @@ function runServer() {
         mongoose.connect(DATABASE_URL, err => {
             if (err) {
                 return reject(err);
-            }/*
+            }
             server = app.listen(PORT, () => {
                 console.log(`Your app is listening on port ${PORT}`);
                 resolve();
@@ -80,7 +79,8 @@ function runServer() {
             .on('error', err => {
                 mongoose.disconnect();
                 reject(err);
-            });*/
+            });
+            io = socketIO(server);
         });
     });
 }
