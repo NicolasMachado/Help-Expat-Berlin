@@ -214,7 +214,7 @@ router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
         }})
         .then(conv => {
             req.io.sockets.emit('newMessage', {id: req.params.id}); 
-            res.send({conversation: conv, user: req.user})
+            res.send({conversation: req.params.id, user: req.user})
         })
         .catch(err => {
             console.error(err);

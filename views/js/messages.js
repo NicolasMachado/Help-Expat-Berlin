@@ -33,7 +33,9 @@ function postNewMessage (messageBody, convId, other) {
         other: other
     };
     thisAjax.method = 'POST';
-    thisAjax.success = function() {};
+    thisAjax.success = function(conv) {
+        updateConversation(conv.conversation); // remove if socket working
+    };
     $.ajax (thisAjax);
 }
 
@@ -55,6 +57,7 @@ function updateConversation (id) {
 
 function getConversation (id) {
     const socket = io.connect(location.protocol + '//' + location.hostname + ':3000');
+    //const socket = io();
     let thisAjax = new AjaxTemplate('/auth/get-conversation/' + id + '?limit=' + messagesLimit);
     thisAjax.success = function(response) {
             // initialize socket, only update if current chat
