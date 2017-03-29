@@ -216,7 +216,8 @@ router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
             return User
                 .findByIdAndUpdate(req.body.other, {$inc: { unreadMessages: 1 }})
                 .then(() => {
-                    req.io.sockets.emit('newMessage', {userID: req.user._id, convID: req.params.id, otherID: req.body.other}); 
+                    io.to(String(req.body.other)).emit('newMessage', {userID: req.user._id, convID: req.params.id, otherID: req.body.other});
+                    io.to(String(req.user._id)).emit('newMessage', {userID: req.user._id, convID: req.params.id, otherID: req.body.other});
                     res.send({conversation: req.params.id, user: req.user});
                 })
         })
@@ -299,7 +300,7 @@ router.get('/get-other-ratings/:id', ensureLoginAjax, (req, res) => {
 
 // AJAX RETURN INDIVIDUAL CONVERSATION
 router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
-    let currentConv = '';
+    let currentConv = '', oldUnread = 0;
     Conversation
         .findById(req.params.id)
         .populate('users')
@@ -309,13 +310,13 @@ router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
         .then(() => {
             return Conversation
                 .findById(currentConv._id)
-        })
-        // substract them from personal count
-        .then((conv) => {
-            if (conv) {
-                return User
-                    .findByIdAndUpdate(req.user._id, {$inc: {unreadMessages: -conv.nbUnread}})
-            }
+                .then((conv) => {
+                    oldUnread = conv.nbUnread;
+                    if (currentConv.unreadUser === String(req.user._id)) {
+                        return User
+                            .findByIdAndUpdate(req.user._id, {$inc: {unreadMessages: -conv.nbUnread}})
+                    }
+                })
         })
         // set unread to 0 in conversation
         .then(() => {
@@ -324,7 +325,7 @@ router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
                     .findByIdAndUpdate(currentConv._id, {$set: {unreadUser: '', nbUnread: 0}}) // mark as read
             }
         })
-        .then(() => res.send({conversation: currentConv, user: req.user}))
+        .then(() => res.send({conversation: currentConv, user: req.user, oldUnread: oldUnread}))
 
         .catch(err => {
             console.error(err);

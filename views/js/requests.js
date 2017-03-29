@@ -120,7 +120,7 @@ function returnIndividualServiceProfile(request, currentUser) {
             '<p><input class="button" type="submit" value="Submit"></p>' +
             '</form>'
     } else if (_.contains(request.accepted, currentUser._id)) {
-        option = request.author.username + ' has accepted your help.<br>You can now communicate with them in the <a href="./' + currentUser._id + '?tab=messages">messages</a> section.'
+        option = request.author.username + ' has accepted your help.<br>You can now communicate with them in the <a href="/auth/profile/' + currentUser._id + '?tab=messages">messages</a> section.'
     } else {
         option = '<p>' + request.author.username + ' has not accepted your help yet.</p>' +
         '<p data-id="' + request._id + '" class="button button-revokehelp">Revoke help</p>';
@@ -128,7 +128,7 @@ function returnIndividualServiceProfile(request, currentUser) {
     return '<div class="request-container" data-id="' + request._id + '">' +
                 '<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</b></p>' +
                 option +
-            '</div>';
+            '</div>'
 }
 
 function clickRevokHelp (button) {
@@ -175,7 +175,7 @@ function getProfileRequests() {
 function returnIndividualProfileRequest (request) {
     let listInterested = '';
     if (request.interested.length > 0) {
-        listInterested += '<h5>The following users proposed their help:</h5>';
+        listInterested += '<p>The following users proposed their help:</p>';
         request.interested.forEach(function(interestedUser) {
             const classButtonHelp = _.contains(request.accepted, interestedUser._id) ? {class: '', text: 'You can now send messages to this user'} : {class: 'fakelink button-accept', text: 'Accept'};
             listInterested += '<div class="interested-container">' +
@@ -184,16 +184,16 @@ function returnIndividualProfileRequest (request) {
             '</div>'
         });
     } else {
-        listInterested += '<h5>No help proposed yet</h5>';
+        listInterested += '<p>No help proposed yet</p>';
     }
     const closeRequest = request.accepted.length > 0 ? '<div data-id="' + request._id + '" class="button close-request">Close request</div>' : '';
     return '<div class="request-container" data-id="' + request._id + '">' +
-                '<p>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
+                '<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</b></p>' +
                 '<p><span class="fakelink delete-request">Delete</span></p>' +
                 '<p class="confirm-delete">Your request will be deleted permanently, are you sure ?<br><br><a href="/request/remove/' + request._id + '">Confirm</a> - <span class="cancel-delete fakelink">Cancel</span></p>' +
                 listInterested +
                 '<p>' + closeRequest + '</p>' +
-            '</div>';
+            '</div>'
 }
 
 function updateRequestDisplay (triggerElement) {

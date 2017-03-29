@@ -14,7 +14,6 @@ function AjaxTemplate (url) {
     }
 };
 
-const socket = io();
 let currentUser, unreadMessages;
 
 const tabParam = getUrlParam('tab');
@@ -70,10 +69,32 @@ $(function() {
 function getUser () {
     let thisAjax = new AjaxTemplate('/auth/get-user/');
     thisAjax.success = function(user) {
-    	currentUser = user;
-        unreadMessages = currentUser.unreadMessages;
+        if (user) {
+            const socket = io.connect();
+            listenSocket(socket);
+            socket.emit('join', String(user._id));
+            currentUser = user;
+            unreadMessages = currentUser.unreadMessages;
+            updateNewMessagesIndicator();
+        }
     };
     $.ajax (thisAjax);
+}
+
+function listenSocket(mySocket) {
+    mySocket.on('newMessage', function (conv) {
+        if ((conv.otherID == currentUser._id) || (conv.userID == currentUser._id)) { //check if user concerned
+            // if viewing chat
+            if ($('.conv-container').data('id') == conv.convID) {
+                updateConversation(conv.convID);
+            } else { // if I received a new messages
+                if (conv.otherID == currentUser._id) {
+                    unreadMessages++;
+                    updateNewMessagesIndicator();
+                }
+            }
+        }
+    });
 }
 
 function colorFilters () {
@@ -100,9 +121,9 @@ function toggleShowFilters () {
 function getUrlParam (name) {
 	const results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
 	if (results==null) {
-		return null;
+		return null
 	} else {
-		return results[1] || 0;
+		return results[1] || 0
 	}	
 }
 
@@ -123,7 +144,7 @@ function getProfileInfo() {
 
 function displayDate (date) {
 	if (!date) {
-		return false;
+		return false
 	}
 	const d = new Date(date);
 	const day = ('0' + d.getDate()).slice(-2);
@@ -136,7 +157,7 @@ function displayDate (date) {
 
 function displayStars (rating, size) {
 	if (!rating) {
-		return '<span class="small">No rating yet</span>';
+		return '<span class="small">No rating yet</span>'
 	}
 	let htmlStars = '';
 	for (let i = 0; i < 5; i++ ) { 

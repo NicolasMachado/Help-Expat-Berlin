@@ -17,7 +17,8 @@ $(function() {
     $('.profile-body').on('submit', '#form-send-message', function(e) {
         e.preventDefault();
         postNewMessage($('#message-textarea').val().replace(/&/g, '&amp;').replace(/</g, '&lt;'), $('#form-send-message').data('id'), $('#form-send-message').data('other'));
-        $(this).find('#message-textarea').val('');
+        $('#btn-send-message').hide();
+        $('#btn-send-loading').css('display', 'inline-block');
     });
     if (tabParam === 'messages') {
         getListMessages();
@@ -33,7 +34,11 @@ function postNewMessage (messageBody, convId, other) {
         other: other
     };
     thisAjax.method = 'POST';
-    thisAjax.success = function() {};
+    thisAjax.success = function() {
+        $('#message-textarea').val('');
+        $('#btn-send-message').show();
+        $('#btn-send-loading').css('display', 'none');   
+    };
     $.ajax (thisAjax);
 }
 
@@ -55,6 +60,10 @@ function updateConversation (id) {
 function getConversation (id) {
     let thisAjax = new AjaxTemplate('/auth/get-conversation/' + id + '?limit=' + messagesLimit);
     thisAjax.success = function(response) {
+            if (response.conversation.unreadUser == response.user._id) {
+                unreadMessages -= response.oldUnread;
+                updateNewMessagesIndicator();
+            }
             $('.now-loading').hide();
             const otherUser = response.conversation.users[0]._id === response.user._id ? response.conversation.users[1] : response.conversation.users[0];
             const olderMessagesButton = response.conversation.messages.length > messagesLimit ? '<div data-id="' + response.conversation._id + '" class="button button-older-messages">Older messages</div>' : '';
@@ -64,7 +73,8 @@ function getConversation (id) {
                 '<form id="form-send-message" method="post" data-other="' + otherUser._id + '" data-id="' + response.conversation._id + '">' +
                 '<input name="other" value="' + otherUser._id + '" hidden>' +
                 '<textarea id="message-textarea" name="messageBody" rows="5" placeholder="Send a message" required></textarea>' +
-                '<div><input class="button" type="submit" value="Send"></div>' +
+                '<div><input class="button" id="btn-send-message" type="submit" value="Send"></div>' +
+                '<div class="button" id="btn-send-loading"> Please wait</div>' +
                 '</form>'
                 );
             response.conversation.messages.reverse().slice(0, messagesLimit).forEach(function (message) {
@@ -80,7 +90,7 @@ function returnIndividualMessage (message, otherUser) {
     return '<div class="message-container ' + messageClass + '" data-id="' + message._id + '">' +
             message.body.replace(/\r?\n/g, '<br />') + '</br>'
             message.date +
-            '</div>';   
+            '</div>' 
 }
 
 function getListMessages () {
@@ -108,27 +118,17 @@ function returnIndividualConvListProfile (conv, otherUser, currentuser) {
     const unread = (conv.nbUnread > 0 && currentuser._id == conv.unreadUser) ? ' <b>(' + conv.nbUnread + ' new)<b/>' : '';
     return '<div class="conversation-container-list proftab" data-id="' + conv._id + '">' +
             'With ' + otherUser.username + ' - ' +  conv.messages.length +' messages' + unread +
-            '</div>';   
+            '</div>'
 }
 
 function updateNewMessagesIndicator () {
     if (unreadMessages > 0) {
-        $('.messages-tab').text('Messages (' + unreadMessages + ')');
+        $('.ms-mobile').html('<img src="/images/messages.png" height="20px"> <div class="messages-indicator">' + String(unreadMessages) + '</div>');
+        $('.ms-normal').html('Messages <div class="messages-indicator">' + String(unreadMessages) + '</div>');
+        $('.menu-messages').html('Messages <div class="messages-indicator">' + String(unreadMessages) + '</div>');
     } else {
-        $('.messages-tab').text('Messages');      
+        $('.ms-mobile').html('<img src="/images/messages.png" height="20px">');
+        $('.ms-normal').html('Messages');    
+        $('.menu-messages').html('Messages');  
     }
 }
-
-socket.on('newMessage', function (conv) {
-    if ((conv.otherID == currentUser._id) || (conv.userID == currentUser._id)) { //check if user concerned
-        // if viewing chat
-        if ($('.conv-container').data('id') == conv.convID) {
-            updateConversation(conv.convID);
-        } else { // if I received a new messages
-            if (conv.otherID == currentUser._id) {
-                unreadMessages++;
-                updateNewMessagesIndicator();
-            }
-        }
-    }
-});

@@ -16,7 +16,8 @@ const socketIO = require('socket.io');
 const {router: authRouter} = require('./auth');
 const {router: requestRouter} = require('./request');
 
-let server, io;
+let server;
+io = '';
 
 mongoose.Promise = global.Promise;
 
@@ -32,8 +33,6 @@ function loadConfig (configPath) {
 }
 
 const app = express();
-/*const serverIO = app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
-const io = socketIO(serverIO);*/
 
 app.use(morgan('common'));
 app.use(cookieParser);
@@ -46,12 +45,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static('views'));
 
-app.use((req, res, next) => {
-    req.io = io;
-    next();
-});
-
 app.use('*', checkLogin);
+/*
+app.use((req, res, next) => {
+    if (req.user) {
+        req.io = io;
+        io.on('connect', (socket) => {
+            socket.join(req.user._id);
+            console.log('JOINED ROOM ' + req.user._id);
+        });
+    }
+    next();
+});*/
 
 app.use('/auth/', authRouter);
 app.use('/request/', requestRouter);
@@ -81,6 +86,12 @@ function runServer() {
                 reject(err);
             });
             io = socketIO(server);
+            io.on('connect', (socket) => {
+                socket.on('join', function(room) {
+                    socket.join(room);
+                    console.log('JOINED ROOM ' + room);
+                });
+            });
         });
     });
 }
