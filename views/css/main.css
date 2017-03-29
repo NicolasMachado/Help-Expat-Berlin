@@ -49,6 +49,39 @@ a {
     text-decoration: none;	
 }
 
+.fb-connect {
+	display: inline-block;
+	font-weight: normal;
+	padding: 8px 15px 8px 15px;
+	border-radius: 5px;
+	background-color: #3b5998;
+	color: white;
+	margin: 10px;
+}
+
+.fb-logo {
+	vertical-align: middle;
+	padding-right: 10px;
+	padding-bottom: 1px;
+}
+
+.fb-connect-small {
+	font-size: 12px;
+	display: inline-block;
+	font-weight: normal;
+	padding: 7px 13px 5px 13px;
+	border-radius: 4px;
+	background-color: #3b5998;
+	color: white;
+	margin: 5px;
+}
+
+.fb-logo-small {
+	vertical-align: middle;
+	padding-right: 10px;
+	padding-bottom: 1px;
+}
+
 nav {
 	text-align: center;
 	background-color: #404040;
