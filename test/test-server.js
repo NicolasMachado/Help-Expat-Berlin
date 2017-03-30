@@ -10,6 +10,17 @@ const {Request, User, Conversation, Rating} = require('../config/models');
 
 chai.use(chaiHttp);
 
+// Load either local config or regular config
+if (fs.existsSync('../config/local')) {
+    console.log('Loading local config');
+    loadConfig('../config/local/config.js');
+} else {
+    loadConfig('../config/config.js');
+}
+function loadConfig (configPath) {
+    return {TEST_DATABASE_URL} = require(configPath);
+}
+
 function seedUserData() {
 	console.info('seeding user data');
 	const seedData = [];
