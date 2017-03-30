@@ -3,6 +3,7 @@ const chaiHttp = require('chai-http');
 const {app, runServer, closeServer} = require('../server');
 const faker = require('faker');
 const mongoose = require('mongoose');
+const fs = require('fs');
 
 const should = chai.should();
 const {Request, User, Conversation, Rating} = require('../config/models');
