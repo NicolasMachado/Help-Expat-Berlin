@@ -70,10 +70,12 @@ describe('App API resource', function() {
 	});*/
 
 	after(function() {
+  		this.timeout(5000);
 		return closeServer();
 	});
 	
 	describe('Root page', function() {
+  		this.timeout(5000);
 		it('should return status 200', function(done) {
 			chai.request(app)
 			.get('/')
@@ -87,6 +89,7 @@ describe('App API resource', function() {
 	});
 	
 	describe('Create new user', function() {
+  		this.timeout(5000);
 		it('should add a new user', function(done) {
 			tearDownDb(); // TO MOVE !
 			agent.post('http://127.0.0.1:8080/auth/new')
@@ -104,6 +107,7 @@ describe('App API resource', function() {
 	});
 	
 	describe('User log in', function() {
+  		this.timeout(5000);
 		it('should log in', function(done) {
 			User.findOne()
 				.then((user) => {
@@ -124,19 +128,19 @@ describe('App API resource', function() {
 	});
 	
 	describe('Post a new request', function() {
+  		this.timeout(5000);
 		it('should add a new request', function(done) {
 			agent.post('http://127.0.0.1:8080/request/new')
 				.send({
 		            author: testUser._id,
 		            datePosted: new Date(),
 		            dateEvent: faker.date.future(),
-		            title: faker.lorem.sentence,
-		            time: '19:30',
+		            title: faker.lorem.sentence(),
 		            type: 'On Site Assistance',
 		            location: 'Mitte',
-		            price: faker.random.number,
+		            price: faker.random.number(),
 		            rate: 'flat',
-		            description: faker.lorem.sentences,
+		            description: faker.lorem.sentences(),
 		            status: `open`,
 		            interested: []
 		        })

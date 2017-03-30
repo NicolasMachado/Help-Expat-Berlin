@@ -64,6 +64,8 @@ const RequestSchema = mongoose.Schema({
     accepted: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     helper: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+}, {
+    strict: 'throw'
 });
 
 // CONVERSATION SCHEMA

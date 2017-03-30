@@ -146,7 +146,7 @@ router.post('/new', ensureLoginNormal, (req, res) => {
     }
 
     if (!('description' in req.body)) {
-        return res.render('newrequest', {errorMessage: 'Missing field: description'});
+        return res.status(400).render('newrequest', {errorMessage: 'Missing field: description'});
     }
 
     return Request
@@ -155,7 +155,6 @@ router.post('/new', ensureLoginNormal, (req, res) => {
             datePosted: new Date(),
             dateEvent: req.body.dateevent || null,
             title: req.body.title,
-            time: req.body.time,
             type: req.body.type,
             location: req.body.location,
             price: req.body.price,
@@ -166,7 +165,7 @@ router.post('/new', ensureLoginNormal, (req, res) => {
         })
         .then(() => {
             req.flash('alertMessage', 'Your request has been posted!');
-            res.redirect('/');
+            return res.redirect('/');
         })
         .catch(err => {
             res.status(500).json({message: err.errmsg})
