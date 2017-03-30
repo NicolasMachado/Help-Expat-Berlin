@@ -5,7 +5,6 @@ const faker = require('faker');
 const mongoose = require('mongoose');
 
 const should = chai.should();
-const {TEST_DATABASE_URL} = require('../config/local/config');
 const {Request, User, Conversation, Rating} = require('../config/models');
 
 chai.use(chaiHttp);
