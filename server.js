@@ -46,17 +46,6 @@ app.use(passport.session());
 app.use(express.static('views'));
 
 app.use('*', checkLogin);
-/*
-app.use((req, res, next) => {
-    if (req.user) {
-        req.io = io;
-        io.on('connect', (socket) => {
-            socket.join(req.user._id);
-            console.log('JOINED ROOM ' + req.user._id);
-        });
-    }
-    next();
-});*/
 
 app.use('/auth/', authRouter);
 app.use('/request/', requestRouter);
@@ -89,7 +78,6 @@ function runServer(databaseUrl = DATABASE_URL) {
             io.on('connect', (socket) => {
                 socket.on('join', function(room) {
                     socket.join(room);
-                    console.log('JOINED ROOM ' + room);
                 });
             });
         });
@@ -104,7 +92,7 @@ function closeServer() {
                 if (err) {
                     return reject(err);
                 }
-                resolve();
+                return resolve();
             });
         });
     });

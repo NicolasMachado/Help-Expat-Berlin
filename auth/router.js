@@ -90,31 +90,6 @@ passport.deserializeUser(function(id, cb) {
     });
 });
 
-/*
-// SHOW ALL USERS (to be removed eventually)
-router.get('/showall', (req, res) => {
-    return User
-    .find()
-    .populate('requests')
-    .then(users => {
-        res.render('userlist', {users});
-    })
-    .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
-});
-
-// DELETE To be removed
-router.get('/delete/:id', (req, res) => {
-    User
-    .findByIdAndRemove(req.params.id)
-    .then(() => {
-        return Request
-            .find({author : req.params.id})
-            .remove()
-    })
-    .then(res.redirect('/auth/showall'))
-});
-*/
-
 // CREATE NEW USER
 router.post('/new', (req, res) => {
     if (!req.body) {
@@ -122,17 +97,17 @@ router.post('/new', (req, res) => {
     }
 
     if (!('username' in req.body)) {
-        return res.render('account-create', {errorMessage: 'Missing field: username'});
+        return res.status(666).render('account-create', {errorMessage: 'Missing field: username'});
     }
 
     if (!('email' in req.body)) {
-        return res.render('account-create', {errorMessage: 'Missing field: email'});
+        return res.status(422).render('account-create', {errorMessage: 'Missing field: email'});
     }
 
     let {username, password, email} = req.body;
 
     if (typeof username !== 'string') {
-        return res.render('account-create', {errorMessage: 'Incorrect field type: username'});
+        return res.status(422).render('account-create', {errorMessage: 'Incorrect field type: username'});
     }
 
     username = username.trim();
@@ -140,23 +115,23 @@ router.post('/new', (req, res) => {
     password = password.trim();
 
     if (username === '') {
-        return res.render('account-create', {errorMessage: 'You must provide a user name'});
+        return res.status(422).render('account-create', {errorMessage: 'You must provide a user name'});
     }
 
     if (email === '') {
-        return res.render('account-create', {errorMessage: 'You must provide an email address'});
+        return res.status(422).render('account-create', {errorMessage: 'You must provide an email address'});
     }
 
     if (!(password)) {
-        return res.render('account-create', {errorMessage: 'You must provide a password'});
+        return res.status(422).render('account-create', {errorMessage: 'You must provide a password'});
     }
 
     if (typeof password !== 'string') {
-        return res.render('account-create', {errorMessage: 'Incorrect field type: password'});
+        return res.status(422).render('account-create', {errorMessage: 'Incorrect field type: password'});
     }
 
     if (password === '') {
-        return res.render('account-create', {errorMessage: 'You must provide a password'});
+        return res.status(422).render('account-create', {errorMessage: 'You must provide a password'});
     }
 
     // check for existing user
