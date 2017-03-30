@@ -5,6 +5,9 @@ const faker = require('faker');
 const mongoose = require('mongoose');
 const fs = require('fs');
 
+const superAgent = require('superagent');
+const agent = superAgent.agent();
+
 const should = chai.should();
 const {Request, User, Conversation, Rating} = require('../config/models');
 
@@ -44,11 +47,7 @@ function generateUserData() {
 		authType: "normal",
 		rating: faker.random.number(),
     	unreadMessages: faker.random.number(),
-		nbRatings: faker.random.number(),
-	    facebook: {
-	        id: "1317554881669073",
-	        token: "EAAMMbH6m2S8BAKlazShBXBRZAOlZBJwav38NSIu6ZA9RQ56urZBZCBx6y0sckYgqrvUGsJnqgJmES5U83UZAZBM0JsrZBNL2Xxr9HGi0lvRBMS1lYZAjEidQrSx5eea31GODZCYbVRb4Yz83YHiWUtJ56N5fqLEgmkNTsZD"
-	    }
+		nbRatings: faker.random.number()
 	}
 }
 
@@ -90,8 +89,7 @@ describe('App API resource', function() {
 	describe('Create new user', function() {
 		it('should add a new user', function(done) {
 			tearDownDb(); // TO MOVE !
-			chai.request(app)
-				.post('/auth/new')
+			agent.post('http://127.0.0.1:8080/auth/new')
 				.send({
 					username: faker.internet.userName(),
 					password: testUser.password,
@@ -109,11 +107,8 @@ describe('App API resource', function() {
 		it('should log in', function(done) {
 			User.findOne()
 				.then((user) => {
-					console.log(user.password);
-					console.log(user.email);
 					testUser._id = user._id;
-					chai.request('http://127.0.0.1:8080')
-						.post('/auth/login')
+					agent.post('http://127.0.0.1:8080/auth/login')
 						.send({
 							password: testUser.password,
 							email: testUser.email
@@ -130,9 +125,7 @@ describe('App API resource', function() {
 	
 	describe('Post a new request', function() {
 		it('should add a new request', function(done) {
-			console.log(testUser);
-			chai.request('http://127.0.0.1:8080')
-				.post('/request/new')
+			agent.post('http://127.0.0.1:8080/request/new')
 				.send({
 		            author: testUser._id,
 		            datePosted: new Date(),
@@ -149,7 +142,8 @@ describe('App API resource', function() {
 		        })
 	  			.end((err, res) => {
 				    should.not.exist(err);
-				    //res.should.not.redirectTo('http://127.0.0.1:8080/auth/account-login');
+				    res.should.redirectTo('http://127.0.0.1:8080/');
+				    res.should.not.redirectTo('http://127.0.0.1:8080/auth/account-login');
 				    res.should.have.status(200);
 					done();
 	  			});	

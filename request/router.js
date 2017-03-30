@@ -166,7 +166,7 @@ router.post('/new', ensureLoginNormal, (req, res) => {
         })
         .then(() => {
             req.flash('alertMessage', 'Your request has been posted!');
-            res.redirect('/'); // account created
+            res.redirect('/');
         })
         .catch(err => {
             res.status(500).json({message: err.errmsg})
