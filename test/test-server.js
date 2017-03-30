@@ -57,9 +57,9 @@ describe('App API resource', function() {
 		return seedUserData();
 	});
 
-	/*afterEach(function() {
+	afterEach(function() {
 		return tearDownDb();
-	});*/
+	});
 
 	after(function() {
 		return closeServer();
