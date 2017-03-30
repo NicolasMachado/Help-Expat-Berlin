@@ -134,7 +134,7 @@ describe('App API resource', function() {
 				.send({
 		            author: testUser._id,
 		            datePosted: new Date(),
-		            dateEvent: faker.date.future(),
+		            dateevent: faker.date.future(),
 		            title: faker.lorem.sentence(),
 		            type: 'On Site Assistance',
 		            location: 'Mitte',
