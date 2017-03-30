@@ -1,5 +1,5 @@
 let currentPage = 0;
-const resultsPerPage = 2;
+const resultsPerPage = 10;
 
 $(function() {
     if ($('.request-list').length !== 0) {

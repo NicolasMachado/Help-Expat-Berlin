@@ -71,9 +71,9 @@ app.use('*', (req, res) => {
     return res.status(404).json({message: '404 - Not Found'});
 });
 
-function runServer() {
+function runServer(databaseUrl = DATABASE_URL) {
     return new Promise((resolve, reject) => {
-        mongoose.connect(DATABASE_URL, err => {
+        mongoose.connect(databaseUrl, err => {
             if (err) {
                 return reject(err);
             }

@@ -215,7 +215,7 @@ router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
         .then(() => {
             return User
                 .findByIdAndUpdate(req.body.other, {$inc: { unreadMessages: 1 }})
-                .then(() => {
+                .then((result) => {
                     io.to(String(req.body.other)).emit('newMessage', {userID: req.user._id, convID: req.params.id, otherID: req.body.other});
                     io.to(String(req.user._id)).emit('newMessage', {userID: req.user._id, convID: req.params.id, otherID: req.body.other});
                     res.send({conversation: req.params.id, user: req.user});
@@ -231,15 +231,28 @@ router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
 router.get('/add-rating', ensureLoginAjax, (req, res) => {
     const helper = req.query.iam === 'author' ? req.query.user : null;
     let avgRating, nbRatings, sumRatings;
-    console.log(req.query);
+    // checking if rating already exists
     return Rating
-        .create({
-            rating: req.query.rating,
-            comment: req.query.comment,
+        .findOne({
             user: req.query.user,
             request: req.query.request,
             from: req.user._id
         })
+        .then((rating) => {
+            if (rating) {
+                throw new Error('RATING ALREADY EXISTS, IGNORING');              
+            }
+        })
+        .then(() => {
+            return Rating
+                .create({
+                    rating: req.query.rating,
+                    comment: req.query.comment,
+                    user: req.query.user,
+                    request: req.query.request,
+                    from: req.user._id
+                })
+            })
         .then(() => {
             return Rating
                 .find({user: req.query.user})
@@ -264,8 +277,9 @@ router.get('/add-rating', ensureLoginAjax, (req, res) => {
             res.status(200).send('Success');
         })
         .catch(err => {
-            console.error(err);
-            res.status(500).json({message: 'Internal server error'})
+            console.error("CAREFUL: " + err);
+            req.flash('errorMessage', 'There was an error processing your rating');
+            res.status(500).redirect('/auth/profile/' + req.user._id + '?tab=profile');
         })
 });
 
@@ -315,6 +329,17 @@ router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
                     if (currentConv.unreadUser === String(req.user._id)) {
                         return User
                             .findByIdAndUpdate(req.user._id, {$inc: {unreadMessages: -conv.nbUnread}})
+                            .then((user) => {
+                                console.log(user.unreadMessages);
+                                return User
+                                    .findById(req.user._id)
+                                    .then(user => {
+                                        if (user.unreadMessages < 0) {
+                                            return User
+                                                .findByIdAndUpdate(req.user._id, {unreadMessages: 0})                                    
+                                        }
+                                    })
+                            })
                     }
                 })
         })

@@ -11,7 +11,7 @@ const UserSchema = mongoose.Schema({
     password: { type: String, required: true },
     rating: { type: Number },
     nbRatings: { type: Number, default: 0 },
-    unreadMessages: { type: Number, default: 0 },
+    unreadMessages: { type: Number, default: 0, min: 0 },
     facebook: {
         id: {type: String},
         token: {type: String}
