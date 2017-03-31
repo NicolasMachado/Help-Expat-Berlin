@@ -36,8 +36,6 @@ router.get('/', saveFilters, (req, res) => {
 
 // AJAX ACCEPT HELP
 router.get('/accepthelp', ensureLoginAjax, (req, res) => {
-    console.log('The query in AJAX is :');
-    console.log(req.query);
     let thisRequest;
     return Request
         .findById(req.query.request)

@@ -25,7 +25,7 @@ let user2 = {
 	id: '',
 	iam: 'USER 2'
 };
-let testRequestID = '';
+let testRequestID = '', testConvID = '';
 
 // Load either local config or regular config
 if (fs.existsSync('./config/local')) {
@@ -267,6 +267,97 @@ describe('App API resource', function() {
 					})
 		  			.end((err, res) => {
 					    should.not.exist(err);
+					    res.body.should.be.an.Array;
+					    res.body.should.not.be.empty;
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+	
+	describe('POST auth/newmessage/:id', function() {
+  		this.timeout(5000);
+			it('should send a message to user2', function(done) {
+				Conversation
+					.findOne()
+					.then((conv) => {
+						testConvID = conv._id;
+						agent.post('http://127.0.0.1:8080/auth/newmessage/' + testConvID)
+							.send({
+						        messageBody : faker.lorem.sentences(),
+						        other: user2.id
+							})
+				  			.end((err, res) => {
+							    should.not.exist(err);
+							    res.body.should.be.an.Object;
+							    res.body.should.not.be.empty;
+							    res.should.have.status(200);
+								done();
+				  			});	
+					})
+			});
+	});
+
+	logOut();
+	logIn(user2);
+	
+	describe('GET auth/get-profile-messages', function() {
+  		this.timeout(5000);
+			it('user2 checks his messages list', function(done) {
+				agent.get('http://127.0.0.1:8080/auth/get-profile-messages/')
+		  			.end((err, res) => {
+					    should.not.exist(err);
+					    res.body.should.be.an.Object;
+					    res.body.should.not.be.empty;
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+	
+	describe('GET auth/get-conversation/:id', function() {
+  		this.timeout(5000);
+			it('user2 checks message from user1 and marks it as read', function(done) {
+				agent.get('http://127.0.0.1:8080/auth/get-conversation/' + testConvID)
+		  			.end((err, res) => {
+					    should.not.exist(err);
+					    res.body.should.be.an.Object;
+					    res.body.should.not.be.empty;
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+	
+	describe('POST auth/newmessage/:id', function() {
+  		this.timeout(5000);
+			it('should send a message back to user1', function(done) {
+				agent.post('http://127.0.0.1:8080/auth/newmessage/' + testConvID)
+					.send({
+				        messageBody : faker.lorem.sentences(),
+				        other: user1.id
+					})
+		  			.end((err, res) => {
+					    should.not.exist(err);
+					    res.body.should.be.an.Object;
+					    res.body.should.not.be.empty;
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+
+	logOut();
+	logIn(user1);
+	
+	describe('GET auth/get-conversation/:id', function() {
+  		this.timeout(5000);
+			it('user1 checks response message from user2 and marks it as read', function(done) {
+				agent.get('http://127.0.0.1:8080/auth/get-conversation/' + testConvID)
+		  			.end((err, res) => {
+					    should.not.exist(err);
+					    res.body.should.be.an.Object;
+					    res.body.should.not.be.empty;
 					    res.should.have.status(200);
 						done();
 		  			});	

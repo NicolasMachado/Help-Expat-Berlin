@@ -297,7 +297,6 @@ router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
                         return User
                             .findByIdAndUpdate(req.user._id, {$inc: {unreadMessages: -conv.nbUnread}})
                             .then((user) => {
-                                console.log(user.unreadMessages);
                                 return User
                                     .findById(req.user._id)
                                     .then(user => {
@@ -315,10 +314,9 @@ router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
             if (currentConv.unreadUser === String(req.user._id)) {
                 return Conversation
                     .findByIdAndUpdate(currentConv._id, {$set: {unreadUser: '', nbUnread: 0}}) // mark as read
-            }
+                }
         })
         .then(() => res.send({conversation: currentConv, user: req.user, oldUnread: oldUnread}))
-
         .catch(err => {
             console.error(err);
             res.status(500).json({message: 'Internal server error'})
