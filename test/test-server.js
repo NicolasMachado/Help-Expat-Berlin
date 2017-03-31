@@ -364,6 +364,47 @@ describe('App API resource', function() {
 			});
 	});
 	
+	describe('GET auth/add-rating', function() {
+  		this.timeout(5000);
+			it('user1 rates user 2 and closes the query', function(done) {
+				agent.get('http://127.0.0.1:8080/auth/add-rating')
+					.query({
+				        rating: Math.random()*5,
+				        comment: faker.lorem.sentences(),
+				        request: String(testRequestID),
+				        user: String(user2.id),
+				        iam: String(user1.id)
+				    })
+		  			.end((err, res) => {
+					    should.not.exist(err);
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+
+	logOut();
+	logIn(user2);
+	
+	describe('GET auth/add-rating', function() {
+  		this.timeout(5000);
+			it('user2 rates user 1 back', function(done) {
+				agent.get('http://127.0.0.1:8080/auth/add-rating')
+					.query({
+				        rating: Math.random()*5,
+				        comment: faker.lorem.sentences(),
+				        request: String(testRequestID),
+				        user: String(user1.id),
+				        iam: String(user2.id)
+				    })
+		  			.end((err, res) => {
+					    should.not.exist(err);
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+	
 	describe('GET PROFILE sections', function() {
   		this.timeout(5000);
 		it('should visit own profile', function(done) {
@@ -375,21 +416,37 @@ describe('App API resource', function() {
 	  			});			
 		});
 
-		it('should return own ratings', function(done) {
+		it('should return user2 ratings', function(done) {
 			agent.get('http://127.0.0.1:8080/auth/get-user-ratings/')
 	  			.end((err, res) => {
 				    should.not.exist(err);
 				    res.should.have.status(200);
+					    res.body.should.be.an.Array;
+					    res.body.should.not.be.empty;
+					done();
+	  			});			
+		});
+
+		it('should return user1 ratings', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/get-other-ratings/' + user1.id)
+	  			.end((err, res) => {
+				    should.not.exist(err);
+				    res.should.have.status(200);
+				    res.body.should.be.an.Array;
+				    res.body.should.not.be.empty;
 					done();
 	  			});			
 		});
 	});
+
+	logOut();
+	logIn(user1);
 	
-	/*describe('GET request/remove/:id', function() {
+	describe('GET request/remove/:id', function() {
   		this.timeout(5000);
 		it('should delete a request', function(done) {
 			Request
-				.findOne()
+				.findOne(testRequestID)
 				.then((request) =>{
 					agent.get('http://127.0.0.1:8080/request/remove/' + request.id)
 			  			.end((err, res) => {
@@ -401,7 +458,7 @@ describe('App API resource', function() {
 			  			});						
 				})
 		});
-	});*/
+	});
 	
 	logOut();
 

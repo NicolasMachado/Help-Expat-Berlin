@@ -244,7 +244,6 @@ router.get('/add-rating', ensureLoginAjax, (req, res) => {
             res.status(200).send('Success');
         })
         .catch(err => {
-            console.error("CAREFUL: " + err);
             req.flash('errorMessage', 'There was an error processing your rating');
             res.status(500).redirect('/auth/profile/' + req.user._id + '?tab=profile');
         })
@@ -266,7 +265,6 @@ router.get('/get-user-ratings', ensureLoginAjax, (req, res) => {
 
 // AJAX RETURN OTHER RATINGS
 router.get('/get-other-ratings/:id', ensureLoginAjax, (req, res) => {
-    console.log(req.params.id);
     return Rating
         .find({ user : req.params.id })
         .populate('from')
