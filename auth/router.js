@@ -163,14 +163,6 @@ router.post('/new', (req, res) => {
     });
 });
 
-// LOG IN
-router.post('/login', passport.authenticate('local'), ensureLoginNormal, (req, res, next) => {
-    User.findOne({ email: req.body.email }, (err, user) => {
-        req.flash('alertMessage', `Welcome, ${user.username}`);
-        res.redirect('/auth/profile/' + user._id + '?tab=profile');
-    });
-});
-
 // POST NEW MESSAGE
 router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
     return Conversation
@@ -422,6 +414,14 @@ router.get('/account-login', (req, res) => {
 router.get('/account-login-request', (req, res) => {
     req.flash('errorMessage', 'Please log in first.');
     res.redirect('/auth/account-login');
+});
+
+// LOG IN
+router.post('/login', passport.authenticate('local'), ensureLoginNormal, (req, res, next) => {
+    User.findOne({ email: req.body.email }, (err, user) => {
+        req.flash('alertMessage', `Welcome, ${user.username}`);
+        res.redirect('/auth/profile/' + user._id + '?tab=profile');
+    });
 });
 
 // LOG OUT
