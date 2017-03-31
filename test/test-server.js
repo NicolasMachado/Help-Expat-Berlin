@@ -39,27 +39,6 @@ function loadConfig (configPath) {
     return {TEST_DATABASE_URL} = require(configPath);
 }
 
-function seedUserData() {
-	console.info('seeding user data');
-	const seedData = [];
-	for (let i=1; i<=10; i++) {
-		seedData.push(generateUserData());
-	}
-	return User.insertMany(seedData);
-}
-
-function generateUserData() {
-	return {
-		username: faker.internet.userName(),
-		password: faker.name.lastName(),
-		email: faker.internet.email(),
-		authType: "normal",
-		rating: faker.random.number(),
-    	unreadMessages: faker.random.number(),
-		nbRatings: faker.random.number()
-	}
-}
-
 function tearDownDb() {
     console.warn('Deleting database');
     return mongoose.connection.dropDatabase();
@@ -103,18 +82,10 @@ function logIn (user) {
 
 // MAIN TEST SUITE
 describe('App API resource', function() {
+	
 	before(function() {
 		return runServer(TEST_DATABASE_URL);
 	});
-/*
-	beforeEach(function() {
-		return seedUserData();
-	});
-
-	afterEach(function() {
-		return tearDownDb();
-	});*/
-
 	after(function() {
   		this.timeout(5000);
 		return closeServer();
@@ -364,6 +335,20 @@ describe('App API resource', function() {
 			});
 	});
 	
+	describe('GET auth/get-profile-requests', function() {
+  		this.timeout(5000);
+			it('user1 checks his requests', function(done) {
+				agent.get('http://127.0.0.1:8080/auth/get-profile-requests')
+		  			.end((err, res) => {
+					    res.body.should.be.an.Array;
+					    res.body.should.not.be.empty;
+					    should.not.exist(err);
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+	
 	describe('GET auth/add-rating', function() {
   		this.timeout(5000);
 			it('user1 rates user 2 and closes the query', function(done) {
@@ -385,6 +370,20 @@ describe('App API resource', function() {
 
 	logOut();
 	logIn(user2);
+	
+	describe('GET auth/get-profile-services', function() {
+  		this.timeout(5000);
+			it('user2 checks his services', function(done) {
+				agent.get('http://127.0.0.1:8080/auth/get-profile-services')
+		  			.end((err, res) => {
+					    res.body.should.be.an.Array;
+					    res.body.should.not.be.empty;
+					    should.not.exist(err);
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
 	
 	describe('GET auth/add-rating', function() {
   		this.timeout(5000);
@@ -460,6 +459,47 @@ describe('App API resource', function() {
 		});
 	});
 	
+	describe('GET auth/get-user', function() {
+  		this.timeout(5000);
+			it('endpoint returns current logged in user (user1)', function(done) {
+				agent.get('http://127.0.0.1:8080/auth/get-user')
+		  			.end((err, res) => {
+		  				res.body.should.be.an.Object;
+		  				res.body.should.not.be.empty;
+					    should.not.exist(err);
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+	
 	logOut();
+	
+	describe('GET auth/get-user', function() {
+  		this.timeout(5000);
+			it('endpoint returns current logged in user (null)', function(done) {
+				agent.get('http://127.0.0.1:8080/auth/get-user')
+		  			.end((err, res) => {
+		  				res.body.should.be.an.Object;
+		  				res.body.should.be.empty;
+					    should.not.exist(err);
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+	
+	describe('GET auth/account-login-request', function() {
+  		this.timeout(5000);
+			it('should redirect to login', function(done) {
+				agent.get('http://127.0.0.1:8080/auth/account-login-request')
+		  			.end((err, res) => {
+		  				res.should.redirectTo('http://127.0.0.1:8080/auth/account-login');
+					    should.not.exist(err);
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
 
 });

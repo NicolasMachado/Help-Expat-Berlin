@@ -334,16 +334,6 @@ router.get('/get-profile-messages', ensureLoginAjax, (req, res) => {
         })
 });
 
-// AJAX RETURN PROFILE SERVICES
-router.get('/get-profile-services', ensureLoginAjax, (req, res, next) => {
-    Request
-        .find({interested: req.user._id})
-        .populate('author')
-        .then(requests => {
-            res.json({requests: requests, currentUser: req.user});
-        })
-});
-
 // AJAX RETURN PROFILE REQUESTS
 router.get('/get-profile-requests', ensureLoginAjax, (req, res, next) => {
     Request
@@ -351,6 +341,16 @@ router.get('/get-profile-requests', ensureLoginAjax, (req, res, next) => {
         .populate('interested')
         .then(requests => {
             res.json(requests);
+        })
+});
+
+// AJAX RETURN PROFILE SERVICES
+router.get('/get-profile-services', ensureLoginAjax, (req, res, next) => {
+    Request
+        .find({interested: req.user._id})
+        .populate('author')
+        .then(requests => {
+            res.json({requests: requests, currentUser: req.user});
         })
 });
 
