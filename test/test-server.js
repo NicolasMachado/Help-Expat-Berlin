@@ -44,55 +44,39 @@ function tearDownDb() {
     return mongoose.connection.dropDatabase();
 }
 
-function logOut () {
-	describe('GET auth/logout', function() {
-  		this.timeout(5000);
-		it('should log out', function(done) {
-			agent.get('http://127.0.0.1:8080/auth/logout')
-			.end((err, res) => {
-				should.not.exist(err);
-				res.should.redirectTo('http://127.0.0.1:8080/');
-				res.should.not.redirectTo('http://127.0.0.1:8080/auth/account-login');
-				res.should.have.status(200);
-				done();
-			});	
-		});
+function logOut (done) {
+	agent.get('http://127.0.0.1:8080/auth/logout')
+	.end((err, res) => {
+		should.not.exist(err);
+		done();
 	});
 }
 
 function logIn (user) {
-	describe('POST auth/login', function() {
-  		this.timeout(5000);
-		it('should log in user1', function(done) {
-			agent.post('http://127.0.0.1:8080/auth/login')
-				.send({
-					password: user.password,
-					email: user.email
-		        })
-				.end((err, res) => {
-				    res.should.not.have.status(401);
-				    should.not.exist(err);
-				    res.should.have.status(200);
-				    console.log('LOGGED IN AS ' + user.iam)
-					done();
-				});	
-		});
-	});
+	return function(done) {
+		agent.post('http://127.0.0.1:8080/auth/login')
+			.send({
+				password: user.password,
+				email: user.email
+	        })
+			.end((err, res) => {
+			    should.not.exist(err);
+				done();
+			});
+	}
 }
 
 // MAIN TEST SUITE
 describe('App API resource', function() {
-	
+
 	before(function() {
 		return runServer(TEST_DATABASE_URL);
 	});
 	after(function() {
-  		this.timeout(5000);
 		return closeServer();
 	});
 	
 	describe('GET /', function() {
-  		this.timeout(5000);
 		it('should return status 200', function(done) {
 			tearDownDb(); // TO MOVE !
 			chai.request(app)
@@ -107,7 +91,6 @@ describe('App API resource', function() {
 	});
 	
 	describe('POST auth/new', function() {
-  		this.timeout(5000);
 		it('should add 2 new users', function(done) {
 			agent.post('http://127.0.0.1:8080/auth/new')
 				.send({
@@ -139,7 +122,6 @@ describe('App API resource', function() {
 	});
 	
 	describe('POST auth/login', function() {
-  		this.timeout(5000);
 		it('should log in user1', function(done) {
 			agent.post('http://127.0.0.1:8080/auth/login')
 				.send({
@@ -156,7 +138,6 @@ describe('App API resource', function() {
 	});
 	
 	describe('POST request/new', function() {
-  		this.timeout(5000);
 		it('should post a new request', function(done) {
 			agent.post('http://127.0.0.1:8080/request/new')
 				.send({
@@ -181,231 +162,225 @@ describe('App API resource', function() {
 		});
 	});
 
-	logOut();
-	logIn(user2);
-	
-	describe('GET /proposehelp/:id', function() {
-  		this.timeout(5000);
-			it('should add user2 to interested array', function(done) {
-				Request
-					.findOne()
-					.then((request) => {
-						testRequestID = request._id;
-							agent.get('http://127.0.0.1:8080/request/proposehelp/' + testRequestID)
-					  			.end((err, res) => {
-								    should.not.exist(err);
-								    res.should.have.status(200);
-									done();
-					  			});	
-					})
+	describe('GET auth/logout', function() {
+		it('should log out', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/logout')
+			.end((err, res) => {
+				should.not.exist(err);
+				res.should.redirectTo('http://127.0.0.1:8080/');
+				res.should.not.redirectTo('http://127.0.0.1:8080/auth/account-login');
+				res.should.have.status(200);
+				done();
 			});
-	});
-	
-	describe('GET /revokehelp/:id', function() {
-  		this.timeout(5000);
-			it('should revoke user2 from interested array', function(done) {
-				agent.get('http://127.0.0.1:8080/request/revokehelp/' + testRequestID)
-		  			.end((err, res) => {
-					    should.not.exist(err);
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+		});
 	});
 	
 	describe('GET /proposehelp/:id', function() {
-  		this.timeout(5000);
-			it('should add user2 to interested array again', function(done) {
-				agent.get('http://127.0.0.1:8080/request/proposehelp/' + testRequestID)
-		  			.end((err, res) => {
-					    should.not.exist(err);
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
-	});
-
-	logOut();
-	logIn(user1);
-	
-	describe('GET /accepthelp/', function() {
-  		this.timeout(5000);
-			it('should accept help from user2', function(done) {
-				agent.get('http://127.0.0.1:8080/request/accepthelp/')
-					.query({
-				        request : String(testRequestID),
-				        helper : String(user2.id)
-					})
-		  			.end((err, res) => {
-					    should.not.exist(err);
-					    res.body.should.be.an.Array;
-					    res.body.should.not.be.empty;
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
-	});
-	
-	describe('POST auth/newmessage/:id', function() {
-  		this.timeout(5000);
-			it('should send a message to user2', function(done) {
-				Conversation
-					.findOne()
-					.then((conv) => {
-						testConvID = conv._id;
-						agent.post('http://127.0.0.1:8080/auth/newmessage/' + testConvID)
-							.send({
-						        messageBody : faker.lorem.sentences(),
-						        other: user2.id
-							})
+		before(logIn(user2));
+		it('should add user2 to interested array', function(done) {
+			Request
+				.findOne()
+				.then((request) => {
+					testRequestID = request._id;
+						agent.get('http://127.0.0.1:8080/request/proposehelp/' + testRequestID)
 				  			.end((err, res) => {
 							    should.not.exist(err);
-							    res.body.should.be.an.Object;
-							    res.body.should.not.be.empty;
 							    res.should.have.status(200);
 								done();
 				  			});	
-					})
-			});
-	});
-
-	logOut();
-	logIn(user2);
-	
-	describe('GET auth/get-profile-messages', function() {
-  		this.timeout(5000);
-			it('user2 checks his messages list', function(done) {
-				agent.get('http://127.0.0.1:8080/auth/get-profile-messages/')
-		  			.end((err, res) => {
-					    should.not.exist(err);
-					    res.body.should.be.an.Object;
-					    res.body.should.not.be.empty;
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+				})
+		});
 	});
 	
-	describe('GET auth/get-conversation/:id', function() {
-  		this.timeout(5000);
-			it('user2 checks message from user1 and marks it as read', function(done) {
-				agent.get('http://127.0.0.1:8080/auth/get-conversation/' + testConvID)
-		  			.end((err, res) => {
-					    should.not.exist(err);
-					    res.body.should.be.an.Object;
-					    res.body.should.not.be.empty;
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+	describe('GET /revokehelp/:id', function() {
+		it('should revoke user2 from interested array', function(done) {
+			agent.get('http://127.0.0.1:8080/request/revokehelp/' + testRequestID)
+	  			.end((err, res) => {
+				    should.not.exist(err);
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
+	});
+	
+	describe('GET /proposehelp/:id', function() {
+		after(logOut);
+		it('should add user2 to interested array again', function(done) {
+			agent.get('http://127.0.0.1:8080/request/proposehelp/' + testRequestID)
+	  			.end((err, res) => {
+				    should.not.exist(err);
+				    res.should.have.status(200);
+					done();
+	  			});
+		});
+	});
+	
+	describe('GET /accepthelp/', function() {
+		before(logIn(user1));
+		it('should accept help from user2', function(done) {
+			agent.get('http://127.0.0.1:8080/request/accepthelp/')
+				.query({
+			        request : String(testRequestID),
+			        helper : String(user2.id)
+				})
+	  			.end((err, res) => {
+				    should.not.exist(err);
+				    res.body.should.be.an.Array;
+				    res.body.should.not.be.empty;
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
 	});
 	
 	describe('POST auth/newmessage/:id', function() {
-  		this.timeout(5000);
-			it('should send a message back to user1', function(done) {
-				agent.post('http://127.0.0.1:8080/auth/newmessage/' + testConvID)
-					.send({
-				        messageBody : faker.lorem.sentences(),
-				        other: user1.id
-					})
-		  			.end((err, res) => {
-					    should.not.exist(err);
-					    res.body.should.be.an.Object;
-					    res.body.should.not.be.empty;
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+		after(logOut);
+		it('should send a message to user2', function(done) {
+			Conversation
+				.findOne()
+				.then((conv) => {
+					testConvID = conv._id;
+					agent.post('http://127.0.0.1:8080/auth/newmessage/' + testConvID)
+						.send({
+					        messageBody : faker.lorem.sentences(),
+					        other: user2.id
+						})
+			  			.end((err, res) => {
+						    should.not.exist(err);
+						    res.body.should.be.an.Object;
+						    res.body.should.not.be.empty;
+						    res.should.have.status(200);
+							done();
+			  			});	
+				})
+		});
 	});
-
-	logOut();
-	logIn(user1);
+	
+	describe('GET auth/get-profile-messages', function() {
+		before(logIn(user2));
+		it('user2 checks his messages list', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/get-profile-messages/')
+	  			.end((err, res) => {
+				    should.not.exist(err);
+				    res.body.should.be.an.Object;
+				    res.body.should.not.be.empty;
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
+	});
 	
 	describe('GET auth/get-conversation/:id', function() {
-  		this.timeout(5000);
-			it('user1 checks response message from user2 and marks it as read', function(done) {
-				agent.get('http://127.0.0.1:8080/auth/get-conversation/' + testConvID)
-		  			.end((err, res) => {
-					    should.not.exist(err);
-					    res.body.should.be.an.Object;
-					    res.body.should.not.be.empty;
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+		it('user2 checks message from user1 and marks it as read', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/get-conversation/' + testConvID)
+	  			.end((err, res) => {
+				    should.not.exist(err);
+				    res.body.should.be.an.Object;
+				    res.body.should.not.be.empty;
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
+	});
+	
+	describe('POST auth/newmessage/:id', function() {
+		after(logOut);
+		it('should send a message back to user1', function(done) {
+			agent.post('http://127.0.0.1:8080/auth/newmessage/' + testConvID)
+				.send({
+			        messageBody : faker.lorem.sentences(),
+			        other: user1.id
+				})
+	  			.end((err, res) => {
+				    should.not.exist(err);
+				    res.body.should.be.an.Object;
+				    res.body.should.not.be.empty;
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
+	});
+	
+	describe('GET auth/get-conversation/:id', function() {
+		before(logIn(user1));
+		it('user1 checks response message from user2 and marks it as read', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/get-conversation/' + testConvID)
+	  			.end((err, res) => {
+				    should.not.exist(err);
+				    res.body.should.be.an.Object;
+				    res.body.should.not.be.empty;
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
 	});
 	
 	describe('GET auth/get-profile-requests', function() {
-  		this.timeout(5000);
-			it('user1 checks his requests', function(done) {
-				agent.get('http://127.0.0.1:8080/auth/get-profile-requests')
-		  			.end((err, res) => {
-					    res.body.should.be.an.Array;
-					    res.body.should.not.be.empty;
-					    should.not.exist(err);
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+		it('user1 checks his requests', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/get-profile-requests')
+	  			.end((err, res) => {
+				    res.body.should.be.an.Array;
+				    res.body.should.not.be.empty;
+				    should.not.exist(err);
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
 	});
 	
 	describe('GET auth/add-rating', function() {
-  		this.timeout(5000);
-			it('user1 rates user 2 and closes the query', function(done) {
-				agent.get('http://127.0.0.1:8080/auth/add-rating')
-					.query({
-				        rating: Math.random()*5,
-				        comment: faker.lorem.sentences(),
-				        request: String(testRequestID),
-				        user: String(user2.id),
-				        iam: String(user1.id)
-				    })
-		  			.end((err, res) => {
-					    should.not.exist(err);
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+		after(logOut);
+		it('user1 rates user 2 and closes the query', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/add-rating')
+				.query({
+			        rating: Math.random()*5,
+			        comment: faker.lorem.sentences(),
+			        request: String(testRequestID),
+			        user: String(user2.id),
+			        iam: String(user1.id)
+			    })
+	  			.end((err, res) => {
+				    should.not.exist(err);
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
 	});
-
-	logOut();
-	logIn(user2);
 	
 	describe('GET auth/get-profile-services', function() {
-  		this.timeout(5000);
-			it('user2 checks his services', function(done) {
-				agent.get('http://127.0.0.1:8080/auth/get-profile-services')
-		  			.end((err, res) => {
-					    res.body.should.be.an.Array;
-					    res.body.should.not.be.empty;
-					    should.not.exist(err);
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+		before(logIn(user2));
+		it('user2 checks his services', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/get-profile-services')
+	  			.end((err, res) => {
+				    res.body.should.be.an.Array;
+				    res.body.should.not.be.empty;
+				    should.not.exist(err);
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
 	});
 	
 	describe('GET auth/add-rating', function() {
-  		this.timeout(5000);
-			it('user2 rates user 1 back', function(done) {
-				agent.get('http://127.0.0.1:8080/auth/add-rating')
-					.query({
-				        rating: Math.random()*5,
-				        comment: faker.lorem.sentences(),
-				        request: String(testRequestID),
-				        user: String(user1.id),
-				        iam: String(user2.id)
-				    })
-		  			.end((err, res) => {
-					    should.not.exist(err);
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+		it('user2 rates user 1 back', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/add-rating')
+				.query({
+			        rating: Math.random()*5,
+			        comment: faker.lorem.sentences(),
+			        request: String(testRequestID),
+			        user: String(user1.id),
+			        iam: String(user2.id)
+			    })
+	  			.end((err, res) => {
+				    should.not.exist(err);
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
 	});
 	
 	describe('GET PROFILE sections', function() {
-  		this.timeout(5000);
+		after(logOut);
 		it('should visit own profile', function(done) {
 			agent.get('http://127.0.0.1:8080/auth/profile/' + user1.id)
 	  			.end((err, res) => {
@@ -437,12 +412,9 @@ describe('App API resource', function() {
 	  			});			
 		});
 	});
-
-	logOut();
-	logIn(user1);
 	
 	describe('GET request/remove/:id', function() {
-  		this.timeout(5000);
+		before(logIn(user1));
 		it('should delete a request', function(done) {
 			Request
 				.findOne(testRequestID)
@@ -460,46 +432,42 @@ describe('App API resource', function() {
 	});
 	
 	describe('GET auth/get-user', function() {
-  		this.timeout(5000);
-			it('endpoint returns current logged in user (user1)', function(done) {
-				agent.get('http://127.0.0.1:8080/auth/get-user')
-		  			.end((err, res) => {
-		  				res.body.should.be.an.Object;
-		  				res.body.should.not.be.empty;
-					    should.not.exist(err);
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+		after(logOut);
+		it('endpoint returns current logged in user (user1)', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/get-user')
+	  			.end((err, res) => {
+	  				res.body.should.be.an.Object;
+	  				res.body.should.not.be.empty;
+				    should.not.exist(err);
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
 	});
 	
-	logOut();
-	
 	describe('GET auth/get-user', function() {
-  		this.timeout(5000);
-			it('endpoint returns current logged in user (null)', function(done) {
-				agent.get('http://127.0.0.1:8080/auth/get-user')
-		  			.end((err, res) => {
-		  				res.body.should.be.an.Object;
-		  				res.body.should.be.empty;
-					    should.not.exist(err);
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+		it('endpoint returns current logged in user (null)', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/get-user')
+	  			.end((err, res) => {
+	  				res.body.should.be.an.Object;
+	  				res.body.should.be.empty;
+				    should.not.exist(err);
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
 	});
 	
 	describe('GET auth/account-login-request', function() {
-  		this.timeout(5000);
-			it('should redirect to login', function(done) {
-				agent.get('http://127.0.0.1:8080/auth/account-login-request')
-		  			.end((err, res) => {
-		  				res.should.redirectTo('http://127.0.0.1:8080/auth/account-login');
-					    should.not.exist(err);
-					    res.should.have.status(200);
-						done();
-		  			});	
-			});
+		it('should redirect to login', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/account-login-request')
+	  			.end((err, res) => {
+	  				res.should.redirectTo('http://127.0.0.1:8080/auth/account-login');
+				    should.not.exist(err);
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
 	});
 
 });
