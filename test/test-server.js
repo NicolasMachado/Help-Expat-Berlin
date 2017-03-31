@@ -230,6 +230,49 @@ describe('App API resource', function() {
 			});
 	});
 	
+	describe('GET /revokehelp/:id', function() {
+  		this.timeout(5000);
+			it('should revoke user2 from interested array', function(done) {
+				agent.get('http://127.0.0.1:8080/request/revokehelp/' + testRequestID)
+		  			.end((err, res) => {
+					    should.not.exist(err);
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+	
+	describe('GET /proposehelp/:id', function() {
+  		this.timeout(5000);
+			it('should add user2 to interested array again', function(done) {
+				agent.get('http://127.0.0.1:8080/request/proposehelp/' + testRequestID)
+		  			.end((err, res) => {
+					    should.not.exist(err);
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+
+	logOut();
+	logIn(user1);
+	
+	describe('GET /accepthelp/', function() {
+  		this.timeout(5000);
+			it('should accept help from user2', function(done) {
+				agent.get('http://127.0.0.1:8080/request/accepthelp/')
+					.query({
+				        request : String(testRequestID),
+				        helper : String(user2.id)
+					})
+		  			.end((err, res) => {
+					    should.not.exist(err);
+					    res.should.have.status(200);
+						done();
+		  			});	
+			});
+	});
+	
 	describe('GET PROFILE sections', function() {
   		this.timeout(5000);
 		it('should visit own profile', function(done) {
@@ -250,9 +293,6 @@ describe('App API resource', function() {
 	  			});			
 		});
 	});
-
-	logOut();
-	logIn(user1);
 	
 	/*describe('GET request/remove/:id', function() {
   		this.timeout(5000);

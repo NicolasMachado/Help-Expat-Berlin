@@ -36,6 +36,8 @@ router.get('/', saveFilters, (req, res) => {
 
 // AJAX ACCEPT HELP
 router.get('/accepthelp', ensureLoginAjax, (req, res) => {
+    console.log('The query in AJAX is :');
+    console.log(req.query);
     let thisRequest;
     return Request
         .findById(req.query.request)
@@ -50,10 +52,18 @@ router.get('/accepthelp', ensureLoginAjax, (req, res) => {
                             .create({
                                 users: [req.user._id, req.query.helper]
                             })
+                            .catch(err => {
+                                console.error(err);
+                                res.status(500).json({message: 'Error when creating conversation'})
+                            });
                     } else {
                         console.log('conversation already exists, updating dateLast');
                         return Conversation
-                            .findByIdAndUpdate(conv._id, { dateLast: new Date() });
+                            .findByIdAndUpdate(conv._id, { dateLast: new Date() })
+                            .catch(err => {
+                                console.error(err);
+                                res.status(500).json({message: 'Error when updating datelast'})
+                            });
                     }
                 })
         })
@@ -62,6 +72,10 @@ router.get('/accepthelp', ensureLoginAjax, (req, res) => {
             .findById(req.query.request)
             .populate('interested')
             .then(request => res.send(request))
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({message: 'Internal server error'})
         });
 });
 
