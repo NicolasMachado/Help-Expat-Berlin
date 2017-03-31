@@ -74,7 +74,7 @@ describe('App API resource', function() {
 		return closeServer();
 	});
 	
-	describe('Root page', function() {
+	describe('GET /', function() {
   		this.timeout(5000);
 		it('should return status 200', function(done) {
 			chai.request(app)
@@ -88,7 +88,7 @@ describe('App API resource', function() {
 		});
 	});
 	
-	describe('Create new user', function() {
+	describe('POST auth/new', function() {
   		this.timeout(5000);
 		it('should add a new user', function(done) {
 			tearDownDb(); // TO MOVE !
@@ -106,7 +106,7 @@ describe('App API resource', function() {
 		});
 	});
 	
-	describe('User log in', function() {
+	describe('POST auth/login', function() {
   		this.timeout(5000);
 		it('should log in', function(done) {
 			User.findOne()
@@ -127,7 +127,7 @@ describe('App API resource', function() {
 		});
 	});
 	
-	describe('Post a new request', function() {
+	describe('POST request/new', function() {
   		this.timeout(5000);
 		it('should add a new request', function(done) {
 			agent.post('http://127.0.0.1:8080/request/new')
@@ -144,6 +144,38 @@ describe('App API resource', function() {
 		            status: `open`,
 		            interested: []
 		        })
+	  			.end((err, res) => {
+				    should.not.exist(err);
+				    res.should.redirectTo('http://127.0.0.1:8080/');
+				    res.should.not.redirectTo('http://127.0.0.1:8080/auth/account-login');
+				    res.should.have.status(200);
+					done();
+	  			});	
+		});
+	});
+	
+	describe('GET /remove/:id', function() {
+  		this.timeout(5000);
+		it('should delete a request', function(done) {
+			Request
+				.findOne()
+				.then((request) =>{
+					agent.get('http://127.0.0.1:8080/request/remove/' + request._id)
+			  			.end((err, res) => {
+						    should.not.exist(err);
+						    res.should.redirectTo('http://127.0.0.1:8080/auth/profile/' + testUser._id + '?tab=requests');
+						    res.should.not.redirectTo('http://127.0.0.1:8080/auth/account-login');
+						    res.should.have.status(200);
+							done();
+			  			});						
+				})
+		});
+	});
+	
+	describe('GET auth/logout', function() {
+  		this.timeout(5000);
+		it('should log out', function(done) {
+			agent.get('http://127.0.0.1:8080/auth/logout')
 	  			.end((err, res) => {
 				    should.not.exist(err);
 				    res.should.redirectTo('http://127.0.0.1:8080/');
