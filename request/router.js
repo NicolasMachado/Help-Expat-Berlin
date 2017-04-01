@@ -7,7 +7,7 @@ router.use(express.static('./views'));
 
 // NEW REQUEST SCREEN
 router.get('/new', ensureLoginNormal, (req, res) => {
-    res.render('newrequest', {alertMessage: `Remember to read the Guidelines before posting a new request.`});
+    res.render('newrequest', {alertMessage: `Remember to read the Guidelines in the About section before posting a new request.`});
 });
 
 // AJAX SHOW ALL

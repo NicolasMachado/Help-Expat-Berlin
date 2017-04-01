@@ -1,14 +1,6 @@
 <% include head %>
 
-<form id="login-form" method="post" action="/auth/login">
-    <h2>Login </h2>
-    <label for="email">Email</label>
-    <input type="email" name="email" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" required>
-    <p><input class="button" type="submit" value="Log in"></p>
-</form>
-<div class="request-container">
+<div class="request-container fb-login-request">
 <a href="/auth/facebook" class="fb-connect"><img class="fb-logo" src="/images/fb-logo.png" width="20px">Connect with Facebook</a>
 <p class="small">If you don't have an account on help-expat-berlin yet, it will be automatically created.</p>
 </div>

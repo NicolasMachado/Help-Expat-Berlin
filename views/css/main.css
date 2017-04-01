@@ -335,6 +335,10 @@ input[type="number"] {
 	margin-bottom: 5px;
 }
 
+.fb-login-request {
+	padding: 50px 10px 50px 10px;
+}
+
 textarea {
 	width: 90%;
 	max-width: 400px;
