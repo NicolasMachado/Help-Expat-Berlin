@@ -21,9 +21,11 @@ section is accessible within 3 clicks or less.
 
 ## Under the hood
 
-* The front-end is built using HTML5, CSS, Javascript, JQuery, Jquery UI and AJAX. The back-end uses Node, Express and MongoDB.
+* The frontend is built using HTML5, CSS, Javascript, JQuery, Jquery UI and AJAX. The backend uses Node, Express and MongoDB.
 * The website is fully responsive, adapting for mobile, table and desktop viewports.
+* Log in is made through the facebook authentication API and is handled using Passport in the backend.
 * Sockets are used to allow real-time chat and real time messages notifications.
+* A test suite containing 25 test cases is implemented. Most of them use SuperAgent to test logged in features.
 
 
 ## To work on the project locally:
