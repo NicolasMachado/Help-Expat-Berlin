@@ -14,12 +14,12 @@ Once the help is provided, the requester can select which user helped him and cl
 can rate each others out of 5 and optionnally leave a comment.
 The ratings are public. They are a way to screen potential abuse.
 
-##User interface
+## User interface
 
 The website is designed to work on mobile, tablets and desktop. Its interface is meant to be simple and intuitive. Every
 section is accessible within 3 clicks or less.
 
-##Under the hood
+## Under the hood
 
 * The front-end is built using HTML5, CSS, Javascript, JQuery, Jquery UI and AJAX. The back-end uses Node, Express and MongoDB.
 * The website is fully responsive, adapting for mobile, table and desktop viewports.
