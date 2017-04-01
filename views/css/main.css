@@ -42,6 +42,29 @@ a {
     text-decoration: none;
 }
 
+#about {
+	text-align: left;
+	background-color: #F3F6E9;
+	padding: 20px;
+	color: #364014;
+}
+
+#about > h3, #about > h4 {
+	color: #3C4717;
+}
+
+li {
+	padding: 5px;
+}
+
+#about > h2 {
+	text-align: center;
+}
+
+em {
+	font-weight: bold;
+}
+
 .fakelink {
 	cursor: pointer;
 	color: #075F7C;
@@ -322,7 +345,7 @@ textarea {
 	background-color: #DFECD4;
     font-style: italic;
     padding: 10px;
-	max-width: 400px;
+	max-width: 600px;
 	border-radius: 5px;
 	margin: 0 auto 0 auto;
 }

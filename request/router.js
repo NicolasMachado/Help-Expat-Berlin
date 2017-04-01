@@ -7,7 +7,7 @@ router.use(express.static('./views'));
 
 // NEW REQUEST SCREEN
 router.get('/new', ensureLoginNormal, (req, res) => {
-    res.render('newrequest', {alertMessage: `Remember to read the rules before posting a new request.`});
+    res.render('newrequest', {alertMessage: `Remember to read the Guidelines before posting a new request.`});
 });
 
 // AJAX SHOW ALL
@@ -182,6 +182,12 @@ router.post('/new', ensureLoginNormal, (req, res) => {
         .catch(err => {
             res.status(500).json({message: err.errmsg})
         });
+});
+
+// RULES/HELP PAGE
+router.get('/about', (req, res) => {
+    req.flash('alertMessage', 'You are now logged out.');
+    res.render('about.ejs');
 });
 
 module.exports = {router};

@@ -27,6 +27,7 @@
 		<% if (!user) { %>
 		<a href="/auth/account-login">Log in</a>
 		<% } %>
+		<a href="/request/about">About</a>
 	</nav>
 	<div id="burger"><img src="/images/burger.png" width ="100%"></div>
 	<% if (errorMessage) { %> <div class="error-banner">Error: <%= errorMessage %></div><% } %>
@@ -46,6 +47,7 @@
 		<% if (!user) { %>
 		<a href="/auth/account-login">Log in</a>
 		<% } %>
+		<a href="/request/about">About</a>
 	</nav>
 	<% if (errorMessage) { %> <div class="error-banner">&nbsp;</div><% } %>
 	<% if (alertMessage) { %> <div class="alert-banner">&nbsp;</div><% } %>
