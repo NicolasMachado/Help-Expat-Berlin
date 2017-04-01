@@ -1,5 +1,6 @@
 # Help Expat Berlin
 
+Thinkful (https://www.thinkful.com/) second portfolio project.
 
 ## Description
 help-expat-berlin is a website that lets users obtain or provide help to each others, especially for administrative
@@ -13,14 +14,26 @@ Once the help is provided, the requester can select which user helped him and cl
 can rate each others out of 5 and optionnally leave a comment.
 The ratings are public. They are a way to screen potential abuse.
 
+##User interface
+
+The website is designed to work on mobile, tablets and desktop. Its interface is meant to be simple and intuitive. Every
+section is accessible within 3 clicks or less.
+
+##Under the hood
+
+* The front-end is built using HTML5, CSS, Javascript, JQuery, Jquery UI and AJAX. The back-end uses Node, Express and MongoDB.
+* The website is fully responsive, adapting for mobile, table and desktop viewports.
+* Sockets are used to allow real-time chat and real time messages notifications.
+
+
 ## To work on the project locally:
-- Install node
-- Install mongo
-- Run npm install
-- Copy the config.js file from the config/ folder into a config/local folder
-- In the file you've just created, set DATABASE_URL to your local database
-- Create a FB app for FB login
-- Set FACEBOOKAUTH clientID, clientSecret, callbackURL as well in your local config file
-- Run node server.js
-- Run mongod
-- The website should be available at the following address: http://127.0.0.1:8080/
+* Install node
+* Install mongo
+* Run npm install
+* Copy the config.js file from the config/ folder into a config/local folder
+* In the file you've just created, set DATABASE_URL to your local database
+* Create a FB app for FB login
+* Set FACEBOOKAUTH clientID, clientSecret, callbackURL as well in your local config file
+* Run node server.js
+* Run mongod
+* The website should be available at the following address: http://127.0.0.1:8080/
