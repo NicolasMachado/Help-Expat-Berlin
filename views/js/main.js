@@ -11,8 +11,8 @@ function AjaxTemplate (url) {
     	if (error === 'Unauthorized') {
     		window.location.href = '/auth/account-login-request';
     	}
-    }
-};
+    };
+}
 
 let currentUser, unreadMessages;
 
@@ -111,19 +111,19 @@ function colorFilters () {
 function toggleShowFilters () {
 	if ($('#show-hide-filters').data('state') === 'open') {
 		$('#show-hide-filters').data('state', 'closed').html('Show filters');
-		$('#filters-form').hide();
+		$('#filters-form').slideUp(200);
 	} else {
 		$('#show-hide-filters').data('state', 'open').html('Hide filters');  
-		$('#filters-form').show(); 		
+		$('#filters-form').slideDown(200);	
 	}
 }
 
 function getUrlParam (name) {
 	const results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-	if (results==null) {
-		return null
+	if (results === null) {
+		return null;
 	} else {
-		return results[1] || 0
+		return results[1] || 0;
 	}	
 }
 
@@ -144,7 +144,7 @@ function getProfileInfo() {
 
 function displayDate (date) {
 	if (!date) {
-		return false
+		return false;
 	}
 	const d = new Date(date);
 	const day = ('0' + d.getDate()).slice(-2);
@@ -152,22 +152,22 @@ function displayDate (date) {
 	const hour = ('0' + d.getHours()).slice(-2);
 	const minute = ('0' + d.getMinutes()).slice(-2);
 
-	return day + '/' + month + '/' + d.getFullYear() + ' at ' + hour + ':' + minute
+	return day + '/' + month + '/' + d.getFullYear() + ' at ' + hour + ':' + minute;
 }
 
 function displayStars (rating, size) {
 	if (!rating) {
-		return '<span class="small">No rating yet</span>'
+		return '<span class="small">No rating yet</span>';
 	}
 	let htmlStars = '';
 	for (let i = 0; i < 5; i++ ) { 
-		if (rating > i+.75 ) { 
+		if (rating > i + 0.75 ) { 
 			htmlStars += '<img src="/images/star-full.png" width="' + size + 'px">';
-		} else if (rating > i+.25 ) { 
+		} else if (rating > i + 0.25 ) { 
 			htmlStars += '<img src="/images/star-half.png" width="' + size + 'px">';
 		} else {
 			htmlStars += '<img src="/images/star-empty.png" width="' + size + 'px">';
 		}
 	}
-	return htmlStars
+	return htmlStars;
 }

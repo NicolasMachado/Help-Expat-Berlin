@@ -42,7 +42,7 @@ function saveRating (rating, comment, request, user, triggerElement, iam) {
         request: request,
         user: user,
         iam: iam
-    }
+    };
     thisAjax.success = function() {
             triggerElement.parents('.request-container').html('<div class="alert-banner">Thank you. Your rating has been saved</div>').delay(5000).fadeOut(1000);
         };
@@ -66,9 +66,12 @@ function getProfileOtherRatings () {
 }
 
 function displayOtherRatings (ratings) {
-    console.log(ratings)
     $('.now-loading').hide();
-    ratings.length > 0 ? $('#title-profile-section').text('Ratings') : $('#title-profile-section').text('Not rated yet');
+    if (ratings.length > 0) {
+        $('#title-profile-section').text('Ratings');
+    } else {
+        $('#title-profile-section').text('Not rated yet');
+    }
     ratings.forEach(rating => {
         $('#ratings-other').append(
             '<div class="request-container">' + 
@@ -82,7 +85,11 @@ function displayOtherRatings (ratings) {
 
 function displayRatings (ratings) {
     $('.now-loading').hide();
-    ratings.length > 0 ? $('#title-profile-section').text('Your ratings') : $('#title-profile-section').text('Not rated yet');
+    if (ratings.length > 0) {
+        $('#title-profile-section').text('Your ratings');
+    } else {
+        $('#title-profile-section').text('Not rated yet');
+    }
     ratings.forEach(rating => {
         $('#profile-container').append(
             '<div class="request-container">' + 
@@ -100,7 +107,7 @@ function displayRateForm (triggerElement) {
     } else {
         let ratings = '';
         for (let i = 0; i<=5; i += 0.5) {
-            ratings += '</option><option value="' + i + '">' + i + '</option>'
+            ratings += '</option><option value="' + i + '">' + i + '</option>';
         }
         triggerElement.parents('.request-container').children('.rate-form').html(
             'Please rate your interaction with ' + triggerElement.find('option:selected').text() +
@@ -118,7 +125,7 @@ function displayRateForm (triggerElement) {
 function displayListHelpersRate (triggerElement, listAccepted) {
     triggerElement.parent('.request-container').children('.who-helped').remove();
     const accepted = listAccepted.result.accepted.map(accepted => {
-        return '<option data-username="' + accepted.username + '" value="' + accepted._id + '">' + accepted.username + '</option>'
+        return '<option data-username="' + accepted.username + '" value="' + accepted._id + '">' + accepted.username + '</option>';
     });
     triggerElement.parent('.request-container').append(
         '<div class="who-helped">' +

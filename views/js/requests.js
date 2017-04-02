@@ -1,5 +1,5 @@
-let currentPage = 0;
 const resultsPerPage = 10;
+let currentPage = 0;
 
 $(function() {
     if ($('.request-list').length !== 0) {
@@ -109,7 +109,7 @@ function returnIndividualServiceProfile(request, currentUser) {
     if (request.helper && request.helper === currentUser._id) {
         let ratings = '';
         for (let i = 0; i<=5; i += 0.5) {
-            ratings += '</option><option value="' + i + '">' + i + '</option>'
+            ratings += '</option><option value="' + i + '">' + i + '</option>';
         }
         option = 'You have provided a service for this request.</p><p>Please rate your interaction with <a href="/auth/profile/' + request.author._id + '">' + request.author.username + '</a>.' +
             '<form data-iam="helper" data-user="' + request.author._id + '" class="rate-user">' +
@@ -118,9 +118,9 @@ function returnIndividualServiceProfile(request, currentUser) {
             '</select> / 5</p>' +
             '<textarea class="ratetext" name="rating-comment" rows="5" placeholder="Leave a comment to explain your rating"></textarea>' +
             '<p><input class="button" type="submit" value="Submit"></p>' +
-            '</form>'
+            '</form>';
     } else if (_.contains(request.accepted, currentUser._id)) {
-        option = request.author.username + ' has accepted your help.<br>You can now communicate with them in the <a href="/auth/profile/' + currentUser._id + '?tab=messages">messages</a> section.'
+        option = request.author.username + ' has accepted your help.<br>You can now communicate with them in the <a href="/auth/profile/' + currentUser._id + '?tab=messages">messages</a> section.';
     } else {
         option = '<p>' + request.author.username + ' has not accepted your help yet.</p>' +
         '<p data-id="' + request._id + '" class="button button-revokehelp">Revoke help</p>';
@@ -128,7 +128,7 @@ function returnIndividualServiceProfile(request, currentUser) {
     return '<div class="request-container" data-id="' + request._id + '">' +
                 '<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</b></p>' +
                 option +
-            '</div>'
+            '</div>';
 }
 
 function clickRevokHelp (button) {
@@ -181,7 +181,7 @@ function returnIndividualProfileRequest (request) {
             listInterested += '<div class="interested-container">' +
             '<a href="/auth/profile/' + interestedUser._id + '">' + interestedUser.username + '</a> - ' +
             '<span data-helper="' + interestedUser._id + '" data-id="' + request._id + '" class="' + classButtonHelp.class + '">' + classButtonHelp.text + '</span>' +
-            '</div>'
+            '</div>';
         });
     } else {
         listInterested += '<p>No help proposed yet</p>';
@@ -193,7 +193,7 @@ function returnIndividualProfileRequest (request) {
                 '<p class="confirm-delete">Your request will be deleted permanently, are you sure ?<br><br><a href="/request/remove/' + request._id + '">Confirm</a> - <span class="cancel-delete fakelink">Cancel</span></p>' +
                 listInterested +
                 '<p>' + closeRequest + '</p>' +
-            '</div>'
+            '</div>';
 }
 
 function updateRequestDisplay (triggerElement) {
@@ -211,10 +211,10 @@ function refreshRequest(container, request, user) {
 function expandDetails (button) {
     if (button.data('state') === 'closed') {
         button.data('state', 'open').text('Hide details');
-        button.siblings('.request-details').show();
+        button.siblings('.request-details').slideDown(200);
     } else {
-        button.data('state', 'closed').text('Show details');;
-        button.siblings('.request-details').hide();
+        button.data('state', 'closed').text('Show details');
+        button.siblings('.request-details').slideUp(200);
     }   
 }
 
@@ -232,12 +232,16 @@ function getList () {
 
 function displayPrevNext (total) {
     if (currentPage > 0) {
-        $('.prev-next').append('<div class="button floatleft prevnext button-previous"><</div>')
+        $('.prev-next').append('<div class="button floatleft prevnext button-previous"><</div>');
     }
     if ((currentPage * resultsPerPage + resultsPerPage) < total) {
-        $('.prev-next').append('<div class="button floatright prevnext button-next">></div>')
+        $('.prev-next').append('<div class="button floatright prevnext button-next">></div>');
     }
-    resultsPerPage >= total ?  $('.prev-next').hide() : $('.prev-next').show();
+    if (resultsPerPage >= total) {
+        $('.prev-next').hide();
+    } else {
+        $('.prev-next').show();
+    }
 }
 
 function displayAllRequests (results, user) {
@@ -292,5 +296,5 @@ function requestTemplate (request, user, open) {
                 '<p class="comment">' + request.description.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
                 helpbutton +
             '</div>' +
-            '<div data-state="' + openOrclosed.buttonState + '" data-id="' + request._id + '" class="button button-details">' + openOrclosed.buttonText + '</div>'
+            '<div data-state="' + openOrclosed.buttonState + '" data-id="' + request._id + '" class="button button-details">' + openOrclosed.buttonText + '</div>';
 }

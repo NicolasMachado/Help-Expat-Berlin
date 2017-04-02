@@ -29,9 +29,9 @@ router.get('/', saveFilters, (req, res) => {
                 .then(reqs => res.send({results: reqs, user: req.user, nbResults: totalResults}))
                 .catch(err => {
                     console.error(err);
-                    res.status(500).json({message: 'Internal server error'})
+                    res.status(500).json({message: 'Internal server error'});
                 });           
-        })
+        });
 });
 
 // AJAX ACCEPT HELP
@@ -52,7 +52,7 @@ router.get('/accepthelp', ensureLoginAjax, (req, res) => {
                             })
                             .catch(err => {
                                 console.error(err);
-                                res.status(500).json({message: 'Error when creating conversation'})
+                                res.status(500).json({message: 'Error when creating conversation'});
                             });
                     } else {
                         console.log('conversation already exists, updating dateLast');
@@ -60,20 +60,20 @@ router.get('/accepthelp', ensureLoginAjax, (req, res) => {
                             .findByIdAndUpdate(conv._id, { dateLast: new Date() })
                             .catch(err => {
                                 console.error(err);
-                                res.status(500).json({message: 'Error when updating datelast'})
+                                res.status(500).json({message: 'Error when updating datelast'});
                             });
                     }
-                })
+                });
         })
         .then(() => {
             Request
             .findById(req.query.request)
             .populate('interested')
-            .then(request => res.send(request))
+            .then(request => res.send(request));
         })
         .catch(err => {
             console.error(err);
-            res.status(500).json({message: 'Internal server error'})
+            res.status(500).json({message: 'Internal server error'});
         });
 });
 
@@ -86,7 +86,7 @@ router.get('/update-display/:id', ensureLoginAjax, (req, res) => {
         .then(request => res.json({result: request, user: req.user}))
         .catch(err => {
             console.error(err);
-            res.status(500).json({message: 'Internal server error'})
+            res.status(500).json({message: 'Internal server error'});
         });
 });
 
@@ -99,7 +99,7 @@ router.get('/proposehelp/:id', ensureLoginAjax, (req, res) => {
         .then(() => res.json({alertMessage: `Update successful`}))
         .catch(err => {
             console.error(err);
-            res.status(500).json({message: 'Internal server error'})
+            res.status(500).json({message: 'Internal server error'});
         });
 });
 
@@ -112,7 +112,7 @@ router.get('/revokehelp/:id', ensureLoginAjax, (req, res) => {
         .then(() => res.json({alertMessage: `Update successful`}))
         .catch(err => {
             console.error(err);
-            res.status(500).json({message: 'Internal server error'})
+            res.status(500).json({message: 'Internal server error'});
         });
 });
 
@@ -123,7 +123,7 @@ router.get('/close-no-rating/:id', ensureLoginAjax, (req, res) => {
         .then(() => res.json({alertMessage: `Update successful`}))
         .catch(err => {
             console.error(err);
-            res.status(500).json({message: 'Internal server error'})
+            res.status(500).json({message: 'Internal server error'});
         });
 });
 
@@ -137,7 +137,7 @@ router.get('/delete/:id', ensureLoginNormal, (req, res) => {
         })
         .catch(err => {
             console.error(err);
-            res.status(500).json({message: 'Internal server error'})
+            res.status(500).json({message: 'Internal server error'});
         });
 });
 
@@ -148,7 +148,7 @@ router.get('/remove/:id', ensureLoginNormal, (req, res) => {
         .then(() => {
             req.flash('alertMessage', 'Your request has been deleted.');
             res.redirect('/auth/profile/' + req.user.id + '?tab=requests');
-        })
+        });
 });
 
 // POST NEW REQUEST
@@ -180,7 +180,7 @@ router.post('/new', ensureLoginNormal, (req, res) => {
             return res.redirect('/');
         })
         .catch(err => {
-            res.status(500).json({message: err.errmsg})
+            res.status(500).json({message: err.errmsg});
         });
 });
 

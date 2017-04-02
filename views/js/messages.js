@@ -88,9 +88,7 @@ function getConversation (id) {
 function returnIndividualMessage (message, otherUser) {
     const messageClass = message.from._id === otherUser._id ? 'message-other' : 'message-mine';
     return '<div class="message-container ' + messageClass + '" data-id="' + message._id + '">' +
-            message.body.replace(/\r?\n/g, '<br />') + '</br>'
-            message.date +
-            '</div>' 
+            message.body.replace(/\r?\n/g, '<br />') + '</div>' ;
 }
 
 function getListMessages () {
@@ -118,7 +116,7 @@ function returnIndividualConvListProfile (conv, otherUser, currentuser) {
     const unread = (conv.nbUnread > 0 && currentuser._id == conv.unreadUser) ? ' <b>(' + conv.nbUnread + ' new)<b/>' : '';
     return '<div class="conversation-container-list proftab" data-id="' + conv._id + '">' +
             'With ' + otherUser.username + ' - ' +  conv.messages.length +' messages' + unread +
-            '</div>'
+            '</div>';
 }
 
 function updateNewMessagesIndicator () {

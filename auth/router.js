@@ -42,7 +42,7 @@ passport.use(new LocalStrategy({
                 return callback(null, false, {message: 'Incorrect password'});
             }
             else {
-                return callback(null, user)
+                return callback(null, user);
             }
         });
 }));
@@ -72,7 +72,7 @@ passport.use(new FacebookStrategy({
                     token: accessToken
                 }
             })
-            .then(user => cb(null, user))
+            .then(user => cb(null, user));
         } else {
             return cb(null, user);
         }
@@ -143,7 +143,7 @@ router.post('/new', (req, res) => {
             return res.render('account-create', {errorMessage: 'This email address is already registered'});
         }
     // if no existing user, hash password
-    return User.hashPassword(password)
+    return User.hashPassword(password);
     })
     .then(hash => {
         return User
@@ -152,14 +152,14 @@ router.post('/new', (req, res) => {
             password: hash,
             email: email,
             authType: 'normal',
-        })
+        });
     })
     .then(user => {
         req.flash('alertMessage', 'Account created! You can now log in with your credentials.');
         res.redirect('/'); // account created
     })
     .catch(err => {
-        res.status(500).json({message: err.errmsg})
+        res.status(500).json({message: err.errmsg});
     });
 });
 
@@ -186,12 +186,12 @@ router.post('/newmessage/:id', ensureLoginAjax, (req, res) => {
                     io.to(String(req.body.other)).emit('newMessage', {userID: req.user._id, convID: req.params.id, otherID: req.body.other});
                     io.to(String(req.user._id)).emit('newMessage', {userID: req.user._id, convID: req.params.id, otherID: req.body.other});
                     res.send({conversation: req.params.id, user: req.user});
-                })
+                });
         })
         .catch(err => {
             console.error(err);
-            res.status(500).json({message: 'Internal server error'})
-        })
+            res.status(500).json({message: 'Internal server error'});
+        });
 });
 
 // AJAX SAVE NEW RATING FROM AUTHOR
@@ -218,27 +218,27 @@ router.get('/add-rating', ensureLoginAjax, (req, res) => {
                     user: req.query.user,
                     request: req.query.request,
                     from: req.user._id
-                })
+                });
             })
         .then(() => {
             return Rating
                 .find({user: req.query.user})
                 .then((ratings) => {
                     const allRatings = ratings.map((rating) => {
-                        return rating.rating
+                        return rating.rating;
                     });
                     nbRatings = allRatings.length;
                     sumRatings = allRatings.reduce((a, b) => { return a + b; }, 0);
                     avgRating = (sumRatings/nbRatings).toFixed(2);
-                })
+                });
         })
         .then(() => {
             return User
-                .findByIdAndUpdate(req.query.user, { rating: avgRating, nbRatings: nbRatings })
+                .findByIdAndUpdate(req.query.user, { rating: avgRating, nbRatings: nbRatings });
         })
         .then(() => {
             return Request
-                .findByIdAndUpdate(req.query.request, { status: 'closed', helper: helper })
+                .findByIdAndUpdate(req.query.request, { status: 'closed', helper: helper });
         })
         .then(() => {
             res.status(200).send('Success');
@@ -246,7 +246,7 @@ router.get('/add-rating', ensureLoginAjax, (req, res) => {
         .catch(err => {
             req.flash('errorMessage', 'There was an error processing your rating');
             res.status(500).redirect('/auth/profile/' + req.user._id + '?tab=profile');
-        })
+        });
 });
 
 // AJAX RETURN USER RATINGS
@@ -259,8 +259,8 @@ router.get('/get-user-ratings', ensureLoginAjax, (req, res) => {
         .then(ratings => res.send(ratings))
         .catch(err => {
             console.error(err);
-            res.status(500).json({message: 'Internal server error'})
-        })
+            res.status(500).json({message: 'Internal server error'});
+        });
 });
 
 // AJAX RETURN OTHER RATINGS
@@ -273,8 +273,8 @@ router.get('/get-other-ratings/:id', ensureLoginAjax, (req, res) => {
         .then(ratings => res.send(ratings))
         .catch(err => {
             console.error(err);
-            res.status(500).json({message: 'Internal server error'})
-        })
+            res.status(500).json({message: 'Internal server error'});
+        });
 });
 
 // AJAX RETURN INDIVIDUAL CONVERSATION
@@ -300,25 +300,25 @@ router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
                                     .then(user => {
                                         if (user.unreadMessages < 0) {
                                             return User
-                                                .findByIdAndUpdate(req.user._id, {unreadMessages: 0})                                    
+                                                .findByIdAndUpdate(req.user._id, {unreadMessages: 0});                                  
                                         }
-                                    })
-                            })
+                                    });
+                            });
                     }
-                })
+                });
         })
         // set unread to 0 in conversation
         .then(() => {
             if (currentConv.unreadUser === String(req.user._id)) {
                 return Conversation
-                    .findByIdAndUpdate(currentConv._id, {$set: {unreadUser: '', nbUnread: 0}}) // mark as read
+                    .findByIdAndUpdate(currentConv._id, {$set: {unreadUser: '', nbUnread: 0}});// mark as read
                 }
         })
         .then(() => res.send({conversation: currentConv, user: req.user, oldUnread: oldUnread}))
         .catch(err => {
             console.error(err);
-            res.status(500).json({message: 'Internal server error'})
-        })
+            res.status(500).json({message: 'Internal server error'});
+        });
 });
 
 // AJAX RETURN PROFILE CONVERSATIONS
@@ -330,8 +330,8 @@ router.get('/get-profile-messages', ensureLoginAjax, (req, res) => {
         .then(reqs => res.send({conversations: reqs, user: req.user}))
         .catch(err => {
             console.error(err);
-            res.status(500).json({message: 'Internal server error'})
-        })
+            res.status(500).json({message: 'Internal server error'});
+        });
 });
 
 // AJAX RETURN PROFILE REQUESTS
@@ -341,7 +341,7 @@ router.get('/get-profile-requests', ensureLoginAjax, (req, res, next) => {
         .populate('interested')
         .then(requests => {
             res.json(requests);
-        })
+        });
 });
 
 // AJAX RETURN PROFILE SERVICES
@@ -351,7 +351,7 @@ router.get('/get-profile-services', ensureLoginAjax, (req, res, next) => {
         .populate('author')
         .then(requests => {
             res.json({requests: requests, currentUser: req.user});
-        })
+        });
 });
 
 // AJAX RETURN CURRENT USER
@@ -359,7 +359,7 @@ router.get('/get-current-user', ensureLoginAjax, (req, res, next) => {
     User.findById(req.user.id)
         .then(user => {
             res.json(user);
-        })
+        });
 });
 
 // AJAX RETURN CURRENT USER EVEN IF DISCONNECTED
@@ -368,7 +368,7 @@ router.get('/get-user', (req, res, next) => {
         User.findById(req.user.id)
             .then(user => {
                 res.json(user);
-            })       
+            });
     } else {
         res.send(null);       
     }
@@ -391,9 +391,9 @@ router.get('/profile/:id', ensureLoginNormal, (req, res, next) => {
                         .then((requests) => {
                             profile.services = requests;
                             res.render('profile', {profile});
-                        })
-                })
-        })
+                        });
+                });
+        });
 });
 
 // CREATE ACCOUNT PAGE

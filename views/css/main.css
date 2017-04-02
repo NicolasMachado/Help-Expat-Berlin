@@ -49,8 +49,8 @@ a {
 	color: #364014;
 }
 
-#about > h3, #about > h4 {
-	color: #3C4717;
+#about > h2, #about > h3, #about > h4 {
+	color: black;
 }
 
 li {
@@ -194,7 +194,7 @@ input[type="submit"]{
 }
 
 .button-help {
-	margin: 10px;
+	margin: 5px;
 	background-color: #366933;
 }
 

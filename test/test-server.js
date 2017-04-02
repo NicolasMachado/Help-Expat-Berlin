@@ -1,3 +1,4 @@
+/* jshint expr: true */
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const {app, runServer, closeServer} = require('../server');
@@ -63,7 +64,7 @@ function logIn (user) {
 			    should.not.exist(err);
 				done();
 			});
-	}
+	};
 }
 
 // MAIN TEST SUITE
@@ -114,8 +115,9 @@ describe('App API resource', function() {
 								.then((users) => {
 									user1.id = users[0]._id;
 									user2.id = users[1]._id;
+									console.log('POUETEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
 									done();
-							  	})
+							  	});
 			  			});
 	  			});
 		});
@@ -188,7 +190,7 @@ describe('App API resource', function() {
 							    res.should.have.status(200);
 								done();
 				  			});	
-				})
+				});
 		});
 	});
 	
@@ -252,7 +254,7 @@ describe('App API resource', function() {
 						    res.should.have.status(200);
 							done();
 			  			});	
-				})
+				});
 		});
 	});
 	
@@ -427,7 +429,7 @@ describe('App API resource', function() {
 						    res.should.have.status(200);
 							done();
 			  			});						
-				})
+				});
 		});
 	});
 	
