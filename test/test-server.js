@@ -451,7 +451,7 @@ describe('App API resource', function() {
 			agent.get('http://127.0.0.1:8080/auth/get-user')
 	  			.end((err, res) => {
 	  				res.body.should.be.an.Object;
-	  				res.body.should.be.empty;
+	  				res.body.should.not.be.empty;
 				    should.not.exist(err);
 				    res.should.have.status(200);
 					done();
