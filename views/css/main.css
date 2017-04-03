@@ -340,6 +340,13 @@ input[type="number"] {
 	margin-bottom: 5px;
 }
 
+.test-login {
+	border-radius: 5px;
+	margin: 5px;
+	padding: 10px;
+	background-color: #D5E2CC;
+}
+
 .fb-login-request {
 	padding: 50px 10px 50px 10px;
 }
@@ -378,7 +385,6 @@ textarea {
 
 .inline {
 	display: inline-block;
-	padding: 0 10px 0 10px;
 }
 
 .mobile-profile-menu {
