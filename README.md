@@ -27,6 +27,11 @@ section is accessible within 3 clicks or less.
 * Sockets are used to allow real-time chat and real time messages notifications.
 * A test suite containing 25 test cases is implemented. Most of them use SuperAgent to test logged in features.
 
+## Test version
+
+If you want to test the features of the website, head to https://help-expat-berlin.herokuapp.com/auth/account-login,
+and log in with any of the test accounts.
+
 
 ## To work on the project locally:
 * Install node
