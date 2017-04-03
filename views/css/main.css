@@ -1,5 +1,5 @@
 html {
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Oxygen', sans-serif;
 	min-height: 100vh;
 }
 
@@ -328,6 +328,10 @@ input[type="number"] {
 	width: 50px;
 }
 
+.test-site-warning {
+	padding: 10px;
+}
+
 #filters-form {
 	background-color: #E6EEE0;
 	margin-bottom: 0px;
@@ -359,7 +363,7 @@ textarea {
 
 .comment {
 	background-color: #DFECD4;
-    font-style: italic;
+    font-style: none;
     padding: 10px;
 	max-width: 600px;
 	border-radius: 5px;
