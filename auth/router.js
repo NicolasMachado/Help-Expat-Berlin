@@ -367,10 +367,10 @@ router.get('/get-user', (req, res, next) => {
     if (req.user) {
         User.findById(req.user.id)
             .then(user => {
-                res.json(user);
+                res.json({user: user});
             });
     } else {
-        res.send(null);       
+        res.json({user: null});       
     }
 });
 

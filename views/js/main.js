@@ -68,12 +68,12 @@ $(function() {
 
 function getUser () {
     let thisAjax = new AjaxTemplate('/auth/get-user/');
-    thisAjax.success = function(user) {
-        if (user) {
+    thisAjax.success = function(response) {
+        if (response.user) {
             const socket = io.connect();
             listenSocket(socket);
-            socket.emit('join', String(user._id));
-            currentUser = user;
+            socket.emit('join', String(response.user._id));
+            currentUser = response.user;
             unreadMessages = currentUser.unreadMessages;
             updateNewMessagesIndicator();
         }
@@ -99,7 +99,7 @@ function listenSocket(mySocket) {
 
 function colorFilters () {
     const selects = $('#filters-form').find('select  option:selected');
-    selects.each((index, select) => {
+    selects.each(function (index, select) {
         if (select.value !== 'all' && select.value !== '-1' && select.value !=='Any') {
             $(select).parent().css('background-color', '#F0F2D9').css('color', '');
         } else {

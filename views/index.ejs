@@ -15,7 +15,7 @@
 <form id="filters-form">
 	<div class="inline-filter">
     <label class="small" for="paid">Fee</label>
-    <select class="small"name="paid">
+    <select class="small" name="paid" id="paid">
 	    <option value="all" <% if (userPrice === 'all') { %> selected <% } %> >Any</option>
 	    <option value="paid" <% if (userPrice === 'paid') { %> selected <% } %> >Paid</option>
 	    <option value="free" <% if (userPrice === 'free') { %> selected <% } %> >Free</option>
@@ -23,14 +23,14 @@
     </div>
 	<div class="inline-filter">
     <label class="small" for="date">Order by</label>
-    <select class="small"name="date">
+    <select class="small" name="date" id="date">
 	    <option value="-1" <% if (userDate === -1) { %> selected <% } %> >Newest</option>
 	    <option value="1" <% if (userDate === 1) { %> selected <% } %> >Oldest</option>
     </select>
     </div>
 	<div class="inline-filter">
 	    <label class="small" for="type">Type</label>
-	    <select class="small"name="type">
+	    <select class="small" name="type" id="type">
 	    	<% types.forEach((type) => { %>
 	    		<option value='<%= type %>' <% if (userType === type) { %> selected <% } %> ><%= type %></option>
 	    	<% }); %>
@@ -38,7 +38,7 @@
     </div>
 	<div class="inline-filter">
 	    <label class="small" for="location">Area</label>
-	    <select class="small" name="location" required>
+	    <select class="small" name="location" id="location" required>
 	    	<% locations.forEach((location) => { %>
 	    		<option value='<%= location %>' <% if (userLocation === location) { %> selected <% } %> ><%= location %></option>
 	    	<% }); %>

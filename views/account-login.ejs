@@ -1,33 +1,28 @@
 <% include head %>
 
-<div class="request-container small">
-	<p>This is the <b>TEST VERSION</b> of Help Expat Berlin. Please feel free to log in using one of the credentials set below and experiment with the website's functionalities as much as you want.</p>
-	<p class="test-login inline">
-		<img src="images/email-icon.png" width="12px"> <input onClick="this.setSelectionRange(0, this.value.length)" value="testuser1@test.com" readonly /><br>
-		<img src="images/password-icon.png" width="12px"> <input onClick="this.setSelectionRange(0, this.value.length)" value="test" readonly />
-	</p>
-	<p class="test-login inline">
-		<img src="images/email-icon.png" width="12px"> <input onClick="this.setSelectionRange(0, this.value.length)" value="testuser2@test.com" readonly /><br>
-		<img src="images/password-icon.png" width="12px"> <input onClick="this.setSelectionRange(0, this.value.length)" value="test" readonly />
-	</p>
-	<p class="test-login inline">
-		<img src="images/email-icon.png" width="12px"> <input onClick="this.setSelectionRange(0, this.value.length)" value="testuser3@test.com" readonly /><br>
-		<img src="images/password-icon.png" width="12px"> <input onClick="this.setSelectionRange(0, this.value.length)" value="test" readonly />
-	</p>
-</div>
-
 <form id="login-form" method="post" action="/auth/login">
+	<p><img src="images/alert-icon.png" width="40px"></p>
+	<p>This is the <b>TEST VERSION</b> of Help Expat Berlin.</p>
+	<p class="small">A random test account has been selected for you.</p><p class="small">Just click <em>Log in</em> and feel free to experiment with the website's functionalities as much as you want.</p>
     <h2>Login </h2>
-    <label for="email"><img src="images/email-icon.png" width="20px"></label>
-    <input type="email" name="email" required>
-    <label for="password"><img src="images/password-icon.png" width="20px"></label>
-    <input type="password" name="password" required>
+    <label for="emailinput"><img src="images/email-icon.png" width="20px"></label>
+    <input id="emailinput" type="email" name="email" required readonly>
+    <label for="pwinput"><img src="images/password-icon.png" width="20px"></label>
+    <input id="pwinput" type="password" name="password" required readonly>
     <p><input class="button" type="submit" value="Log in"></p>
 </form>
 
 <div class="request-container fb-login-request">
 <a href="/auth/facebook" class="fb-connect"><img class="fb-logo" src="/images/fb-logo.png" width="20px">Connect with Facebook</a>
-<p class="small">If you don't have an account on help-expat-berlin yet, it will be automatically created.</p>
+<p class="small">If you don't have an account on Help Expat Berlin yet, it will be automatically created.</p>
 </div>
+
+<script>
+	const testUsers = ['testuser1@test.com', 'testuser2@test.com', 'testuser3@test.com'];
+	const mailInput = document.getElementById("emailinput");
+	const passswordInput = document.getElementById("pwinput");
+	mailInput.value = testUsers[Math.floor(Math.random()*testUsers.length)];
+	passswordInput.value = 'test';
+</script>
 
 <% include footer %>
