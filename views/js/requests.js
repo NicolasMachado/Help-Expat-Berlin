@@ -283,16 +283,16 @@ function requestTemplate (request, user, open) {
     };
     return '<div class="request-details-less">' +
                 '<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</b></p>' +
+                '<div class="no-lb small">Posted: ' + datePosted + ' by</div>' +
                 '<p class="no-lb">' + author + '</p>' +
                 '<p class="no-lb">' + displayStars(request.author.rating, 20) + '</p>' +
                 nbRatingString + '<p> </p>' +
-                '<div class="no-lb small">Posted: ' + datePosted + '</div>' +
-                '<p class="small">' + request.type + ' - <b>' + request.interested.length + '</b> interested</p>' +
+                '<p class="small"><img src="images/category-icon.png"> ' + request.type + '</p><p class="small"><b>' + request.interested.length + '</b> interested</p>' +
             '</div>' +
             '<div class="request-details" data-id="' + request._id + '" ' + openOrclosed.classDetails + '>' +
-                '<p class="small">When: ' + dateEvent + '</p>' +
-                '<p class="small">Where: ' + request.location + '</p>' +
-                '<p class="small">Proposed fee: ' + price + rate + '</p>' +
+                '<p class="small"><img src="images/date-icon.png"></img> ' + dateEvent + '</p>' +
+                '<p class="small"><img src="images/location-icon.png"></img> ' + request.location + '</p>' +
+                '<p class="small"><img src="images/fee-icon.png"></img> ' + price + rate + '</p>' +
                 '<p class="comment">' + request.description.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
                 helpbutton +
             '</div>' +

@@ -101,9 +101,9 @@ function colorFilters () {
     const selects = $('#filters-form').find('select  option:selected');
     selects.each((index, select) => {
         if (select.value !== 'all' && select.value !== '-1' && select.value !=='Any') {
-            $(select).parent().css('background-color', '#E9E5D4');
+            $(select).parent().css('background-color', '#F0F2D9').css('color', '');
         } else {
-            $(select).parent().css('background-color', '');        	
+            $(select).parent().css('background-color', '').css('color', '');        	
         }
     }); 
 }

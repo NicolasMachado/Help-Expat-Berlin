@@ -24,8 +24,8 @@ router.get('/', saveFilters, (req, res) => {
                 .populate('author')
                 .where(req.filters.filter)
                 .sort(req.filters.sort)
+                .skip(req.query.page*10)
                 .limit(Number(req.query.perpage))
-                .skip(req.query.page*2)
                 .then(reqs => res.send({results: reqs, user: req.user, nbResults: totalResults}))
                 .catch(err => {
                     console.error(err);

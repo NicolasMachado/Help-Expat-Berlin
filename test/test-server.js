@@ -115,7 +115,6 @@ describe('App API resource', function() {
 								.then((users) => {
 									user1.id = users[0]._id;
 									user2.id = users[1]._id;
-									console.log('POUETEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE');
 									done();
 							  	});
 			  			});

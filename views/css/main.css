@@ -158,6 +158,10 @@ h1 {
 	margin-bottom: 10px;
 }
 
+.small > img {
+	width: 12px;
+}
+
 .request-details {
 	padding: 10px;
 }
@@ -368,6 +372,11 @@ textarea {
 }
 
 .inline-filter {
+	display: inline-block;
+	padding: 0 10px 0 10px;
+}
+
+.inline {
 	display: inline-block;
 	padding: 0 10px 0 10px;
 }
