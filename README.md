@@ -44,3 +44,5 @@ and log in with any of the test accounts.
 * Run node server.js
 * Run mongod
 * The website should be available at the following address: http://127.0.0.1:8080/
+
+<img src="https://content.screencast.com/users/zeroots/folders/Jing/media/b4fadfb4-360f-468a-b342-997fc9085126/2017-04-04_2222.png" />
