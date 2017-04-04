@@ -58,3 +58,15 @@ and log in with any of the test accounts.
 ## Profile / Requests section
 
 <img src="https://content.screencast.com/users/zeroots/folders/Jing/media/61c73e0e-43f5-499a-95e7-b550dbb1f392/2017-04-04_2226.png" />
+
+## Profile / Services section
+
+<img src="https://content.screencast.com/users/zeroots/folders/Jing/media/d76e5fd6-8793-4887-8614-c1ac73c65396/2017-04-04_2228.png" />
+
+## Profile / Messages section
+
+<img src="https://content.screencast.com/users/zeroots/folders/Jing/media/9ece2834-2ec5-4aff-bc9e-d4c3d396e4d9/2017-04-04_2229.png" />
+
+## Profile / Ratings section
+
+<img src="https://content.screencast.com/users/zeroots/folders/Jing/media/0c2e5585-12ff-41ae-b241-22f82941dc9a/2017-04-04_2230.png" />
