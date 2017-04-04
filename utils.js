@@ -18,15 +18,16 @@ const checkLogin = (req, res, next) => {
 };
 
 const ensureLoginAjax = (req, res, next) => {
-    if (req.isAuthenticated()) {
+    if (req.isAuthenticated() && !req.user.banned) {
         next();
     } else {
+        req.logout();
         res.status(401).json({message: 'You need to login first'});
     } 
 };
 
 const ensureLoginNormal = (req, res, next) => {
-    if (req.isAuthenticated()) {
+    if (req.isAuthenticated() && !req.user.banned) {
         next();
     } else {
         res.redirect('/auth/account-login-request');

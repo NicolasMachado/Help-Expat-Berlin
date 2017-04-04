@@ -106,29 +106,31 @@ function getProfileServices() {
 
 function returnIndividualServiceProfile(request, currentUser) {
     let option = '';
-    if (request.helper && request.helper === currentUser._id) {
-        let ratings = '';
-        for (let i = 0; i<=5; i += 0.5) {
-            ratings += '</option><option value="' + i + '">' + i + '</option>';
+    if (!request.author.banned) {
+        if (request.helper && request.helper === currentUser._id) {
+            let ratings = '';
+            for (let i = 0; i<=5; i += 0.5) {
+                ratings += '</option><option value="' + i + '">' + i + '</option>';
+            }
+            option = 'You have provided a service for this request.</p><p>Please rate your interaction with <a href="/auth/profile/' + request.author._id + '">' + request.author.username + '</a>.' +
+                '<form data-iam="helper" data-user="' + request.author._id + '" class="rate-user">' +
+                '<p><select class="select-rating-number" name="select-rating-number" required>' +
+                '<option value="">Rating</option>' + ratings +
+                '</select> / 5</p>' +
+                '<textarea class="ratetext" name="rating-comment" rows="5" placeholder="Leave a comment to explain your rating"></textarea>' +
+                '<p><input class="button" type="submit" value="Submit"></p>' +
+                '</form>';
+        } else if (_.contains(request.accepted, currentUser._id)) {
+            option = request.author.username + ' has accepted your help.<br>You can now communicate with them in the <a href="/auth/profile/' + currentUser._id + '?tab=messages">messages</a> section.';
+        } else {
+            option = '<p>' + request.author.username + ' has not accepted your help yet.</p>' +
+            '<p data-id="' + request._id + '" class="button button-revokehelp">Revoke help</p>';
         }
-        option = 'You have provided a service for this request.</p><p>Please rate your interaction with <a href="/auth/profile/' + request.author._id + '">' + request.author.username + '</a>.' +
-            '<form data-iam="helper" data-user="' + request.author._id + '" class="rate-user">' +
-            '<p><select class="select-rating-number" name="select-rating-number" required>' +
-            '<option value="">Rating</option>' + ratings +
-            '</select> / 5</p>' +
-            '<textarea class="ratetext" name="rating-comment" rows="5" placeholder="Leave a comment to explain your rating"></textarea>' +
-            '<p><input class="button" type="submit" value="Submit"></p>' +
-            '</form>';
-    } else if (_.contains(request.accepted, currentUser._id)) {
-        option = request.author.username + ' has accepted your help.<br>You can now communicate with them in the <a href="/auth/profile/' + currentUser._id + '?tab=messages">messages</a> section.';
-    } else {
-        option = '<p>' + request.author.username + ' has not accepted your help yet.</p>' +
-        '<p data-id="' + request._id + '" class="button button-revokehelp">Revoke help</p>';
+        return '<div class="request-container" data-id="' + request._id + '">' +
+                    '<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</b></p>' +
+                    option +
+                '</div>';
     }
-    return '<div class="request-container" data-id="' + request._id + '">' +
-                '<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</b></p>' +
-                option +
-            '</div>';
 }
 
 function clickRevokHelp (button) {
@@ -177,11 +179,13 @@ function returnIndividualProfileRequest (request) {
     if (request.interested.length > 0) {
         listInterested += '<p>The following users proposed their help:</p>';
         request.interested.forEach(function(interestedUser) {
-            const classButtonHelp = _.contains(request.accepted, interestedUser._id) ? {class: '', text: 'You can now send messages to this user'} : {class: 'fakelink button-accept', text: 'Accept'};
-            listInterested += '<div class="interested-container">' +
-            '<a href="/auth/profile/' + interestedUser._id + '">' + interestedUser.username + '</a> - ' +
-            '<span data-helper="' + interestedUser._id + '" data-id="' + request._id + '" class="' + classButtonHelp.class + '">' + classButtonHelp.text + '</span>' +
-            '</div>';
+            if (!interestedUser.banned) {
+                const classButtonHelp = _.contains(request.accepted, interestedUser._id) ? {class: '', text: 'You can now send messages to this user'} : {class: 'fakelink button-accept', text: 'Accept'};
+                listInterested += '<div class="interested-container">' +
+                '<a href="/auth/profile/' + interestedUser._id + '">' + interestedUser.username + '</a> - ' +
+                '<span data-helper="' + interestedUser._id + '" data-id="' + request._id + '" class="' + classButtonHelp.class + '">' + classButtonHelp.text + '</span>' +
+                '</div>';
+            }
         });
     } else {
         listInterested += '<p>No help proposed yet</p>';
@@ -249,7 +253,9 @@ function displayAllRequests (results, user) {
         $('.request-list').html('<h3>No request found</h3>');
     }
     results.forEach(function(request) {
-        $('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, user) + '</div>');
+        if (!request.author.banned) {
+            $('.request-list').append('<div data-id="' +  request._id + '" class="request-container">' + requestTemplate(request, user) + '</div>');
+        }
     });
 }
 

@@ -158,6 +158,10 @@ h1 {
 	margin-bottom: 10px;
 }
 
+.interested-container {
+	padding: 5px;
+}
+
 .small > img {
 	width: 12px;
 }

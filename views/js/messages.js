@@ -106,7 +106,9 @@ function getListMessages () {
                     otherUser = conv.users[0];
                     currentuser = conv.users[1];
                 }
-                $('#profile-container').append(returnIndividualConvListProfile(conv, otherUser, currentuser));
+                if (!otherUser.banned) {
+                    $('#profile-container').append(returnIndividualConvListProfile(conv, otherUser, currentuser));
+                }
             });
         };
     $.ajax (thisAjax);
