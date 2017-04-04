@@ -53,20 +53,33 @@ and log in with any of the test accounts.
 
 ## Request creation form
 
+This section is where users can create new requests.
+
 <img src="https://content.screencast.com/users/zeroots/folders/Jing/media/79e45c5c-9308-412d-a38f-c5c4c77a363b/2017-04-04_2225.png" />
 
 ## Profile / Requests section
+
+In this section of the user profile dashboard, users can check the requests they have posted, accept help from users, delete their
+requests or close them
 
 <img src="https://content.screencast.com/users/zeroots/folders/Jing/media/61c73e0e-43f5-499a-95e7-b550dbb1f392/2017-04-04_2226.png" />
 
 ## Profile / Services section
 
+The services section of the user profile dashboard lets users check the services they have either proposed on provided. They can revoke
+their help or rate a requester back when the request is closed.
+
 <img src="https://content.screencast.com/users/zeroots/folders/Jing/media/d76e5fd6-8793-4887-8614-c1ac73c65396/2017-04-04_2228.png" />
 
 ## Profile / Messages section
 
+The messages section is where user can interact once the requester has accepted another user's help. It is a LIVE chat, thanks to the use
+of a socket. If the receiver is not in the chat room, he gets alerted in the main interface.
+
 <img src="https://content.screencast.com/users/zeroots/folders/Jing/media/9ece2834-2ec5-4aff-bc9e-d4c3d396e4d9/2017-04-04_2229.png" />
 
 ## Profile / Ratings section
+
+This is where a user can check the ratings he received.
 
 <img src="https://content.screencast.com/users/zeroots/folders/Jing/media/0c2e5585-12ff-41ae-b241-22f82941dc9a/2017-04-04_2230.png" />
