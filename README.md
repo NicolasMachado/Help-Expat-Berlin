@@ -45,8 +45,16 @@ and log in with any of the test accounts.
 * Run mongod
 * The website should be available at the following address: http://127.0.0.1:8080/
 
-## The sections
+# The sections
 
-# Main list
+## Main list
 
 <img src="https://content.screencast.com/users/zeroots/folders/Jing/media/b4fadfb4-360f-468a-b342-997fc9085126/2017-04-04_2222.png" />
+
+## Request creation form
+
+<img src="https://content.screencast.com/users/zeroots/folders/Jing/media/79e45c5c-9308-412d-a38f-c5c4c77a363b/2017-04-04_2225.png" />
+
+## Profile / Requests section
+
+<img src="https://content.screencast.com/users/zeroots/folders/Jing/media/61c73e0e-43f5-499a-95e7-b550dbb1f392/2017-04-04_2226.png" />
