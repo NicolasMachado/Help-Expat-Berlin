@@ -121,13 +121,13 @@ function returnIndividualServiceProfile(request, currentUser) {
                 '<p><input class="button" type="submit" value="Submit"></p>' +
                 '</form>';
         } else if (_.contains(request.accepted, currentUser._id)) {
-            option = request.author.username + ' has accepted your help.<br>You can now communicate with them in the <a href="/auth/profile/' + currentUser._id + '?tab=messages">messages</a> section.';
+            option = '<p>' + request.author.username + ' has accepted your help.</p><p>You can now communicate with them in the <a href="/auth/profile/' + currentUser._id + '?tab=messages">messages</a> section.</p>';
         } else {
             option = '<p>' + request.author.username + ' has not accepted your help yet.</p>' +
-            '<p data-id="' + request._id + '" class="button button-revokehelp">Revoke help</p>';
+            '<div data-id="' + request._id + '" class="button button-revokehelp">Revoke help</div>';
         }
         return '<div class="request-container" data-id="' + request._id + '">' +
-                    '<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</b></p>' +
+                    '<p class="title-request-container"><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</b></p>' +
                     option +
                 '</div>';
     }
@@ -192,7 +192,7 @@ function returnIndividualProfileRequest (request) {
     }
     const closeRequest = request.accepted.length > 0 ? '<div data-id="' + request._id + '" class="button close-request">Close request</div>' : '';
     return '<div class="request-container" data-id="' + request._id + '">' +
-                '<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</b></p>' +
+                '<p class="title-request-container"><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</b></p>' +
                 '<p><span class="fakelink delete-request">Delete</span></p>' +
                 '<p class="confirm-delete">Your request will be deleted permanently, are you sure ?<br><br><a href="/request/remove/' + request._id + '">Confirm</a> - <span class="cancel-delete fakelink">Cancel</span></p>' +
                 listInterested +
@@ -236,10 +236,10 @@ function getList () {
 
 function displayPrevNext (total) {
     if (currentPage > 0) {
-        $('.prev-next').append('<div class="button floatleft prevnext button-previous"><</div>');
+        $('.prev-next').append('<div class="button floatleft prevnext button-previous"><img src="./images/left-chevron.png" width="15px" /></div>');
     }
     if ((currentPage * resultsPerPage + resultsPerPage) < total) {
-        $('.prev-next').append('<div class="button floatright prevnext button-next">></div>');
+        $('.prev-next').append('<div class="button floatright prevnext button-next"><img src="./images/right-chevron.png" width="15px" /></div>');
     }
     if (resultsPerPage >= total) {
         $('.prev-next').hide();
@@ -289,16 +289,23 @@ function requestTemplate (request, user, open) {
     };
     return '<div class="request-details-less">' +
                 '<p class="title-request-container"><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</b></p>' +
-                '<div class="no-lb small">Posted: ' + datePosted + ' by</div>' +
-                '<p class="no-lb">' + author + '</p>' +
-                '<p class="no-lb">' + displayStars(request.author.rating, 20) + '</p>' +
-                nbRatingString + '<p> </p>' +
-                '<p class="small"><img src="images/category-icon.png"> ' + request.type + '</p><p class="small"><b>' + request.interested.length + '</b> interested</p>' +
+                '<div class="author-container">' +
+                    '<p class="no-lb">' + author + '</p>' +
+                    '<p class="no-lb">' + displayStars(request.author.rating, 20) + '</p>' +
+                    nbRatingString +
+                '</div>' +
+                '<div class="details-less-container">' +
+                    '<p class="small"><img src="images/category-icon.png"> ' + request.type + '</p>' +
+                    '<p class="small"><b>' + request.interested.length + '</b> interested</p>' +
+                    '<div class="no-lb small">Posted: ' + datePosted + '</div>' +
+                '</div>' +
             '</div>' +
             '<div class="request-details" data-id="' + request._id + '" ' + openOrclosed.classDetails + '>' +
-                '<p class="small"><img src="images/date-icon.png"></img> ' + dateEvent + '</p>' +
-                '<p class="small"><img src="images/location-icon.png"></img> ' + request.location + '</p>' +
-                '<p class="small"><img src="images/fee-icon.png"></img> ' + price + rate + '</p>' +
+                '<div class="details-more-container">' +
+                    '<p class="small"><img src="images/date-icon.png"></img> ' + dateEvent + '</p>' +
+                    '<p class="small"><img src="images/location-icon.png"></img> ' + request.location + '</p>' +
+                    '<p class="small"><img src="images/fee-icon.png"></img> ' + price + rate + '</p>' +
+                '</div>' +
                 '<p class="comment">' + request.description.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
                 helpbutton +
             '</div>' +

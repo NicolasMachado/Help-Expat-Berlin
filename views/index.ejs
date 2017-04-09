@@ -45,10 +45,10 @@
 	    </select>
     </div>
 <% if (!user) { %>
-	<p class="small tiplogin"><a href="/auth/account-login">Log in</a> to automatically save your filters</p>
+	<p class="tiplogin small"><img src="images/information.png" /> <a href="/auth/account-login">Log in</a> to automatically save your filters</p>
 	<a href="/auth/facebook" class="fb-connect-small"><img class="fb-logo-small" src="/images/fb-logo.png" width="15px">Connect with Facebook</a>
 <% } else { %>
-	<p class="small tiplogin">You are logged in as <b><%= user.username %></b>. <a href="/auth/logout">Sign out</a>.</p>
+	<p class="tiplogin small"><img src="images/information.png" /> You are logged in as <b><%= user.username %></b>. <a href="/auth/logout">Sign out</a>.</p>
 <% } %>
 </form>
 <div data-state="closed" id="show-hide-filters">Hide filters</div>
