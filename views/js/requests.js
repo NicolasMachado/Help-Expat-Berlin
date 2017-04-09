@@ -8,7 +8,7 @@ $(function() {
             getList();
         } else {
             toggleShowFilters();
-            getList();      
+            getList();
         }
     }
     if (tabParam === 'requests') {
@@ -135,7 +135,7 @@ function returnIndividualServiceProfile(request, currentUser) {
 
 function clickRevokHelp (button) {
     let thisAjax = new AjaxTemplate('/request/revokehelp/' + button.data('id'));
-    thisAjax.success = function() { 
+    thisAjax.success = function() {
             updateRequestDisplay(button);
         };
     $.ajax (thisAjax);
@@ -143,7 +143,7 @@ function clickRevokHelp (button) {
 
 function clickRevokHelpProfile (button) {
     let thisAjax = new AjaxTemplate('/request/revokehelp/' + button.data('id'));
-    thisAjax.success = function() { 
+    thisAjax.success = function() {
             button.parent().remove();
         };
     $.ajax (thisAjax);
@@ -151,7 +151,7 @@ function clickRevokHelpProfile (button) {
 
 function clickICanHelp (button) {
     let thisAjax = new AjaxTemplate('/request/proposehelp/' + button.data('id'));
-    thisAjax.success = function() { 
+    thisAjax.success = function() {
             updateRequestDisplay(button);
         };
     $.ajax (thisAjax);
@@ -219,7 +219,7 @@ function expandDetails (button) {
     } else {
         button.data('state', 'closed').text('Show details');
         button.siblings('.request-details').slideUp(200);
-    }   
+    }
 }
 
 function getList () {
@@ -278,17 +278,17 @@ function requestTemplate (request, user, open) {
     const rate = request.rate === 'perhour' ? '/hour' : '';
     const nbPlural = request.author.nbRatings > 1 ? 's' : '';
     const nbRatingString = request.author.nbRatings > 0 ? '<p class="no-lb small">(' + request.author.nbRatings + ' rating' + nbPlural + ')</p>' : '';
-    const openOrclosed = open ? { 
-        classDetails : '', 
+    const openOrclosed = open ? {
+        classDetails : '',
         buttonText: 'Hide details',
         buttonState: 'open'
-    } : { 
-        classDetails : 'hidden', 
+    } : {
+        classDetails : 'hidden',
         buttonText: 'Show details',
         buttonState: 'closed'
     };
     return '<div class="request-details-less">' +
-                '<p><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</b></p>' +
+                '<p class="title-request-container"><b>' + request.title.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</b></p>' +
                 '<div class="no-lb small">Posted: ' + datePosted + ' by</div>' +
                 '<p class="no-lb">' + author + '</p>' +
                 '<p class="no-lb">' + displayStars(request.author.rating, 20) + '</p>' +
@@ -302,5 +302,5 @@ function requestTemplate (request, user, open) {
                 '<p class="comment">' + request.description.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
                 helpbutton +
             '</div>' +
-            '<div data-state="' + openOrclosed.buttonState + '" data-id="' + request._id + '" class="button button-details">' + openOrclosed.buttonText + '</div>';
+            '<div data-state="' + openOrclosed.buttonState + '" data-id="' + request._id + '" class="button-details">' + openOrclosed.buttonText + '</div>';
 }
