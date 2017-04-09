@@ -84,12 +84,12 @@ header {
     //background-image: url("/images/berlin.png");
   	background-size: cover;
   	background-position: center;
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,0.5);
 }
 
 nav {
 	text-align: center;
 	background-color: $nav-background;
-	box-shadow: inset 0 1px 3px 0 rgba(0,0,0,0.5);
 }
 
 nav a {
@@ -370,8 +370,7 @@ input[type="submit"]{
 
 form {
 	@include border(#bbb);
-	display: inline-block;
-	min-width: 500px;
+	display: block;
 	background-color: $container-background;
 	padding: 10px;
 	margin: 5px 0 5px 0;

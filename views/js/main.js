@@ -57,7 +57,7 @@ $(function() {
     	$('#profile-container').empty();
     });
     $('#burger').click(function() {
-    	$('#realnav').toggle();
+    	$('#realnav').toggle( "fast");
     });
     $('main').click(function() {
     	if ($('#realnav').css('font-size') !== '16px') {
