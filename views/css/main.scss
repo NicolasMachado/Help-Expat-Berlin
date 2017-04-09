@@ -1,7 +1,7 @@
 // scheme
 $color1: #9cb7c9; // content
 $color2: #3b537a; // header
-$color3: #ebd0ae; // clickable
+$color3: #d9ebae; // clickable
 
 // header
 $header-background: $color2;
@@ -81,10 +81,21 @@ header {
     width: 100%;
     top: 0px;
 	color: white;
-    //background-image: url("/images/berlin.png");
-  	background-size: cover;
-  	background-position: center;
 	box-shadow: 0 1px 3px 0 rgba(0,0,0,0.5);
+    &:after {
+        content: "";
+        background: url(/images/berlin-back.png);
+        background-size: 400px;
+        background-repeat: no-repeat;
+        background-position: center top;
+        opacity: 0.3;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        position: absolute;
+        z-index: -1;
+    }
 }
 
 nav {
@@ -562,4 +573,8 @@ textarea {
 	.normal-profile-menu {
 		display: none;
 	}
+
+    header::after {
+        background-size: 250px;
+    }
 }
