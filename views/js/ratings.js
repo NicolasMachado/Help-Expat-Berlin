@@ -1,8 +1,8 @@
 $(function() {
     if (tabParam === 'ratings') {
         getProfileRatings();
-        $('.proftab').css('background-color',  '#6F7469');
-        $('.ratings-tab').css('background-color',  '#484C44');
+        $('.proftab').css('background-color',  '#696b74');
+        $('.ratings-tab').css('background-color',  '#44464d');
     }
     if ($('#ratings-other').length > 0) {
         getProfileOtherRatings();
@@ -10,8 +10,8 @@ $(function() {
     $('.profile-body').on('click', '.ratings-tab', function() {
         getProfileRatings();
         window.history.pushState('', 'Ratings', window.location.href.split('?')[0] + '?tab=ratings');
-        $('.proftab').css('background-color',  '#6F7469');
-        $('.ratings-tab').css('background-color',  '#484C44');
+        $('.proftab').css('background-color',  '#696b74');
+        $('.ratings-tab').css('background-color',  '#44464d');
     });
     $('.profile-body').on('change', '.select-to-rate', function() {
         displayRateForm($(this));

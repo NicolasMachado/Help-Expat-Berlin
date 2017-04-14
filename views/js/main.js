@@ -32,14 +32,14 @@ $(function() {
 
 	if (tabParam === 'profile') {
     	getProfileInfo();
-        $('.proftab').css('background-color',  '#6F7469');
-        $('.profile-tab').css('background-color',  '#484C44');
+        $('.proftab').css('background-color',  '#696b74');
+        $('.profile-tab').css('background-color',  '#44464d');
 	}
     $('.profile-body').on('click', '.profile-tab', function() {
     	getProfileInfo();
         window.history.pushState('', 'Ratings', window.location.href.split('?')[0] + '?tab=profile');
-        $('.proftab').css('background-color',  '#6F7469');
-        $('.profile-tab').css('background-color',  '#484C44');
+        $('.proftab').css('background-color',  '#696b74');
+        $('.profile-tab').css('background-color',  '#44464d');
     });
     $('#show-hide-filters').click(function() {
     	toggleShowFilters();

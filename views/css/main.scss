@@ -140,13 +140,30 @@ a {
 
 #about {
 	text-align: left;
-	background-color: $about-background;
-	padding: 20px;
+	background-color: $general-background;
+	padding: 0 20px 0 20px;
 	color: $about-text;
 }
 
-#about > h2, #about > h3, #about > h4 {
+h2 {
+    color: darken($general-background, 60%);
+}
+
+#login-form > label {
+    margin-top: 10px;
+}
+
+#about > h4 {
 	color: black;
+}
+
+#about > .request-container {
+    padding: 10px 20px 10px 20px;
+}
+
+h3 {
+    color: darken($general-background, 50%);
+    padding: 10px 0 10px 0;
 }
 
 li {
@@ -329,7 +346,7 @@ input[type="submit"]{
 	color: white;
 	width: 20%;
 	padding: 8px 0 8px 0;
-	background-color: $tab-profile-background;
+	background-color: #696b74;
 	cursor: pointer;
 }
 
@@ -338,10 +355,14 @@ input[type="submit"]{
 }
 
 .conversation-container-list {
-	background-color: $container-background;
+	background-color: darken($general-background, 10%);
 	margin-top: 10px;
 	padding: 10px;
 	cursor: pointer;
+    border-radius: 5px;
+    &:hover{
+    	background-color: darken($general-background, 20%);
+    }
 }
 
 .conv-container {
@@ -386,6 +407,32 @@ form {
 	padding: 10px;
 	margin: 5px 0 5px 0;
 	border-radius: 10px;
+}
+
+#form-send-message {
+    border: 0;
+    max-width: 500px;
+    margin: 0 auto 0 auto;
+    background-color: $general-background;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+#btn-send-message {
+    margin-bottom: 10px;
+}
+
+#message-textarea {
+    margin-bottom: 10px;
+}
+
+#login-form {
+    border: 0;
+    max-width: 500px;
+    margin: 0 auto 0 auto;
+    background-color: darken($general-background, 2%);
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 #filters {
