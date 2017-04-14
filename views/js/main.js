@@ -32,14 +32,14 @@ $(function() {
 
 	if (tabParam === 'profile') {
     	getProfileInfo();
-        $('.proftab').css('background-color',  '#6F7469');
-        $('.profile-tab').css('background-color',  '#484C44');
+        $('.proftab').css('background-color',  '#696b74');
+        $('.profile-tab').css('background-color',  '#44464d');
 	}
     $('.profile-body').on('click', '.profile-tab', function() {
     	getProfileInfo();
         window.history.pushState('', 'Ratings', window.location.href.split('?')[0] + '?tab=profile');
-        $('.proftab').css('background-color',  '#6F7469');
-        $('.profile-tab').css('background-color',  '#484C44');
+        $('.proftab').css('background-color',  '#696b74');
+        $('.profile-tab').css('background-color',  '#44464d');
     });
     $('#show-hide-filters').click(function() {
     	toggleShowFilters();
@@ -57,7 +57,7 @@ $(function() {
     	$('#profile-container').empty();
     });
     $('#burger').click(function() {
-    	$('#realnav').toggle();
+    	$('#realnav').toggle( "fast");
     });
     $('main').click(function() {
     	if ($('#realnav').css('font-size') !== '16px') {
@@ -103,9 +103,9 @@ function colorFilters () {
         if (select.value !== 'all' && select.value !== '-1' && select.value !=='Any') {
             $(select).parent().css('background-color', '#F0F2D9').css('color', '');
         } else {
-            $(select).parent().css('background-color', '').css('color', '');        	
+            $(select).parent().css('background-color', '').css('color', '');
         }
-    }); 
+    });
 }
 
 function toggleShowFilters () {
@@ -113,8 +113,8 @@ function toggleShowFilters () {
 		$('#show-hide-filters').data('state', 'closed').html('Show filters');
 		$('#filters-form').slideUp(200);
 	} else {
-		$('#show-hide-filters').data('state', 'open').html('Hide filters');  
-		$('#filters-form').slideDown(200);	
+		$('#show-hide-filters').data('state', 'open').html('Hide filters');
+		$('#filters-form').slideDown(200);
 	}
 }
 
@@ -124,7 +124,7 @@ function getUrlParam (name) {
 		return null;
 	} else {
 		return results[1] || 0;
-	}	
+	}
 }
 
 function getProfileInfo() {
@@ -134,9 +134,9 @@ function getProfileInfo() {
 			$('.now-loading').hide();
 			$('#title-profile-section').text('User info');
 			$('#profile-container').html(
-					'<p>Username: ' + user.username + '</p>' +
-					'<p>Email: ' + user.email + '</p>' + 
-					'<p><a href="/auth/logout">Sign out</a></p>'
+					'<div class="request-container"><p>Username: ' + user.username + '</p>' +
+					'<p>Email: ' + user.email + '</p>' +
+					'<p><a href="/auth/logout">Sign out</a></p></div>'
 				);
 	    };
 	$.ajax (thisAjax);
@@ -160,10 +160,10 @@ function displayStars (rating, size) {
 		return '<span class="small">No rating yet</span>';
 	}
 	let htmlStars = '';
-	for (let i = 0; i < 5; i++ ) { 
-		if (rating > i + 0.75 ) { 
+	for (let i = 0; i < 5; i++ ) {
+		if (rating > i + 0.75 ) {
 			htmlStars += '<img src="/images/star-full.png" width="' + size + 'px">';
-		} else if (rating > i + 0.25 ) { 
+		} else if (rating > i + 0.25 ) {
 			htmlStars += '<img src="/images/star-half.png" width="' + size + 'px">';
 		} else {
 			htmlStars += '<img src="/images/star-empty.png" width="' + size + 'px">';

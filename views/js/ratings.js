@@ -1,8 +1,8 @@
 $(function() {
     if (tabParam === 'ratings') {
         getProfileRatings();
-        $('.proftab').css('background-color',  '#6F7469');
-        $('.ratings-tab').css('background-color',  '#484C44');
+        $('.proftab').css('background-color',  '#696b74');
+        $('.ratings-tab').css('background-color',  '#44464d');
     }
     if ($('#ratings-other').length > 0) {
         getProfileOtherRatings();
@@ -10,8 +10,8 @@ $(function() {
     $('.profile-body').on('click', '.ratings-tab', function() {
         getProfileRatings();
         window.history.pushState('', 'Ratings', window.location.href.split('?')[0] + '?tab=ratings');
-        $('.proftab').css('background-color',  '#6F7469');
-        $('.ratings-tab').css('background-color',  '#484C44');
+        $('.proftab').css('background-color',  '#696b74');
+        $('.ratings-tab').css('background-color',  '#44464d');
     });
     $('.profile-body').on('change', '.select-to-rate', function() {
         displayRateForm($(this));
@@ -74,8 +74,8 @@ function displayOtherRatings (ratings) {
     }
     ratings.forEach(rating => {
         $('#ratings-other').append(
-            '<div class="request-container">' + 
-                '<p small>Request: <b>' + rating.request.title + '</b></p>' +
+            '<div class="request-container">' +
+                '<p class="title-request-container">Request: <b>' + rating.request.title + '</b></p>' +
                 '<p>Rated ' + displayStars(rating.rating, 15) + ' by <a href="/auth/profile/' + rating.from._id + '">' + rating.from.username + '</a></p>' +
                 '<p class="comment">' + rating.comment.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
             '</div>'
@@ -92,8 +92,8 @@ function displayRatings (ratings) {
     }
     ratings.forEach(rating => {
         $('#profile-container').append(
-            '<div class="request-container">' + 
-                '<p small>Request: <b>' + rating.request.title + '</b></p>' +
+            '<div class="request-container">' +
+                '<p class="title-request-container">Request: <b>' + rating.request.title + '</b></p>' +
                 '<p>Rated ' + displayStars(rating.rating, 15) + ' by <a href="/auth/profile/' + rating.from._id + '">' + rating.from.username + '</a></p>' +
                 '<p class="comment">' + rating.comment.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\r?\n/g, '<br />') + '</p>' +
             '</div>'
@@ -129,7 +129,7 @@ function displayListHelpersRate (triggerElement, listAccepted) {
     });
     triggerElement.parent('.request-container').append(
         '<div class="who-helped">' +
-        '<p>Who helped?</p>' + 
+        '<p>Who helped?</p>' +
         '<p><select class="select-to-rate" name="accepted">' +
         '<option value="none">No one</option>' +
         accepted +

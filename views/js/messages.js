@@ -3,8 +3,8 @@ let messagesLimit = 10;
 $(function() {
     $('.profile-body').on('click', '.messages-tab', function() {
         getListMessages();
-        $('.proftab').css('background-color',  '#6F7469');
-        $('.messages-tab').css('background-color',  '#484C44');
+        $('.proftab').css('background-color',  '#696b74');
+        $('.messages-tab').css('background-color',  '#44464d');
         window.history.pushState('', 'Ratings', window.location.href.split('?')[0] + '?tab=messages');
     });
     $('.profile-body').on('click', '.conversation-container-list', function() {
@@ -22,8 +22,8 @@ $(function() {
     });
     if (tabParam === 'messages') {
         getListMessages();
-        $('.proftab').css('background-color',  '#6F7469');
-        $('.messages-tab').css('background-color',  '#484C44');
+        $('.proftab').css('background-color',  '#696b74');
+        $('.messages-tab').css('background-color',  '#44464d');
     }
 });
 
@@ -37,7 +37,7 @@ function postNewMessage (messageBody, convId, other) {
     thisAjax.success = function() {
         $('#message-textarea').val('');
         $('#btn-send-message').show();
-        $('#btn-send-loading').css('display', 'none');   
+        $('#btn-send-loading').css('display', 'none');
     };
     $.ajax (thisAjax);
 }
@@ -46,7 +46,7 @@ function updateConversation (id) {
     let thisAjax = new AjaxTemplate('/auth/get-conversation/' + id + '?limit=' + messagesLimit);
     thisAjax.success = function(response) {
             $('.now-loading').hide();
-            const otherUser = response.conversation.users[0]._id === response.user._id ? response.conversation.users[1] : response.conversation.users[0];            
+            const otherUser = response.conversation.users[0]._id === response.user._id ? response.conversation.users[1] : response.conversation.users[0];
             const olderMessagesButton = response.conversation.messages.length > messagesLimit ? '<div data-id="' + response.conversation._id + '" class="button button-older-messages">Older messages</div>' : '';
             $('.conv-container').empty();
             response.conversation.messages.reverse().slice(0, messagesLimit).forEach(function (message) {
@@ -54,7 +54,7 @@ function updateConversation (id) {
             });
             $('.conv-container').append(olderMessagesButton);
         };
-    $.ajax (thisAjax);  
+    $.ajax (thisAjax);
 }
 
 function getConversation (id) {
@@ -82,7 +82,7 @@ function getConversation (id) {
             });
             $('.conv-container').append(olderMessagesButton);
         };
-    $.ajax (thisAjax);  
+    $.ajax (thisAjax);
 }
 
 function returnIndividualMessage (message, otherUser) {
@@ -128,7 +128,7 @@ function updateNewMessagesIndicator () {
         $('.menu-messages').html('Messages <div class="messages-indicator">' + String(unreadMessages) + '</div>');
     } else {
         $('.ms-mobile').html('<img src="/images/messages.png" height="20px">');
-        $('.ms-normal').html('Messages');    
-        $('.menu-messages').html('Messages');  
+        $('.ms-normal').html('Messages');
+        $('.menu-messages').html('Messages');
     }
 }

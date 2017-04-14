@@ -2,7 +2,7 @@
 <% const loggedin = user ? "true" : "false"; %>
 <div id="filters" data-loggedin='<%= loggedin %>'>
 
-<% 
+<%
 	const userPrice = user ? user.myfilters.filter.price : "";
 	const userDate = user ? user.myfilters.sort.datePosted : "";
 	const userType = user ? user.myfilters.filter.type : "";
@@ -45,15 +45,15 @@
 	    </select>
     </div>
 <% if (!user) { %>
-	<p class="small tiplogin"><a href="/auth/account-login">Log in</a> to automatically save your filters</p>
+	<p class="tiplogin small"><img src="images/information.png" /> <a href="/auth/account-login">Log in</a> to automatically save your filters</p>
 	<a href="/auth/facebook" class="fb-connect-small"><img class="fb-logo-small" src="/images/fb-logo.png" width="15px">Connect with Facebook</a>
 <% } else { %>
-	<p class="small tiplogin">You are logged in as <b><%= user.username %></b>. <a href="/auth/logout">Sign out</a>.</p>	
+	<p class="tiplogin small"><img src="images/information.png" /> You are logged in as <b><%= user.username %></b>. <a href="/auth/logout">Sign out</a>.</p>
 <% } %>
 </form>
-
-</div>
 <div data-state="closed" id="show-hide-filters">Hide filters</div>
+</div>
+
 <div class="now-loading"><img src="/images/ajax_loading.gif"></div>
 <div class="prev-next"></div>
 <div class="request-list"></div>

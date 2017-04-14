@@ -1,0 +1,627 @@
+// scheme
+$color1: #9cb7c9; // content
+$color2: #3b537a; // header
+$color3: #d9ebae; // clickable
+
+// header
+$header-background: $color2;
+$nav-background: lighten($color2, 10%);
+$nav-link-hover: darken($nav-background, 5%);
+$nav-link: lighten($nav-background, 60%);
+
+// banners
+$error-banner-background: #FFA4A4;
+$error-banner-text: #B42020;
+$alert-banner-background: #D0D2FF;
+$alert-banner-text: #3B3B93;
+
+// general
+$border-color: #ebe7e7;
+$general-background: lighten($color1, 25%);
+$chat-message-other: lighten($color2, 40%);
+$chat-message-mine: lighten($color2, 50%);
+$message-indicator: #AF4B4B;
+$form-elements-border-color: $border-color;
+$form-elements-background-color: lighten($color1, 28%);
+$test-login-background: #D5E2CC;
+$tab-profile-background: #6F7469;
+$link: #075F7C;
+$fb-color: #3b5998;
+
+// containers
+$container-background: lighten($color1, 30%);
+$title-request-container-background: darken($container-background, 1%);
+$comment-background: $title-request-container-background;
+$clickable-element: lighten($color3, 10%);
+
+// about section
+$about-background: #F3F6E9;
+$about-text: #364014;
+
+// button
+$submit-button-background: #417143;
+$button-background: #B8C2A7;
+$button-help-background: #366933;
+$button-revoke-background: #69333B;
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+
+@mixin border($color) {
+	border-top: 1px solid lighten($color, 20%);
+	border-right: 1px solid lighten($color, 10%);
+	border-bottom: 1px solid lighten($color, 10%);
+	border-left: 1px solid lighten($color, 15%);
+}
+
+html {
+	font-family: Arial, sans-serif;
+	min-height: 100vh;
+	box-sizing: border-box;
+}
+
+body {
+	min-height: 100%;
+	background-color: $general-background;
+	text-align: center;
+}
+
+#burger {
+	display: none;
+}
+
+header {
+	font-family: 'Roboto', sans-serif;
+	background-color: $header-background;
+    position: fixed;
+    width: 100%;
+    top: 0px;
+	color: white;
+	box-shadow: 0 1px 3px 0 rgba(0,0,0,0.5);
+    &:after {
+        content: "";
+        background: url(/images/berlin-back.png);
+        background-size: 400px;
+        background-repeat: no-repeat;
+        background-position: center top;
+        opacity: 0.3;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        position: absolute;
+        z-index: -1;
+    }
+}
+
+nav {
+	text-align: center;
+	background-color: $nav-background;
+}
+
+nav a {
+	display: inline-block;
+	padding: 20px;
+	color: $nav-link;
+    text-decoration: none;
+	&:hover{
+		background-color: $nav-link-hover;
+		z-index: 10;
+	}
+}
+
+h1 {
+	padding: 30px;
+	margin: 0px;
+	box-shadow: 0 1px 1px 0 rgba(0,0,0,0.5);
+}
+
+.header-push {
+    width: 100%;
+    top: 0px;
+}
+
+main {
+	max-width: 1000px;
+	padding: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+a {
+	color: $link;
+	font-weight: bold;
+    text-decoration: none;
+}
+
+#about {
+	text-align: left;
+	background-color: $general-background;
+	padding: 0 20px 0 20px;
+	color: $about-text;
+}
+
+h2 {
+    color: darken($general-background, 60%);
+}
+
+#login-form > label {
+    margin-top: 10px;
+}
+
+#about > h4 {
+	color: black;
+}
+
+#about > .request-container {
+    padding: 10px 20px 10px 20px;
+}
+
+h3 {
+    color: darken($general-background, 50%);
+    padding: 10px 0 10px 0;
+}
+
+li {
+	padding: 5px;
+}
+
+#about > h2 {
+	text-align: center;
+}
+
+em {
+	font-weight: bold;
+    font-style: normal;
+}
+
+.fakelink {
+	cursor: pointer;
+	color: $link;
+	font-weight: bold;
+    text-decoration: none;
+}
+
+.fb-connect {
+	display: inline-block;
+	font-weight: normal;
+	padding: 8px 15px 8px 15px;
+	border-radius: 5px;
+	background-color: $fb-color;
+	color: white;
+	margin: 10px;
+}
+
+.fb-logo {
+	vertical-align: middle;
+	padding-right: 10px;
+	padding-bottom: 1px;
+}
+
+.fb-connect-small {
+	font-size: 12px;
+	display: inline-block;
+	font-weight: normal;
+	padding: 7px 13px 5px 13px;
+	border-radius: 4px;
+	background-color: $fb-color;
+	color: white;
+	margin: 5px;
+}
+
+.fb-logo-small {
+	vertical-align: middle;
+	padding-right: 10px;
+	padding-bottom: 1px;
+}
+
+.no-lb {
+	margin: 0;
+	padding: 0;
+}
+
+.error-banner {
+	padding: 20px;
+	text-align: center;
+	background-color: $error-banner-background;
+	color: $error-banner-text;
+}
+
+.alert-banner {
+	padding: 20px;
+	text-align: center;
+	background-color: $alert-banner-background;
+	color: $alert-banner-text;
+}
+
+.request-container {
+	@include border(#bbb);
+	background-color: $container-background;
+	margin-top: 10px;
+	margin-bottom: 30px;
+}
+
+.interested-container {
+	padding: 5px;
+}
+
+.small > img {
+	width: 12px;
+}
+
+.request-details {
+}
+
+.request-details-less {
+	padding-bottom: 0px;
+}
+
+.title-request-container {
+	padding: 10px;
+	margin: 0;
+	margin-bottom: 20px;
+	background-color: $title-request-container-background;
+	border-bottom: 1px solid $border-color;
+}
+
+.confirm-delete {
+	padding: 15px;
+	background-color: $alert-banner-background;
+	color: $alert-banner-text;
+	display: none;
+	border-radius: 5px;
+	max-width: 500px;
+	margin: auto;
+}
+
+input[type="submit"]{
+	border: 0px;
+	background-color: $submit-button-background;
+}
+
+.button {
+	display: inline-block;
+	border-radius: 3px;
+	padding: 10px;
+	background-color: $button-background;
+	color: white;
+	cursor: pointer;
+	min-width: 150px;
+	font-weight: normal;
+	margin-bottom: 20px;
+}
+
+.button-help {
+	background-color: $button-help-background;
+}
+
+.button-details {
+	display: block;
+	background-color: $clickable-element;
+	padding: 5px;
+	margin: 0;
+	cursor: pointer;
+    &:hover {
+        background-color: darken($clickable-element, 5%);
+    }
+}
+
+#btn-send-loading {
+	display: none;
+}
+
+#btn-send-message {
+
+}
+
+.prevnext {
+	@include border(#bbb);
+	color: black;
+	padding: 5px;
+	height: 25px;
+	line-height: 30px;
+	vertical-align: middle;
+	min-width: 50px;
+	background-color: $clickable-element;
+	margin: 0;
+    &:hover {
+        background-color: darken($clickable-element, 5%);
+    }
+}
+
+.prev-next {
+	min-height: 35px;
+}
+
+.button-revokehelp {
+	background-color: $button-revoke-background;
+}
+
+.button-profile {
+	display: inline-block;
+	color: white;
+	width: 20%;
+	padding: 8px 0 8px 0;
+	background-color: #696b74;
+	cursor: pointer;
+}
+
+.now-loading {
+	padding: 20px;
+}
+
+.conversation-container-list {
+	background-color: darken($general-background, 10%);
+	margin-top: 10px;
+	padding: 10px;
+	cursor: pointer;
+    border-radius: 5px;
+    &:hover{
+    	background-color: darken($general-background, 20%);
+    }
+}
+
+.conv-container {
+	max-width: 600px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.message-container {
+	margin-top: 10px;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+.message-other {
+	background-color: $chat-message-other;
+	margin-right: auto;
+	max-width: 80%;
+	text-align: left;
+}
+
+.message-mine {
+	background-color: $chat-message-mine;
+	margin-left: auto;
+	max-width: 80%;
+	text-align: right;
+}
+
+.messages-indicator {
+	display: inline-block;
+	background-color: $message-indicator;
+	border-radius: 50%;
+	font-size: 10px;
+	padding: 3px 5px 1px 4px;
+	font-family: "Lucida Console", Monaco, monospace;
+}
+
+form {
+	@include border(#bbb);
+	display: block;
+	background-color: $container-background;
+	padding: 10px;
+	margin: 5px 0 5px 0;
+	border-radius: 10px;
+}
+
+#form-send-message {
+    border: 0;
+    max-width: 500px;
+    margin: 0 auto 0 auto;
+    background-color: $general-background;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+#btn-send-message {
+    margin-bottom: 10px;
+}
+
+#message-textarea {
+    margin-bottom: 10px;
+}
+
+#login-form {
+    border: 0;
+    max-width: 500px;
+    margin: 0 auto 0 auto;
+    background-color: darken($general-background, 2%);
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+#filters {
+	@include border(#aaa);
+	margin-bottom: 10px;
+}
+
+#filters-form {
+	display: block;
+	background-color: $container-background;
+	margin: 0px;
+	border-radius: 0px;
+}
+
+#show-hide-filters {
+	background-color: $clickable-element;
+	padding: 5px;
+	cursor: pointer;
+    &:hover {
+        background-color: darken($clickable-element, 5%);
+    }
+}
+
+label {
+	display:block;
+	padding: 5px;
+}
+
+select, input, textarea {
+	border: 1px solid $form-elements-border-color;
+	background-color: $form-elements-background-color;
+	padding: 2px 5px 2px 5px;
+	border-radius: 4px;
+}
+
+/* Hack to remove number input arrows */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+	width: 50px;
+}
+
+.test-site-warning {
+	padding: 10px;
+}
+
+.small {
+	font-size: 13px;
+	margin: 0;
+	padding: 5px;
+}
+
+.author-container {
+	box-sizing: border-box;
+	display: inline-block;
+	text-align: left;
+	width: 50%;
+	padding-left: 20px;
+	padding-bottom: 10px;
+}
+
+.details-less-container {
+	box-sizing: border-box;
+	display: inline-block;
+	text-align: right;
+	padding-right: 20px;
+	padding-bottom: 10px;
+	width: 50%;
+}
+
+.details-more-container {
+	display: block;
+	text-align: right;
+	padding-right: 20px;
+	padding-bottom: 10px;
+	margin-top: -5px;
+}
+
+.tiplogin {
+	display: block;
+	max-width: 400px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin: 10px auto 5px auto;
+	background-color: $title-request-container-background;
+	border: 1px solid $border-color;
+}
+
+.test-login {
+	border-radius: 5px;
+	margin: 5px;
+	padding: 10px;
+	background-color: $test-login-background;
+}
+
+.fb-login-request {
+	padding: 50px 10px 50px 10px;
+}
+
+textarea {
+	width: 90%;
+	max-width: 400px;
+	resize: vertical;
+}
+
+.comment {
+	background-color: $comment-background;
+    font-style: none;
+    padding: 10px;
+	max-width: 90%;
+	border-radius: 5px;
+	margin: 0 auto 20px auto;
+	border: 1px solid $border-color;
+}
+
+.floatright {
+	float: right;
+}
+
+.floatleft {
+	float: left;
+}
+
+.inline-filter {
+	display: inline-block;
+	padding: 0 10px 0 10px;
+}
+
+.inline {
+	display: inline-block;
+}
+
+.mobile-profile-menu {
+	display: none;
+}
+
+
+/* mobile */
+@media only screen and (max-width: 570px) {
+	nav {
+		display : none;
+	}
+
+	#realnav > a {
+		display : block;
+	}
+
+	#realnav {
+		display : none;
+		font-size: 18px;
+	}
+
+	header {
+		text-align: left;
+  		background-size: 500px;
+  		background-position: top;
+	}
+
+	.proftab {
+		padding: 8px 0 5px 0;
+	}
+
+	h1 {
+		font-size: 22px;
+		padding: 20px;
+	}
+
+	#burger {
+		display: block;
+		position: absolute;
+		top: 20px;
+		right: 10px;
+		cursor: pointer;
+		width: 30px;
+	}
+
+	.mobile-profile-menu {
+		display: block;
+	}
+
+	.normal-profile-menu {
+		display: none;
+	}
+
+    header::after {
+        background-size: 250px;
+    }
+}
