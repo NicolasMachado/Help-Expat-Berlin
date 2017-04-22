@@ -2,6 +2,10 @@
 
 Thinkful (https://www.thinkful.com/) second portfolio project.
 
+## Technology
+
+<img src="https://raw.githubusercontent.com/NicolasMachado/The-Brain/master/src/images/html5.png" height="40px" alt="HTML5" title="HTML5" style="display:inline-block;" /> <img src="https://raw.githubusercontent.com/NicolasMachado/The-Brain/master/src/images/css3.png" height="40px" alt="CSS3" title="CSS3" style="display:inline-block;" /> <img src="https://raw.githubusercontent.com/NicolasMachado/The-Brain/master/src/images/react.png" height="40px" alt="ReactJS" title="ReactJS" style="display:inline-block;" /> <img src="https://raw.githubusercontent.com/NicolasMachado/The-Brain/master/src/images/redux.png" height="40px" alt="Redux" title="Redux" style="display:inline-block;" /> <img src="https://raw.githubusercontent.com/NicolasMachado/The-Brain/master/src/images/redux.png" height="40px" alt="Redux" title="Redux" style="display:inline-block;" /> <img src="https://raw.githubusercontent.com/NicolasMachado/The-Brain/master/src/images/redux.png" height="40px" alt="Redux" title="Redux" style="display:inline-block;" /> <img src="https://raw.githubusercontent.com/NicolasMachado/The-Brain/master/src/images/redux.png" height="40px" alt="Redux" title="Redux" style="display:inline-block;" /> <img src="https://raw.githubusercontent.com/NicolasMachado/The-Brain/master/src/images/redux.png" height="40px" alt="Redux" title="Redux" style="display:inline-block;" /> <img src="https://raw.githubusercontent.com/NicolasMachado/The-Brain/master/src/images/redux.png" height="40px" alt="Redux" title="Redux" style="display:inline-block;" />
+
 ## Description
 help-expat-berlin is a website that lets users obtain or provide help to each others, especially for administrative
 tasks, or anything that poses a language barrier issue to foreigners in Berlin.
