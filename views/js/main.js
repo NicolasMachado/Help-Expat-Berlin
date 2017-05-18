@@ -142,7 +142,7 @@ function getProfileInfo() {
 	$.ajax (thisAjax);
 }
 
-function displayDate (date) {
+function displayDate(date) {
 	if (!date) {
 		return false;
 	}

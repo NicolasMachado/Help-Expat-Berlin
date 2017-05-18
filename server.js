@@ -56,7 +56,7 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.use('*', (req, res) => { 
+app.use('*', (req, res) => {
     return res.status(404).json({message: '404 - Not Found'});
 });
 
@@ -103,4 +103,3 @@ if (require.main === module) {
 }
 
 module.exports = {app, runServer, closeServer};
-
