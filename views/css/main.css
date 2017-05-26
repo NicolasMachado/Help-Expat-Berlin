@@ -70,7 +70,7 @@ em {
 	cursor: pointer;
 	color: #075F7C;
 	font-weight: bold;
-    text-decoration: none;	
+    text-decoration: none;
 }
 
 .fb-connect {
@@ -136,14 +136,14 @@ h1 {
 	padding: 20px;
 	text-align: center;
 	background-color: #FFA4A4;
-	color: #B42020;	
+	color: #B42020;
 }
 
 .alert-banner {
 	padding: 20px;
 	text-align: center;
 	background-color: #D0D2FF;
-	color: #3B3B93;	
+	color: #3B3B93;
 }
 
 .user-desc {
@@ -186,7 +186,7 @@ h1 {
 
 input[type="submit"]{
 	border: 0px;
-	background-color: #417143;	
+	background-color: #417143;
 }
 
 .button {
@@ -255,7 +255,7 @@ input[type="submit"]{
 	background-color: #EDF4DA;
 	margin-top: 10px;
 	padding: 10px;
-	cursor: pointer;	
+	cursor: pointer;
 }
 
 .conv-container {
@@ -333,6 +333,7 @@ input[type="number"] {
 }
 
 .test-site-warning {
+	text-align: center;
 	padding: 10px;
 }
 
@@ -399,6 +400,10 @@ textarea {
 	display: none;
 }
 
+.site-intro-warning {
+	padding: 20px;
+	max-width: 300px;
+}
 
 /* mobile */
 @media only screen and (max-width: 570px) {
