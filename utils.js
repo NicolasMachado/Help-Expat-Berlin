@@ -1,4 +1,41 @@
 const {User} = require('./config/models');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+
+// Load either local config or regular config
+if (fs.existsSync('./config/local')) {
+    loadConfig('./config/local/config.js');
+} else {
+    loadConfig('./config/config.js');
+}
+function loadConfig (configPath) {
+    return {MAIL_PASS, FACEBOOKAUTH} = require(configPath);
+}
+
+//Setting up mailer
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'nicoma63@gmail.com',
+        pass: MAIL_PASS
+    }
+});
+
+const sendMailAdmin = (message) => {
+    let mailOptions = {
+        from: 'nicoma63@gmail.com',
+        to: 'nicoma63@gmail.com',
+        subject: 'Mail from HEB backend',
+        html: message
+    };
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
 
 const checkLogin = (req, res, next) => {
     res.locals.user = req.user || false; // check if authenticated
@@ -23,7 +60,7 @@ const ensureLoginAjax = (req, res, next) => {
     } else {
         req.logout();
         res.status(401).json({message: 'You need to login first'});
-    } 
+    }
 };
 
 const ensureLoginNormal = (req, res, next) => {
@@ -31,7 +68,7 @@ const ensureLoginNormal = (req, res, next) => {
         next();
     } else {
         res.redirect('/auth/account-login-request');
-    } 
+    }
 };
 
 const saveFilters = (req, res, next) => {
@@ -45,7 +82,7 @@ const saveFilters = (req, res, next) => {
     if (req.query.location !== 'Any') {
         filters.filter.location = req.query.location;
     }
-    
+
     // paid
     if (req.query.paid === 'paid') {
         filters.filter.price = { $gt: 0 };
@@ -55,16 +92,16 @@ const saveFilters = (req, res, next) => {
 
     if (req.isAuthenticated()) {
         return User
-        .findByIdAndUpdate(req.user._id, { 
-            myfilters: { 
+        .findByIdAndUpdate(req.user._id, {
+            myfilters: {
                 sort: {
                     datePosted: req.query.date
-                }, 
+                },
                 filter: {
                     price: req.query.paid,
                     type: req.query.type,
                     location: req.query.location
-                } 
+                }
             }
         })
         .then(() => {
@@ -78,4 +115,4 @@ const saveFilters = (req, res, next) => {
     }
 };
 
-module.exports = {ensureLoginAjax, ensureLoginNormal, checkLogin, saveFilters};
+module.exports = {ensureLoginAjax, ensureLoginNormal, checkLogin, saveFilters, sendMailAdmin};

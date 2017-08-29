@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const {Request, User, Conversation} = require('../config/models');
 const router = express.Router();
-const {ensureLoginAjax, ensureLoginNormal, saveFilters} = require('../utils');
+const {ensureLoginAjax, ensureLoginNormal, saveFilters, sendMailAdmin} = require('../utils');
 router.use(express.static('./views'));
 
 // NEW REQUEST SCREEN
@@ -30,7 +30,7 @@ router.get('/', saveFilters, (req, res) => {
                 .catch(err => {
                     console.error(err);
                     res.status(500).json({message: 'Internal server error'});
-                });           
+                });
         });
 });
 
@@ -97,10 +97,6 @@ router.get('/proposehelp/:id', ensureLoginAjax, (req, res) => {
         .find({ interested : {$nin: [req.user._id]}})
         .update({$push : {interested : req.user._id}})
         .then(() => res.json({alertMessage: `Update successful`}))
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({message: 'Internal server error'});
-        });
 });
 
 // AJAX REVOKE HELP
@@ -176,6 +172,7 @@ router.post('/new', ensureLoginNormal, (req, res) => {
             interested: []
         })
         .then(() => {
+            sendMailAdmin('<h2>Someone has posted a new HEB request!</h2>');
             req.flash('alertMessage', 'Your request has been posted!');
             return res.redirect('/');
         })

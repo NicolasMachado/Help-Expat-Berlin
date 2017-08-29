@@ -6,17 +6,7 @@ const {User, Request, Conversation, Rating} = require('../config/models');
 const router = express.Router();
 const faker = require('faker');
 const fs = require('fs');
-const {ensureLoginAjax, ensureLoginNormal} = require('../utils');
-
-// Load either local config or regular config
-if (fs.existsSync('./config/local')) {
-    loadConfig('../config/local/config.js');
-} else {
-    loadConfig('../config/config.js');
-}
-function loadConfig (configPath) {
-    return {FACEBOOKAUTH} = require(configPath);
-}
+const {ensureLoginAjax, ensureLoginNormal, sendMailAdmin} = require('../utils');
 
 router.use(express.static('./views'));
 
@@ -155,6 +145,7 @@ router.post('/new', (req, res) => {
         });
     })
     .then(user => {
+        sendMailAdmin('<h2>Someone has created a new HEB account!</h2>');
         req.flash('alertMessage', 'Account created! You can now log in with your credentials.');
         res.redirect('/'); // account created
     })
@@ -207,7 +198,7 @@ router.get('/add-rating', ensureLoginAjax, (req, res) => {
         })
         .then((rating) => {
             if (rating) {
-                throw new Error('RATING ALREADY EXISTS, IGNORING');              
+                throw new Error('RATING ALREADY EXISTS, IGNORING');
             }
         })
         .then(() => {
@@ -300,7 +291,7 @@ router.get('/get-conversation/:id', ensureLoginAjax, (req, res) => {
                                     .then(user => {
                                         if (user.unreadMessages < 0) {
                                             return User
-                                                .findByIdAndUpdate(req.user._id, {unreadMessages: 0});                                  
+                                                .findByIdAndUpdate(req.user._id, {unreadMessages: 0});
                                         }
                                     });
                             });
@@ -370,7 +361,7 @@ router.get('/get-user', (req, res, next) => {
                 res.json({user: user});
             });
     } else {
-        res.json({user: null});       
+        res.json({user: null});
     }
 });
 

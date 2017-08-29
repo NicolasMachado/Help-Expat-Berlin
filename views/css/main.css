@@ -400,11 +400,6 @@ textarea {
 	display: none;
 }
 
-.site-intro-warning {
-	padding: 20px;
-	max-width: 300px;
-}
-
 /* mobile */
 @media only screen and (max-width: 570px) {
 	nav {
