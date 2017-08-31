@@ -14,9 +14,9 @@ function loadConfig (configPath) {
 
 //Setting up mailer
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.mailgun.org',
     auth: {
-        user: 'nicoma63@gmail.com',
+        user: 'postmaster@sandbox82e9d6dc6f374890b03994540b9c6366.mailgun.org',
         pass: MAIL_PASS
     }
 });
