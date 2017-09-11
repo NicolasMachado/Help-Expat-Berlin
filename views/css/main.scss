@@ -1,7 +1,7 @@
 // scheme
 $color1: #9cb7c9; // content
 $color2: #3b537a; // header
-$color3: #d9ebae; // clickable
+$color3: #aec2eb; // clickable
 
 // header
 $header-background: $color2;
@@ -36,7 +36,7 @@ $clickable-element: lighten($color3, 10%);
 
 // about section
 $about-background: #F3F6E9;
-$about-text: #364014;
+$about-text: #333333;
 
 // button
 $submit-button-background: #417143;
@@ -152,12 +152,13 @@ h2 {
 #login-form > label {
     margin-top: 10px;
 }
-
+request
 #about > h4 {
 	color: black;
 }
 
 #about > .request-container {
+    line-height: 1.5em;
     padding: 10px 20px 10px 20px;
 }
 
@@ -269,11 +270,13 @@ em {
 }
 
 .confirm-delete {
-	padding: 15px;
-	background-color: $alert-banner-background;
-	color: $alert-banner-text;
+	padding: 8px;
+	background-color: #f2f5fb;
+    font-weight: bold;
+	color: black;
 	display: none;
 	border-radius: 5px;
+    border: 3px solid #939eb5;
 	max-width: 500px;
 	margin: auto;
 }
@@ -312,10 +315,6 @@ input[type="submit"]{
 
 #btn-send-loading {
 	display: none;
-}
-
-#btn-send-message {
-
 }
 
 .prevnext {
@@ -409,6 +408,19 @@ form {
 	border-radius: 10px;
 }
 
+.rate-form {
+    margin: 8px auto;
+    max-width: 600px;
+}
+
+.select-rating-number {
+    max-width: 100px;
+}
+
+.select-to-rate {
+    max-width: 300px;
+}
+
 #form-send-message {
     border: 0;
     max-width: 500px;
@@ -461,11 +473,25 @@ label {
 	padding: 5px;
 }
 
+#new-request-form {
+    box-sizing: border-box;
+    margin: 8px auto;
+    max-width: 400px;
+}
+
+.inline-form {
+    display: inline-block;
+    width: 40%;
+}
+
 select, input, textarea {
+    box-sizing: border-box;
 	border: 1px solid $form-elements-border-color;
 	background-color: $form-elements-background-color;
-	padding: 2px 5px 2px 5px;
+	padding: 5px 5px 5px 5px;
 	border-radius: 4px;
+    margin-bottom: 8px;
+    width: 100%;
 }
 
 /* Hack to remove number input arrows */
@@ -536,13 +562,9 @@ input[type="number"] {
 	padding: 50px 10px 50px 10px;
 }
 
-textarea {
-	width: 90%;
-	max-width: 400px;
-	resize: vertical;
-}
-
 .comment {
+    line-height: 1.3em;
+    text-align: left;
 	background-color: $comment-background;
     font-style: none;
     padding: 10px;
@@ -574,7 +596,8 @@ textarea {
 }
 
 .site-intro-warning {
-  margin: 0 auto 20px auto;
+    line-height: 1.3em;
+    margin: 0 auto 20px auto;
 	padding: 20px;
 	max-width: 600px;
 }
